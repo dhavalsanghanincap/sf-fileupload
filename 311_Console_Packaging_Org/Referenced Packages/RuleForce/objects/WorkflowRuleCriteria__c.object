@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Object to hold the rule criteria for a rule. Ex: When the account name is &quot;Test&quot;</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Child_Relationship_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the relationship between the Workflow object and the criteria&apos;s object. Ex: Workflow Object is an Account and the criteria object is Contact the child relationship name is Contacts.</description>
+        <externalId>false</externalId>
+        <label>Child Relationship Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Criteria_Object__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Object type that the criteria is evaluating on. Ex: Contact</description>
+        <externalId>false</externalId>
+        <label>Criteria Object</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>CrossFormula__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Cross Formula</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Evaluate_ChildCriteria_Using__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Used when comparing child relationships. State whether the criteria needs to match all(AND) or any(OR) of the children</description>
+        <externalId>false</externalId>
+        <label>Evaluate Child Criteria Using</label>
+        <picklist>
+            <picklistValues>
+                <fullName>AND</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>OR</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Evaluate_Criteria_Result_To__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Used when comparing child relationships.Sets the default outcome when there are no Children.</description>
+        <externalId>false</externalId>
+        <label>Evaluate Criteria Result To</label>
+        <picklist>
+            <picklistValues>
+                <fullName>True - If no child record found</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>False - If no child record found</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Field_API_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>API name of the field being compared. When doing relationship comparison this will have the API name of the relationship field.</description>
+        <externalId>false</externalId>
+        <label>Field API Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Field_Name__c</fullName>
+        <defaultValue>&quot;&lt;auto-detect&gt;&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Name of the field being compared. When doing relationship comparison this will have the value of the relationship field.</description>
+        <externalId>false</externalId>
+        <label>Field Name</label>
+        <length>255</length>
+        <required>true</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Field_Relation__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(CONTAINS(Field_API_Name__c, &apos;[].&apos;), &apos;Related List&apos;, IF(CONTAINS(Field_API_Name__c, &apos;.&apos;), &apos;Lookup&apos;, NULL))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Field Relation</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Field_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Type of field that is chosen to compare against.</description>
+        <externalId>false</externalId>
+        <label>Field Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Number</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Percentage</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Multi-Picklist</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Text</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>GlobalVariable__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Global Variable</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Maximum_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated</description>
+        <externalId>false</externalId>
+        <label>Maximum Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Minimum_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated</description>
+        <externalId>false</externalId>
+        <label>Minimum Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Operator__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Operator used for comparing the value against the input. Ex: Equals</description>
+        <externalId>false</externalId>
+        <label>Operator</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Equals</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Equal To</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Contains</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Does Not Contain</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Starts With</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Ends With</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Greater Than</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Greater Or Equal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Less Than</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Less Or Equal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Includes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Excludes</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Between</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Parent_Object_Field__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Used when criteria is against a relationship field. This is the name of the field that is used to compare to the value.</description>
+        <externalId>false</externalId>
+        <label>Parent Object Field</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Parent_Object_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Used when criteria is against a relationship. State the parent Object Name</description>
+        <externalId>false</externalId>
+        <label>Parent Object Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Relationship_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Name of the relationship field when using relationships for criteria</description>
+        <externalId>false</externalId>
+        <label>Relationship Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>RuleObjectType__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The object name for the workflow rule</description>
+        <externalId>false</externalId>
+        <formula>Workflow_Rule__r.Object_Name__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Rule Object</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sequence__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Sequence</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The value that the we are comparing to.</description>
+        <externalId>false</externalId>
+        <label>Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>WorkflowRuleCriteriaGroup__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Workflow Rule Criteria Group</label>
+        <referenceTo>Workflow_Rule_Criteria_Group__c</referenceTo>
+        <relationshipLabel>Workflow Rule Criterias</relationshipLabel>
+        <relationshipName>Workflow_Rule_Criterias</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Workflow_Rule__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Workflow Rule</label>
+        <referenceTo>WorkflowRule__c</referenceTo>
+        <relationshipLabel>Workflow Rule Criterias</relationshipLabel>
+        <relationshipName>Workflow_Rule_Criterias</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <label>Workflow Rule Criteria</label>
+    <nameField>
+        <displayFormat>Criteria #{0000}</displayFormat>
+        <label>Reference ID</label>
+        <trackHistory>true</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Workflow Rule Criterias</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Cross_Formula_Required</fullName>
+        <active>true</active>
+        <description>CrossFormula is required if  field selected is cross formula</description>
+        <errorConditionFormula>AND( CONTAINS ( Field_API_Name__c , &apos;CrossFormula&apos;), ISBLANK( CrossFormula__c ))</errorConditionFormula>
+        <errorMessage>Cross formula needs to be defined.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Matching_Value_Is_Required</fullName>
+        <active>false</active>
+        <description>Matching Value should be a required field for all operators except the opperator &quot;Between&quot; E</description>
+        <errorConditionFormula>AND(Not(ISBLANK(TEXT(Operator__c))),Not(ISPICKVAL(Operator__c , &apos;Between&apos;)),Not(ISPICKVAL(Operator__c , &apos;Is Changed&apos;)),Not(ISPICKVAL(Operator__c , &apos;Is Null&apos;)),Not(ISPICKVAL(Operator__c , &apos;Is Not Null&apos;)), ISBLANK(Value__c))</errorConditionFormula>
+        <errorMessage>Please enter a matching value</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Maximum_Value_Is_Required</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(Operator__c , &apos;Between&apos;), ISBLANK(Maximum_Value__c))</errorConditionFormula>
+        <errorDisplayField>Maximum_Value__c</errorDisplayField>
+        <errorMessage>When the Operator is Between, the Maximum Value field is required.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Minimum_Value_Is_Required</fullName>
+        <active>true</active>
+        <errorConditionFormula>AND(ISPICKVAL(Operator__c , &apos;Between&apos;), ISBLANK(Minimum_Value__c))</errorConditionFormula>
+        <errorDisplayField>Minimum_Value__c</errorDisplayField>
+        <errorMessage>When the Operator is Between, the Minimum Value field is required.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Operator_Is_Required</fullName>
+        <active>false</active>
+        <description>Operator is required field</description>
+        <errorConditionFormula>ISBLANK( TEXT(Operator__c) )</errorConditionFormula>
+        <errorMessage>Operator value is required</errorMessage>
+    </validationRules>
+</CustomObject>

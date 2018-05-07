@@ -1,0 +1,41 @@
+<apex:page standardController="Case" extensions="Console311_Map_Extension" sidebar="false" standardstylesheets="false" applyhtmltag="false" doctype="html-5.0" showheader="false">
+<apex:slds />
+<c:Console311_Header />
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+    <html lang="en" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <body>
+            <div class="slds-scope slds slds-padding-disabled">
+                <div>
+                    <div class="slds-grid slds-page-header">
+                      <div class="slds-col slds-media">
+                        <div class="slds-media__figure">
+                          <span class="slds-icon_container slds-icon-standard-address">
+                            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/address.svg')}" aria-hidden="true" class="slds-icon svg" />
+                          </span>
+                        </div>
+                        <div class="slds-media__body">
+                          <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="serviceRequest">{! serviceRequest.Incap311__Address__c }</h1>
+                          <p class="slds-text-body_small slds-line-height_reset">{! serviceRequest.Incap311__Service_Request_Number__c } • {! serviceRequest.Subject}</p>
+                        </div>
+                      </div>
+                      <!--<div class="slds-col slds-no-flex slds-grid slds-align-top">
+                            <button class="slds-button slds-button--neutral" type="button" onclick="goBack()">Cancel</button>
+                        </div>-->
+                    </div>
+                </div>
+                
+                <div>
+                    <c:Console311_Section_ESRI centerLat="{! mapCenterLatitude }"
+                                            centerLng="{! mapCenterLongitude }"
+                                            currentCase="{! serviceRequest }" 
+                                            defaultZoom="18"
+                                            arcgisLayers="{! mapLayers }" />
+                </div>
+            </div>
+        </body>
+    </html>
+</apex:page>

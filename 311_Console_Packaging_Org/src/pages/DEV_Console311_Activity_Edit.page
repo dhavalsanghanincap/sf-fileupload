@@ -1,0 +1,876 @@
+<apex:page sidebar="false" standardstylesheets="false" applyhtmltag="false" doctype="html-5.0" showheader="false" standardController="Incap311__Service_Activity__c" extensions="Dev_Console311_Activity_Edit_Ext" docType="html-5.0">
+    <apex:includeScript value="//code.jquery.com/jquery-1.11.1.js" />
+    <apex:includeScript value="/support/console/28.0/integration.js" />
+
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Status__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Description__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Service_Type_Version__r }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Service_Type_Version__r.Name }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Request__r }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Request__r.CaseNumber }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__SR_Type_Name__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__SR_Status__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Request__r.Description }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Finish_Date__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Expected_Date_Time__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Activity_Code__c  }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Allowable_Outcome__c }" />
+    <apex:outputText rendered="false" value="{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Activity__r.Incap311__Activity_Name__c }" />
+
+    <!-- Lightning Styles -->
+    <!--<apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}"/>-->
+    <apex:slds />
+
+    <c:Console311_Header />
+
+    <style>
+        .slds hr {
+            width: 100%;
+        }
+
+        .link-word-break {
+            white-space: pre-wrap; /* css-3 */    
+            white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+            white-space: -pre-wrap; /* Opera 4-6 */    
+            white-space: -o-pre-wrap; /* Opera 7 */    
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
+        }
+
+        .slds-padding-disabled {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        #flexNoteContainer {
+            margin-top: 45px;
+        }
+
+        #flexnotes-loading {
+            display: none;
+        }
+
+        .flex-note-container .fn-loading-container {
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .flexnote-note-panel {
+            color:#A3A3A3; 
+            margin-top: 5px;
+            font-weight: normal; 
+        }
+
+        .required-input {
+            color: red;
+        }
+
+        .image-no-border {
+            border: 0 !important;
+            outline: none !important;
+            padding-left: 5px;
+            max-height: 200px;
+        }
+
+        .list-image-container {
+            cursor: pointer;
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        .question-container {
+            margin-top: 12px;
+        }
+
+        body [id*=question-container] .bPageBlock .detailList tr td {
+            border-color: transparent;
+        }
+
+        .question-sub-container {
+            padding: 7px;
+        }
+
+        .scrollable-panel {
+            overflow-y: scroll;
+            padding-bottom: 90px;
+        }
+
+        .slds .slds-section-title--divider {
+            margin-bottom: 10px !important;
+            color: #16325c !important;
+        }
+
+        .ui-autocomplete {
+            overflow: scroll;
+            max-height: 230px;  
+        }
+
+        .map-controlls {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+
+        .toggle-map-button {
+            width: 140px;
+        }
+
+        /*.slds-scope .slds-input-has-icon .slds-input__icon {
+        width: 1rem;
+        height: 1rem;
+        position: absolute;
+        top: 50%;
+        margin-top: -.5rem;
+        fill: #54698d;
+        left: 80%;
+        }*/
+        .slds-icon-text-default {
+            fill: #54698d;
+        }
+        .slds-tree-container {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .slds-tree-container {
+            display: inline-block;
+        }
+
+        .info-container {
+            position: relative;
+        }
+
+        .srinfo-icon-container {
+            padding-left: 7px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+        .badge-abs-container {
+            position: absolute;    
+            right: 5px;
+            top: 5px;
+        }
+        .case-icon.svg path {
+            fill: #ffffff;
+        }
+        .task-icon.svg path {
+            fill: #ffffff;
+        }
+
+        .activity-header{
+            margin-bottom:5px;
+            border-bottom:0px;
+        }
+
+        .console-padding{
+            padding-left:20px;
+            padding-right:20px;
+            padding-top:5px;
+            padding-bottom:5px;
+        }
+
+        .overall-form {
+            padding: 0;
+        }
+
+        .form-inner-container {
+            padding: 0px;
+        }
+
+        .inner-container-padding {
+            padding: 10px 25px;
+        }
+
+        .dateFormat{
+            visibility:hidden;
+        }
+        .h6 {
+            border-style: dashed;
+            border-width: 3px;
+            border-left-width: 10px;
+            border-right-width: 10px;
+            border-color: red;
+        }
+    </style>
+    <html lang="en" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <body>
+            <div class="slds-scope slds slds-padding-disabled">
+                <div class="">
+                    <!--apex:sectionHeader title="Service Activity: Edit" subtitle="{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Activity__r.Incap311__Activity_Name__c}"/-->
+
+                    <apex:form styleclass="slds overall-form">
+
+                        <apex:actionFunction name="saveActivity" action="{!saveActivity}" rerender="errmsg, onSaveScripts,Error,Error2" oncomplete="redirectAfterSave();convertSVGtoInlineSVG();">
+                            <apex:param name="QuestionsJson2" assignTo="{!QuestionsJson}" value=""/>
+                        </apex:actionFunction>
+
+                        <apex:actionFunction action="{!refresh}" name="fetchQuestions" reRender="questionContainer,CannedResponses" onComplete="convertSVGtoInlineSVG();" >
+                            <apex:param name="outcomeId" value="" assignTo="{!activeOutcome}"/>
+                        </apex:actionFunction> 
+
+                        <apex:actionFunction action="{!cancel}" name="cancel" reRender="questionContainer,CannedResponses" onComplete="convertSVGtoInlineSVG();" >
+                        </apex:actionFunction> 
+
+                        <apex:actionFunction name="storeFlexnoteAnswers" action="{!refresh}" rerender="questionContainer" onComplete="$('.loading-spinner').hide();verifySRTypeAvailable('reApplyServiceTypeNameWithFlexnotes');convertSVGtoInlineSVG();">
+                            <apex:param name="QuestionsJson" assignTo="{!QuestionsJson}" value="" />
+                        </apex:actionFunction>
+
+                        <apex:actionFunction name="refreshReallocateComponent" rerender="reallocatePanel"/>
+
+                        <apex:outputPanel styleClass="form-inner-container" layout="block">
+                            <apex:pageBlock >
+                                <div class="slds-page-header activity-header">
+                                    <div class="slds-grid">
+                                        <div class="slds-col slds-has-flexi-truncate">
+                                            <div class="slds-media slds-grow">
+                                                <div class="slds-media__figure">
+                                                    <span class="slds-icon_container slds-icon-standard-task">
+                                                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/task.svg')}" aria-hidden="true" class="task-icon slds-icon slds-icon--medium svg" />
+                                                    </span>
+                                                </div>
+
+                                                <div class="slds-media__body">
+                                                    <p class="slds-text-title slds-line-height--reset">{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Activity__r.Incap311__Activity_Code__c}</p>
+                                                    <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="Activity Name">{!mSRActivity.Incap311__Service_Type_Version_Activity__r.Incap311__Activity__r.Incap311__Activity_Name__c}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col slds-no-flex slds-grid slds-align-top">
+                                            <button class="slds-button slds-button--neutral" type="button" onclick="cancel();">Cancel</button>
+                                            <button class="slds-button slds-button--brand slds-button--last" onclick="validationAndProcessForm();" type="button">Save</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="slds-grid inner-container-padding">
+
+
+
+                                    <apex:outputPanel title="Service Request Information" id="errHeader" rendered="{!NOT(ISNULL(mSRActivity))}" styleClass="left-panel-container slds-size--2-of-8" layout="block">
+                                        <div class="slds-col">
+                                            <h4 class="slds-text-title--caps" id="treeheading">
+                                                <span class="slds-icon_container">
+                                                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/work_order_type.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                </span>
+                                                Service Activity Information
+                                            </h4>
+                                            <div class="slds-page-header--vertical info-container">
+                                                <div class="badge-abs-container">
+                                                    <span class="slds-badge">{!mSRActivity.Incap311__Status__c}</span>
+                                                </div>
+                                                <ul class="slds-list--vertical-space-medium slds-m-left--xx-small">
+                                                    <li class="slds-item">
+                                                        <div class="slds-text-title slds-m-bottom--xx-small">Service Level Agreement</div>
+                                                        <div class="slds-text-body--regular" title="Activity SLA">{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Activity__r.Incap311__SLA__c} {!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Activity__r.Incap311__SLA_Type__c}</div>
+                                                    </li>
+                                                    <li class="slds-item">
+                                                        <div class="slds-text-title slds-m-bottom--xx-small">Description</div>
+                                                        <div class="slds-text-body--regular" title="Activity Description">{!Incap311__Service_Activity__c.Incap311__Service_Type_Version_Activity__r.Incap311__Task_Description__c}</div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </apex:outputPanel>
+
+                                    <div class="detail-view slds-col slds-size--4-of-8 scrollable-panel">
+
+                                        <div class="">
+                                            <div class="slds-form--stacked">
+                                                <apex:pagemessages id="Error2"/>
+
+                                                <h4 class="slds-text-title--caps slds-size--1-of-1">
+                                                    <span class="slds-icon_container">
+                                                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/touch_action.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                    </span>
+                                                    {!Pagelayout.sectionMap['311 Outcome Section'].Title__c}
+                                                </h4>
+
+                                                <div class="slds-form-element console-padding">
+                                                    <apex:outputPanel title="Information" id="Info" styleclass="slds-form-element__control" layout="block">
+
+                                                        <div class="slds-form-element__control">
+                                                            <label class="slds-form-element__label" for="Incap311__Allowable_Outcome__c">Select an Outcome</label>
+                                                            <apex:selectList styleClass="slds-input outcome-list" value="{!mSRActivity.Incap311__Allowable_Outcome__c}" onchange="UIOutcomeUpdate()" multiselect="false" size="1" id="Incap311__Allowable_Outcome__c"  label="Outcome" > 
+                                                                <apex:selectOption itemValue="" itemLabel="--Select--"></apex:selectOption>
+                                                                <apex:selectOptions value="{!outcomeValues}"> </apex:selectOptions>
+                                                            </apex:selectList>
+                                                        </div>
+                                                        <div class="slds-form-element__control">
+
+                                                            <apex:inputHidden value="{!mSRActivity.Incap311__Status__c}" id="Incap311__Status__c" />
+                                                        </div>
+
+
+
+                                                        <apex:outputPanel rendered="{!NOT(Pagelayout.FieldMap['311 Outcome Section']['Finish Date'].Read_Only__c) && Pagelayout.FieldMap['311 Outcome Section']['Finish Date'].Visible__c}">
+                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--left">
+                                                                <label class="slds-form-element__label" for="Incap311__Finish_Date__c">{!AllLabels['incap311__finish_date__c']}</label>
+                                                                <apex:image url="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/event.svg')}" styleclass="svg slds-input__icon slds-icon-text-default"/>
+                                                                <apex:inputField styleClass="slds-input finish-date-input" value="{!mSRActivity.Incap311__Finish_Date__c}" id="Incap311__Finish_Date__c" onfocus="j$('.finish-date-input').datepicker({format: 'MM/DD/YYYY hh:mm a', onChange: onChangeDatetimeFunc});" onclick="j$('.finish-date-input').datepicker({format: 'MM/DD/YYYY hh:mm a', onChange: onChangeDatetimeFunc});"/>
+                                                            </div>
+                                                        </apex:outputPanel>
+
+                                                        <apex:outputPanel rendered="{!Pagelayout.FieldMap['311 Outcome Section']['Finish Date'].Read_Only__c && Pagelayout.FieldMap['311 Outcome Section']['Finish Date'].Visible__c}">
+                                                            <div class="slds-form-element__control">
+                                                                <label class="slds-form-element__label" for="Incap311__Finish_Date__c">{!AllLabels['incap311__finish_date__c']}</label>
+                                                                <apex:outputText styleClass="slds-input" value="{!mSRActivity.Incap311__Finish_Date__c}" id="Incap311__Finish_Date__cDisplay"/>
+                                                            </div>
+                                                        </apex:outputPanel>
+
+                                                        <apex:outputPanel rendered="{!Pagelayout.FieldMap['311 Outcome Section']['Finish Date'].Read_Only__c || NOT(Pagelayout.FieldMap['311 Outcome Section']['Finish Date'].Visible__c)}">
+                                                            <div style="display:none;"> 
+                                                               <apex:inputField styleClass="slds-input finish-date-input" value="{!mSRActivity.Incap311__Finish_Date__c}" id="Incap311__Finish_Date__cHidden" />
+                                                            </div>
+
+                                                        </apex:outputPanel>
+
+
+                                                    </apex:outputPanel>
+                                                </div>
+                                                <br/>
+
+                                                <!-- Reallocate component -->
+                                                <apex:outputPanel id="reallocatePanel" title="Reallocate">
+                                                    <apex:outputPanel rendered="{!AND(outcomeActions!=null,mSRActivity.Incap311__Allowable_Outcome__c !='',mSRActivity.Incap311__Allowable_Outcome__c != null,outcomeActions[mSRActivity.Incap311__Allowable_Outcome__c] != null,outcomeActions[mSRActivity.Incap311__Allowable_Outcome__c] == 'Reallocate')}" styleclass="slds-form-element__control" layout="block">
+                                                        <h4 class="slds-text-title--caps slds-size--1-of-1">
+                                                            <span class="slds-icon_container">
+                                                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/change_record_type.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                            </span>
+                                                            {!Pagelayout.sectionMap['Reallocate'].Title__c}
+                                                        </h4>
+                                                        <div class="console-padding">
+                                                            <Incap311:Base311_Reallocate sObjectAPIName="Service_Activity__c" serviceTypeValue="{!mSRActivity.Incap311__Service_Type_Version_Activity__r.Incap311__Service_Type_Version__r.Incap311__Service_Type__c}" ReallocatePageCtrlBase="{!this}"/>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                <!-- End of change -->
+                                                <h4 class="slds-text-title--caps slds-size--1-of-1">
+                                                    <span class="slds-icon_container">
+                                                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/announcement.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                    </span>
+                                                    {!Pagelayout.sectionMap['Response'].Title__c}
+                                                </h4>
+
+                                                <div class="slds-form-element console-padding">
+                                                    <apex:outputPanel title="Responses" id="CannedResponses" styleclass="slds-form-element__control" layout="block">
+                                                        <apex:variable var="canned" value="{!cannedResponses[mSRActivity.Incap311__Allowable_Outcome__c]}" />
+                                                        <div class="slds-form-element__control">
+                                                            <apex:outputPanel title="PredefinedResponses" id="PredefinedResponses" rendered="{!canned.size > 0}">
+                                                                <label class="slds-form-element__label" for="cannedresponseSelect">Response</label>
+                                                                <apex:selectList styleClass="slds-input" value="{!selectedCannedResponseID}"  multiselect="false" size="1" id="cannedresponseSelect" label="Response"  rendered="{!canned.size > 0}"> 
+                                                                    <apex:selectOption itemValue="" itemLabel="--Select--"></apex:selectOption>
+                                                                    <apex:selectOptions value="{!cannedResponses[mSRActivity.Incap311__Allowable_Outcome__c]}" />
+                                                                    <apex:actionSupport event="onchange" 
+                                                                                        action="{!refresh}" 
+                                                                                        rerender="CannedResponses,addComments" status="counterStatus"/>
+                                                                </apex:selectList>
+                                                            </apex:outputPanel>
+                                                        </div>
+                                                        <div class="slds-form-element__control">
+                                                           <apex:variable var="foo" value="" rendered="{!AdditionalComments}" > <abbr class="slds-required" title="required">*</abbr> </apex:variable>
+                                                            <label class="slds-form-element__label" for="addComments">{!AllLabels['incap311__additional_comments__c']}</label>
+                                                            <apex:inputField styleClass="slds-input" value="{!mSRActivity.Incap311__Additional_Comments__c}" id="addComments" required="{!AdditionalComments}"/>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </div>
+
+                                                <h4 class="slds-text-title--caps slds-size--1-of-1">
+                                                    <span class="slds-icon_container">
+                                                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/comments.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                    </span>
+                                                    {!Pagelayout.sectionMap['Internal Comments'].Title__c}
+                                                </h4>
+
+                                                <div class="slds-form-element console-padding">
+                                                    <apex:outputPanel title="Responses" id="InternalCommentsPanel" styleclass="slds-form-element__control" layout="block">
+                                                        <div class="slds-form-element__control">
+                                                            <label class="slds-form-element__label" for="internalComments">{!AllLabels['incap311__internal_comments__c']}</label>
+                                                            <apex:inputField styleClass="slds-input" value="{!mSRActivity.Incap311__Internal_Comments__c}" id="internalComments"/>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </div>
+
+                                                <apex:outputPanel id="questionContainer" layout="none">
+                                                    <apex:outputPanel title="Questions" id="Questions" rendered="{!ooawList.size > 0}" layout="block">
+                                                        <h4 class="slds-text-title--caps slds-size--1-of-1">
+                                                            <span class="slds-icon_container">
+                                                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/note.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                            </span>
+                                                            {!Pagelayout.sectionMap['Questions'].Title__c}
+                                                        </h4>
+                                                        <c:Console311_Section_FlexNoteV2 mFlexnotesList="{!ooawList}" Title="Questions" showTitle="false"/>
+
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </div>
+                                        <br/>
+
+                                        <h6 class="slds-size--1-of-1; border-color: red;background: red;">
+                                            <apex:pagemessages id="Error"/>
+                                        </h6>
+
+                                        <div class="slds-grid slds-grid--align-end console-padding">
+                                            <button class="slds-button slds-button--neutral" type="button" onclick="cancel();">Cancel</button>
+                                            <button class="slds-button slds-button--brand slds-button--last" onclick="validationAndProcessForm();" type="button">Save</button>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <apex:outputPanel title="Service Request Information" rendered="{!NOT(ISNULL(mSRActivity))}" styleClass="left-panel-container slds-size--2-of-8" layout="block">
+                                        <div class="slds-col">
+                                            <h4 class="slds-text-title--caps" id="treeheading">
+                                                <span class="slds-icon_container">
+                                                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+                                                </span>
+                                                Service Request Information
+                                            </h4>
+                                            <div class="slds-page-header--vertical info-container">
+                                                <div class="badge-abs-container">
+                                                    <span class="slds-badge">{!mSRActivity.Incap311__SR_Status__c}</span>
+                                                </div>
+
+                                                <div class="slds-grid slds-grid--vertical">
+                                                    <div>
+                                                        <div class="slds-media slds-no-space slds-has-divider--bottom-space slds-media--center">
+                                                            <div class="slds-media__figure">
+                                                                <span class="slds-icon_container slds-icon-standard-case">
+                                                                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="case-icon slds-icon slds-icon--medium svg" />
+                                                                </span>
+                                                            </div>
+                                                            <div class="slds-media__body">
+                                                                <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" onclick="sforce.console.openPrimaryTab(null,'/{!mSRActivity.Incap311__Service_Request__r.Id}', true, 'SR #: {!mSRActivity.Incap311__Service_Request__r.CaseNumber}');">
+                                                                    <p class="slds-text-title slds-line-height--reset link-word-break">{!mSRActivity.Incap311__Service_Request__r.CaseNumber}</p>
+                                                                </a>
+                                                                <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" onclick="sforce.console.openPrimaryTab(null,'/{!mSRActivity.Incap311__Service_Request__r.Id}', true, 'SR #: {!mSRActivity.Incap311__Service_Request__r.CaseNumber}');">
+                                                                    <h2 class="slds-page-header__title slds-m-right--small slds-align-middle link-word-break" title="Service Type">{!mSRActivity.Incap311__SR_Type_Name__c}</h2>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <ul class="slds-list--vertical-space-medium slds-m-left--xx-small">
+                                                    <li class="slds-item">
+                                                        <div class="slds-text-title slds-m-bottom--xx-small">Location</div>
+                                                        <div class="slds-text-body--regular" title="Location">{!mSRActivity.Incap311__Service_Request__r.Incap311__Address__c}</div>
+                                                    </li>
+                                                    <li class="slds-item">
+                                                        <div class="slds-text-title slds-m-bottom--xx-small">Description</div>
+                                                        <div class="slds-text-body--regular" title="Description">{!mSRActivity.Incap311__Service_Request__r.Description}</div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </apex:outputPanel>
+                                </div>
+                            </apex:pageBlock>
+                        </apex:outputPanel>
+                    </apex:form>
+                </div>
+            </div>
+        </body>
+    </html>
+
+    <!--<c:Console311_Section_FlexNote mFlexnotesList="{!mFNQuestionAnswerList}" mTheme="slds-classic"/>-->
+
+    <c:Console311_Scripts datatableenabled="false" datatablesettings=""/>
+    <script>
+        j$ = jQuery.noConflict();
+
+
+        j$(document).ready(function() {
+            // Handle apex_inputhidden issue with dates: Copy the text format SFDC can parse into the value attribute so completion dates uaffected can be saved
+            var hidvalText = j$("[id*=Incap311__Finish_Date__c]").text().trim();
+            if(hidvalText.length!=0 ) j$("[id*=Incap311__Finish_Date__c]").val(hidvalText);
+            var hidvalText = j$("[id*=Incap311__Finish_Date__cHidden]").text().trim();
+            if(hidvalText.length!=0 ) j$("[id*=Incap311__Finish_Date__cHidden]").val(hidvalText);
+
+            j$('body').on('change', '.outcome-list', function() {            
+                var ansValue = j$(this).val();
+                fetchQuestions(ansValue);
+            });
+
+            j$('body').on('blur', '.question-sub-container .answer-container input, .question-sub-container .answer-container textarea, .question-sub-container .answer-container .slds-dropdown__list li a', function(e) {
+
+            });
+            //reallocateHideShowFunction(); //logic to show/hide reallocate section
+            testSetTabTitle();
+            SRActivityStatusUpdate(new Date("{!mSRActivity.Incap311__Finish_Date__c}"));
+
+            var onChangeDatetimeFunc = function(datetime) {
+                console.log('-----> onChangeDatetimeFunc');
+                if (datetime != null) {
+                    var d = new Date();
+                    datetime.selectedFullDate.hour(d.getHours());
+                    datetime.selectedFullDate.minute(d.getMinutes());
+                    datetime.selectedFullDate.second(d.getSeconds());
+                    j$(datetime.$el[0]).val(datetime.selectedFullDate.format('MM/DD/YYYY hh:mm a'));
+                }
+            };
+
+            j$('.finish-date-input').datepicker({format: 'MM/DD/YYYY hh:mm a'});
+
+            j$('body').on('click', '.finish-date-input', function(){
+                j$('.finish-date-input').datepicker({format: 'MM/DD/YYYY hh:mm a', onChange: onChangeDatetimeFunc});
+            });
+        });
+
+        var dropdownToggle = function(ele, event) { 
+            event.preventDefault();
+            toggleDropdown(ele);
+        };
+
+        var dropdownSelection = function(ele, event) {
+            var menuItem = j$(ele);
+            var buttonTxt = menuItem.children('a').text();
+            event.preventDefault();
+
+            menuItem.parents('.slds-picklist').find('.slds-picklist__label span').text(buttonTxt);
+            toggleDropdown(menuItem.parents('.slds-picklist').find('.slds-picklist__label'));
+            setDropdownInputValue(menuItem);
+        };
+
+        function SRActivityStatusUpdate(now) {
+            //var hidvalText = j$("[id*=Completion_Date__c]").text();
+            //alert('hidvalText: ' + hidvalText + ' - Hidden parse to string: ' + d.toString() + '  -- Now to string: ' + now.toString());
+            var hours = now.getHours()>12 ? now.getHours()-12 : now.getHours();
+            if(hours==0) hours=12;
+
+            var strDateTime = [[AddZero(now.getMonth() + 1), AddZero(now.getDate()), now.getFullYear()].join("/"), [hours, AddZero(now.getMinutes())].join(":"), now.getHours() >= 12 ? "PM" : "AM"].join(" ");
+            //Update what is saved by the controller
+            j$("[id*=Incap311__Finish_Date__c]").val(strDateTime);
+            j$("[id*=Incap311__Finish_Date__cHidden]").val(strDateTime);
+            // update what is displayed to the user
+            j$("[id*=Incap311__Finish_Date__cDisplay]").text(strDateTime);
+            j$("[id*=Incap311__Status__c]").val('Complete');
+            j$("[id*=Incap311__Status__c]").text('Complete');
+
+        }
+        
+
+        function UIOutcomeUpdate() {
+            UIOutcome = j$('[id*=Incap311__Allowable_Outcome__c] option:selected').text();
+            UIOutcomeValue = j$('[id*=Incap311__Allowable_Outcome__c] option:selected').val();
+            //console.log('Outcome: ' + UIOutcome);
+
+
+            // if a any outcome is selected, set SR Status to completed
+            if(UIOutcomeValue != '') {
+                //j$("[id*=Incap311__Status__c]").val('Complete');
+                // Also trigger the onchange for SR Status code
+                SRActivityStatusUpdate(new Date());
+                refreshReallocateComponent();
+
+            }
+
+            //alert(UIOutcome);
+        }
+
+        //Pad given value to the left with "0"
+        function AddZero(num) {
+            return (num >= 0 && num < 10) ? "0" + num : num + "";
+        }
+
+        function toggleDropdown(ele) {
+            var btn = j$(ele);
+            var dropdown = btn.parent().children('.slds-dropdown');
+
+            btn.parent().attr('aria-expanded', !btn.parent().attr('aria-expanded'));
+            dropdown.toggleClass('slds-hide');
+
+            if (dropdown.hasClass('active')) {
+                dropdown.removeClass('active');
+            } else {
+                j$('.slds-dropdown.active').addClass('slds-hide');
+                j$('.slds-dropdown.active').removeClass('active');
+                dropdown.addClass('active');
+            }
+        };
+
+        function setDropdownInputValue(ele) {
+            //console.log(ele);
+            var value = ele.children('a').html();
+
+            value = value == '--None--'
+                ? ''
+            : value;
+            ele.parents('.multi-picklist-container').find('input.picklist-input').val(value);
+        }
+
+        function testSetTabTitle() {
+            sforce.console.setTabTitle('{!Incap311__Service_Activity__c.Name}');
+        }                                        
+    </script>
+    <apex:outputpanel id="onSaveScripts">
+        <script>
+            //function redirectAfterSave() {}
+            function redirectAfterSave() {
+                console.log('{!saveNoErrors} value '+{!saveNoErrors});
+                if({!saveNoErrors}){
+                    // console.log('Saving');
+                    var redirectUrl = '';
+                    var caseName = '{!mSRActivity.Incap311__Service_Request__r.CaseNumber}';
+                    var subtabTitle = '';
+                    var outcomeAction = '{!outcome.Incap311__Outcome_Action__c}';
+                    console.log('outcome action '+outcomeAction);
+
+
+                    if (outcomeAction == 'Transfer') {
+                        redirectUrl = '/apex/Incap311Console__Console311_Case?cid={!mSRActivity.Incap311__Service_Request__r.CaseNumber}&activity=transfer&level=outcome'; 
+                        subtabTitle = 'Transfer: #'+caseName;
+                        //} else if(outcomeAction == 'Reallocate') {
+                        //  redirectUrl = '/apex/Incap311__Base311_CaseReallocate?id={!mSRActivity.Incap311__Service_Request__c}&a=true';
+
+                        //subtabTitle = 'Reallocate: #'+caseName;
+                    } else if (outcomeAction == 'Create') {
+                        redirectUrl = '/apex/Incap311Console__Console311_Case?pid={!mSRActivity.Incap311__Service_Request__r.CaseNumber}&activity=new'; 
+                        subtabTitle = 'New: #'+caseName;
+                    } else {
+                        console.log('Else '+'{!mSRActivity.Name}'+ ' '+ '/{!mSRActivity.Id}');
+                        redirectUrl = '/{!mSRActivity.Id}';
+                        subtabTitle = '{!mSRActivity.Name}';
+                    }
+                    //console.log(redirectUrl);
+                    // console.log(sforce.console.isInConsole());
+
+                    //if (sforce.console.isInConsole()) {
+                    console.log('redirectUrl '+redirectUrl);
+                    sforce.console.openSubtab(null, redirectUrl, true, subtabTitle, closeTab);
+                    
+
+                    //} else {
+                    //    console.log('no console');
+                    //    window.location.href = redirectUrl;
+                    //}
+                }
+            }
+             var closeSubtab = function closeSubtab(result) {
+                console.log('clos subtab');
+                //Now that we have the tab ID, we can close it
+                var tabId = result.id;
+                 console.log(tabId);
+                // If the tab has no id and success is false then we're on the navigation tab.
+                if (typeof tabId != "undefined" && tabId != "null") {
+                    sforce.console.getEnclosingPrimaryTabId(function(res) {
+                        sforce.console.refreshPrimaryTabById(res.id, true, function() {
+                            sforce.console.closeTab(tabId);
+                        }, true)
+                    })
+
+
+                } else {
+                    sforce.console.refreshNavigationTab(null);
+                }
+            };
+
+            var closeTab = function closeTab() {
+                //First find the ID of the current tab to close it
+                console.log('Closing tab');
+                sforce.console.getEnclosingPrimaryTabId(function(result){console.log('teastaeda' + result)});
+                console.log('done closing tab');
+            }
+
+           
+
+
+            function selection()
+            {    
+                document.getElementById("test1").setAttribute("required","");
+            }
+
+        </script>
+
+
+        <script>
+            var $ = jQuery;
+            var refreshFlexNotes = function(){
+
+                console.log('----> This element is controlling! Refreshing flexnotes...');
+                $('.loading-spinner').show();
+                var json = JSON.stringify(buildFormJson());
+                //console.log(json);
+                storeFlexnoteAnswers(json);
+            }
+        </script>
+
+        <script>
+            //save scripts
+            function validationAndProcessForm() {
+                $('.loading-spinner').show();
+                isSubmitted = true;
+                //console.log(form);
+
+                //if (form.validate()) {
+                console.log("Form is valid");
+                var formData = buildFormJson();
+                console.log(JSON.stringify(formData));
+                saveActivity(JSON.stringify(formData));
+                //} else {
+                // $('.loading-spinner').hide();
+                //}
+            }
+
+            var buildFormJson = function() { 
+                // Destroy and recreate the form to ensure that all validation and fields are present.
+                //$('#newcaseform').parsley().destroy();
+                // $('#newcaseform').parsley();
+                var formData = {
+                    "serviceQuestions": []
+                };
+                var formsCollection = document.forms;
+                //console.log(formsCollection);
+                for(var x=0;x<formsCollection.length;x++) {
+                    if(formsCollection[x] != null && formsCollection[x].elements != null){
+                        for (i = 0; i < formsCollection[x].elements.length; i++) {
+                            //console.log(formsCollection[x].elements[i].dataset);
+                            //console.log(formsCollection[x].elements[i].value);
+                            //console.log(JSON.stringify(formsCollection[x].elements[i]));
+                            var fieldName = formsCollection[x].elements[i].name;
+                            var value = formsCollection[x].elements[i].value;
+                            var datatype = formsCollection[x].elements[i].dataset['datatype'];
+
+                            // Split the field name so we know what the value applies to.
+                            var fieldObj = fieldName.substr(0, fieldName.indexOf('-'));
+                            var nameWithoutObject = fieldName.substr(fieldName.indexOf('-') + 1);
+                            //console.log(fieldName+' '+value+' '+fieldObj+' '+nameWithoutObject);
+                            //console.log(formsCollection[x].elements[i].dataset.serviceTypeVersionQuestionName +'   '+datatype+''+value)
+
+                            //if (datatype && datatype == 'Boolean (checkbox)') {
+                            //flexNote['Incap311__Answer__c'] = formsCollection[x].elements[i].checked;
+                            //  } 
+
+                            if ((typeof value != "undefined" && value) || (datatype && datatype == 'Boolean (checkbox)')) {
+                                //console.log(fieldName+' '+value+' '+fieldObj+' '+nameWithoutObject);
+                                if (typeof fieldObj != "undefined" && fieldObj && typeof nameWithoutObject != "undefined" && nameWithoutObject) {
+                                    if (fieldObj == 'serviceQuestions') {
+                                        var flexNote = {};
+                                        // Validate if the current value is a json object or array.
+                                        try {
+                                            value = JSON.parse(value);
+                                        } catch (e) {
+
+                                        }
+
+                                        if (isArray(value)) {
+                                            flexNote['Incap311__Answer__c'] = '';
+                                            for (var z = 0; z < value.length; z++) {
+                                                flexNote['Incap311__Answer__c'] += value[z];
+
+
+                                                if (z != value.length) {
+                                                    flexNote['Incap311__Answer__c'] += ',';
+                                                }
+                                            }
+                                        } else {
+                                            if (datatype && datatype == 'Boolean (checkbox)') {
+                                                flexNote['Incap311__Answer__c'] = formsCollection[x].elements[i].checked;
+                                            } else {
+                                                flexNote['Incap311__Answer__c'] = value;
+                                            }
+                                        }
+                                        flexNote['Incap311__Service_Type_Version_Question__c'] = formsCollection[x].elements[i].dataset.serviceTypeVersionQuestionId;
+
+                                        var serviceQuestionWrapperObj = {
+                                            "mSRTypeVQuestionName": formsCollection[x].elements[i].dataset.serviceTypeVersionQuestionName,
+                                            "question": flexNote,
+                                            "mDataType": datatype
+                                        }; 
+
+                                        // Add flexnote obj to flexnotes array.
+                                        formData[fieldObj].push(flexNote);
+                                        formData[fieldObj].push(serviceQuestionWrapperObj);
+                                    } 
+                                }
+                            }
+                        }
+                    }
+                }
+                return formData;
+            }
+
+            /**
+       * isArray
+       *
+       * @description A function to verify if the current value is an array or not.
+       * @author Darkis
+       * @param {object} subject is the variable that is tested for Array identity check
+       */
+            var isArray = (function () {
+                // Use compiler's own isArray when available
+                if (Array.isArray) {
+                    return Array.isArray;
+                }
+                // Retain references to variables for performance optimization
+                var objectToStringFn = Object.prototype.toString;
+                var arrayToStringResult = objectToStringFn.call([]);
+
+                return function (subject) {
+                    return objectToStringFn.call(subject) === arrayToStringResult;
+                };
+            }());
+
+            var reInitMap = function() {
+                if (typeof(window['mapLeaflet']) != "undefined") {
+                    mapLeaflet.invalidateSize();
+                }
+
+                if(typeof(window['esriMap']) != 'undefined') {
+                    window.esriMap.__initESRIMap__();
+                }
+            }
+        </script>
+    </apex:outputpanel>
+
+    <apex:outputpanel id="convertSvg">
+        <script>
+            /*
+      * Replace all SVG images with inline SVG
+      */
+            var convertSVGtoInlineSVG = function () {
+                jQuery('img.svg').each(function () {
+                    var $img = jQuery(this);
+                    var imgID = $img.attr('id');
+                    var imgClass = $img.attr('class');
+                    var imgURL = $img.attr('src');
+                    var imgClickEvent = $img.attr('onclick');
+
+                    jQuery.get(imgURL, function (data) {
+                        // Get the SVG tag, ignore the rest
+                        var $svg = jQuery(data).find('svg');
+
+                        // Add replaced image's ID to the new SVG
+                        if (typeof imgID !== 'undefined') {
+                            $svg = $svg.attr('id', imgID);
+                        }
+                        // Add replaced image's classes to the new SVG
+                        if (typeof imgClass !== 'undefined') {
+                            $svg = $svg.attr('class', imgClass + ' replaced-svg');
+                        }
+
+                        if (typeof imgClickEvent !== 'undefined') {
+                            $svg = $svg.attr('onclick', imgClickEvent);
+                        }
+
+                        // Remove any invalid XML tags as per http://validator.w3.org
+                        $svg = $svg.removeAttr('xmlns:a');
+                        $svg = $svg.attr('height', '1.25rem');
+                        $svg = $svg.attr('width', '1.25rem');
+
+                        // Replace image with new SVG
+                        $img.replaceWith($svg);
+
+                    }, 'xml');
+                });
+            }
+            convertSVGtoInlineSVG();
+        </script>
+    </apex:outputpanel>
+
+    <apex:includeScript value="/support/console/28.0/integration.js"/>
+</apex:page>

@@ -1,0 +1,283 @@
+<apex:page controller="Console311_LookupCtrl" applyhtmltag="false" applybodytag="false" showheader="false" sidebar="false" standardstylesheets="false" readonly="true">
+  
+  <html lang="en" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portable Lookup</title>
+
+    <!--<apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}"/>-->
+    <apex:slds />
+
+    <style>
+      html {
+        font: 100%/1.5 "Salesforce Sans", Arial, sans-serif !important;
+        background: white !important;
+        color: #16325c !important;
+        -webkit-tap-highlight-color: transparent !important;
+      }
+
+      body {
+        padding-bottom: 45px !important;
+        font-size: 0.875rem !important;
+        font-family: "Salesforce Sans", Arial, sans-serif !important;
+        background: transparent !important;
+      }
+
+      .loading-status {
+        line-height: 32px;
+      }
+
+        .loading-status:before {
+          content: " ";
+          width: 30px;
+          height: 60px;
+          float: left;
+          display: block;
+          position: relative;
+          background: url("{!URLFOR($Resource.LightningDesign, 'assets/images/spinners/slds_spinner_brand.gif')}") top center no-repeat;
+          background-size: 100%;
+        }
+
+      @font-face {
+        font-family: "Salesforce Sans";
+        src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Light.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Light.woff')}") format("woff");
+        font-weight: 300;
+      }
+
+      @font-face {
+        font-family: "Salesforce Sans";
+        src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-LightItalic.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-LightItalic.woff')}") format("woff");
+        font-style: italic;
+        font-weight: 300;
+      }
+
+      @font-face {
+        font-family: "Salesforce Sans";
+        src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Regular.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Regular.woff')}") format("woff");
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "Salesforce Sans";
+        src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Italic.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Italic.woff')}") format("woff");
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "Salesforce Sans";
+        src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Bold.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Bold.woff')}") format("woff");
+        font-weight: 700;
+      }
+
+      @font-face {
+        font-family: "Salesforce Sans";
+        src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-BoldItalic.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-BoldItalic.woff')}") format("woff");
+        font-style: italic;
+        font-weight: 700;
+      }
+
+      .slds-container {
+        padding-bottom: 30px;
+        margin-left: 20px;
+        margin-right: 10px;
+        margin-top: 10px;
+      }
+
+      .button-container {
+        margin-top: 21px;
+        padding-left: 5px;
+      }
+
+      .sr-item-row {
+        cursor: pointer;
+        padding: 10px;
+      }
+
+        .sr-item-row:hover {
+          background: rgba(225,225,225,0.8);
+          cursor: pointer;
+        }
+
+      .top-level-label {
+        font-weight: 600;
+        margin-right: 3px;
+        line-height: 20px;
+        color: rgba(0,0,0,0.54);
+      }
+        
+      .inner-label {
+        color: black;
+        font-weight: normal;
+        line-height: initial;
+        white-space: nowrap;
+      }
+
+      .slds .slds-icon-text-default path {
+        fill: #54698d;
+      }
+
+      .clickable-svg {
+        cursor: pointer;
+      }
+
+      .lookup-footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        height: 45px;  
+        border-top: 2px solid #d8dde6;
+        border-bottom-right-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+        padding: .30rem 1rem;
+        background-color: #f4f6f9;
+        text-align: right;
+        box-shadow: 0 2px 3px 0 rgba(0,0,0,.16);
+      }
+    </style>
+
+    <apex:includescript value="//cdnjs.cloudflare.com/ajax/libs/svg4everybody/2.0.0/svg4everybody.min.js" />
+  </head>
+  <body class="slds slds-container slds-scope" style="margin: 0;">
+    <apex:actionstatus id="searchStatus">
+      <apex:facet name="start">
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+          &nbsp;
+        </div>
+        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; top: 45%; left:35%">
+          <div style="display: inline-block; padding: 15px; background-color: #fff; border-radius:5px; width: 170px; height:60px; text-align:center">
+            <p class="loading-status"><b>Please Wait...</b></p>
+          </div>
+        </div>
+      </apex:facet>
+    </apex:actionstatus>
+    <apex:form styleclass="slds-grid slds-wrap">
+      <apex:actionFunction name="getObjectRecords" action="{!query}" status="searchStatus" reRender="result-container, results-count-container">
+        <apex:param assignTo="{!queryStr}" value="" name="queryParam"/>
+      </apex:actionFunction>
+
+      <div class="slds-form-element slds-col slds-size--1-of-1" style="padding: 20px; padding-bottom: 0.75rem;">
+        <label class="slds-form-element__label" for="case-status">{!sObjectName}</label>
+        <div class="slds-form-element">
+          <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+            <apex:image url="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" styleclass="svg slds-input__icon slds-icon-text-default clickable-svg"/>
+            <apex:inputtext id="queryStr" value="{!queryStr}" styleclass="search-input slds-input" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="slds-size--1-of-1" style="margin: 0;"/>
+
+      <apex:outputPanel styleClass="slds-size--1-of-1" id="results-count-container" layout="block" style="padding: 10px 0 10px 30px;">
+        <p>{!queryResults.size} Results {!IF(mActiveQueryLangType == 'soql', ', sorted by ' + mOrderCondition, '')}</p>
+      </apex:outputPanel>      
+
+      <apex:outputpanel id="result-container" style="width: 100%;" layout="block">
+        <apex:outputpanel rendered="{!queryResults != NULL && queryResults.size > 0}" layout="block">
+
+          <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+            <thead>
+              <tr class="slds-text-title--caps">
+                <apex:repeat value="{!fieldNamesForObject}" var="fieldName">
+                  <th scope="col">
+                    <div class="slds-truncate" title="{!IF(fileNamesForObjectFormatted[fieldName]['Custom'] != 'null', fileNamesForObjectFormatted[fieldName]['Custom'], fileNamesForObjectFormatted[fieldName]['Default'])}">{!IF(fileNamesForObjectFormatted[fieldName]['Custom'] != 'null', fileNamesForObjectFormatted[fieldName]['Custom'], fileNamesForObjectFormatted[fieldName]['Default'])}</div>
+                  </th>
+                </apex:repeat>
+              </tr>
+            </thead>
+            <tbody>
+              <apex:repeat value="{!queryResults}" var="obj">
+                <tr class="sr-item-row" data-id="{!obj.Id}" data-obj-json="{!mQueryResultJsonMapById[obj.Id]}" >
+                  <apex:repeat value="{!fieldNamesForObject}" var="fieldName">
+                    <td data-label="{!IF(fileNamesForObjectFormatted[fieldName]['Custom'] != 'null', fileNamesForObjectFormatted[fieldName]['Custom'], fileNamesForObjectFormatted[fieldName]['Default'])}">
+                      <div class="slds-truncate">{!IF(sObjectFieldUtilMap[obj.Id][fieldName]['Data_Type'] == 'DATE' && sObjectFieldUtilMap[obj.Id][fieldName]['Formatted_Date'] != 'null', sObjectFieldUtilMap[obj.Id][fieldName]['Formatted_Date'], obj[fieldName])}</div>
+                    </td>
+                  </apex:repeat>
+                </tr>
+              </apex:repeat>
+            </tbody>
+          </table>
+        </apex:outputpanel>
+          
+        <apex:outputPanel rendered="{!errorMessage != ''}">
+          <div class="slds-box slds-box-small">  
+            <p>{!errorMessage}</p>  
+          </div>
+        </apex:outputPanel>
+      </apex:outputpanel>
+
+      <div class="lookup-footer">
+        <button class="slds-button slds-button--neutral" type="button" style="float: left;" onclick="window.close();">Cancel</button>
+      </div>
+    </apex:form>
+    
+    <apex:includescript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" />
+    <apex:includescript value="/lightning/lightning.out.js" />
+
+    <script>
+        jQuery('form').on('click', '.sr-item-row', function() {
+          window.opener["{!mCallbackFuncName}"]("{!sObjectName}", jQuery(this).data('id'), jQuery(this).data('obj-json'));
+          window.close();
+        });
+      
+        jQuery(".search-input").keypress(function(e) {
+          if(e.keyCode == 13) {
+            getObjectRecords(jQuery(this).val());
+            e.preventDefault();
+          }    
+        });
+
+        jQuery("body").on('click', 'svg', function(e) {
+          getObjectRecords(jQuery(".search-input").val());
+        });
+    </script>
+
+    <apex:outputpanel id="convertSvg">
+      <script>
+       /*
+        * Replace all SVG images with inline SVG
+        */
+        var convertSVGtoInlineSVG = function () {
+          jQuery('img.svg').each(function () {
+            var $img = jQuery(this);
+            var imgID = $img.attr('id');
+            var imgClass = $img.attr('class');
+            var imgURL = $img.attr('src');
+            var imgClickEvent = $img.attr('onclick');
+
+            jQuery.get(imgURL, function (data) {
+              // Get the SVG tag, ignore the rest
+              var $svg = jQuery(data).find('svg');
+
+              // Add replaced image's ID to the new SVG
+              if (typeof imgID !== 'undefined') {
+                  $svg = $svg.attr('id', imgID);
+              }
+              // Add replaced image's classes to the new SVG
+              if (typeof imgClass !== 'undefined') {
+                  $svg = $svg.attr('class', imgClass + ' replaced-svg');
+              }
+
+              if (typeof imgClickEvent !== 'undefined') {
+                  $svg = $svg.attr('onclick', imgClickEvent);
+              }
+
+              // Remove any invalid XML tags as per http://validator.w3.org
+              $svg = $svg.removeAttr('xmlns:a');
+              $svg = $svg.attr('height', '1.25rem');
+              $svg = $svg.attr('width', '1.25rem');
+
+              // Replace image with new SVG
+              $img.replaceWith($svg);
+
+            }, 'xml');
+          });
+        }
+        convertSVGtoInlineSVG();
+      </script>
+  </apex:outputpanel>
+  </body>
+</html>
+</apex:page>

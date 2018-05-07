@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Used to control features within the core capsule trigger architecture</description>
+    <fields>
+        <fullName>Description__c</fullName>
+        <deprecated>false</deprecated>
+        <description>A brief description of what the trigger/feature is controlled by the record.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <inlineHelpText>Please enter a brief description of what the trigger/feature is controlled by the record.</inlineHelpText>
+        <label>Description</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Enabled__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Flag to enable or disable the associated feature</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Enabled</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>311 Trigger</label>
+    <pluralLabel>311 Triggers</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

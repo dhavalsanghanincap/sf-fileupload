@@ -1,0 +1,171 @@
+<apex:component controller="Console311_Controller_Recommendations" >
+    <apex:attribute name="onClickCard" type="String" description="Page action to call when a user selects a type" />
+    <apex:attribute name="context" assignTo="{! mContext }" type="Object" description="Context for which recommendations are needed" />
+    <apex:attribute name="serviceTypeVersion" assignTo="{! mVersion }" type="Incap311__Service_Type_Version__c" description="The reference version" />
+    
+  <style>
+    .duplicate-requests-container {
+      max-height: 400px;
+      overflow-y: scroll;
+      display: block;
+      position: relative;
+    }
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+    
+    .card-sub-label { 
+      display: block;
+      padding: 1px 10px;
+    }
+
+    .dupe-card-icon.svg path {
+      fill: #ffffff;
+    }
+
+    .dupe-container {
+      margin: 10px 0px 15px 0px;
+    }
+
+    .dupe-container .slds-text-title--caps {
+      margin-bottom: 3px;
+    }
+
+    .dupe-icon-container {
+      padding-left: 7px;
+      padding-top: 7px;
+    }
+
+    .slds .slds-card+.slds-card {
+      margin-top: 0.5rem;  
+    }
+
+    .dupes-view-all-footer {
+
+    }
+
+    .card-sub-label-case-num {
+      font-size: .875rem;
+      text-decoration: none;
+      color: #16325c;
+    }
+  </style>
+
+    <script>
+    
+        var showRecommendations = false;
+        
+        <apex:outputPanel rendered="{! recommendations == null || recommendations.size == 0 }" layout="none">
+            window.recommendationsCleared = true;
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{! recommendations != null && recommendations.size != 0 }" layout="none">
+            if(window.recommendationsCleared) {
+                showRecommendations = true;
+                window.recommendationsCleared = false;
+            }
+        </apex:outputPanel>
+         
+        window.printStackTrace = function() {
+            return '';
+        }
+        
+        if(showRecommendations) {
+            $('.recommendations-modal').removeClass('slds-hide');
+        }
+        
+        function onClickCard(serviceName, serviceType) {
+            $('.recommendations-modal').addClass('slds-hide'); 
+            if(window.confirm('You are about to change the service type based on recommendations. Are you sure?')) {
+                window.recommendationsCleared = true;
+                window["{! onClickCard }"](serviceName, serviceType);
+            }
+        }
+        
+    </script>
+    <apex:outputPanel rendered="{! recommendations != null && recommendations.size > 0 }" layout="none">
+        <div class="slds-col">
+            <div class="slds-hide recommendations-modal">
+                <div role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <button type="button" class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onClick="$('.recommendations-modal').addClass('slds-hide')">
+                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/action/close.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="header43" class="slds-text-heading--medium">Recommended Service Types</h2>
+                        </div>
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <p>
+                            Because of the answers you have provided; we have found service types that would likely be a better fit for this request. 
+                            Please review this list; if you believe that these suggestions are incorrect you may dismiss this notification.
+                            You will not be shown this notification again unless you start a new service request. You may refer to the current
+                            recommendations on the side of the console.
+                        </p>
+                        <div class="slds-tree-container side-panel-default  duplicate-requests-container" role="application">
+                            <apex:repeat value="{! recommendations }" var="rec">
+                                <article class="slds-card slds-card--narrow">
+                                  <div class="slds-card__body slds-grid">
+                                    <div class="dupe-icon-container">
+                                      <span class="slds-icon_container slds-icon-standard-contact">
+                                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/coaching.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                                      </span>
+                                    </div>
+                    
+                                    <div class="slds-col slds-grid-horizontal  slds-truncate">
+                                      <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                                          <a class="slds-card__header-link slds-truncate" href="javascript:void(0)" onClick="onClickCard('{!rec.Incap311__Service_Name__c}','{!rec.Name}')">
+                                            <span class="card-sub-label card-sub-label-case-num  slds-truncate">{!rec.Incap311__Service_Name__c}</span>
+                                          </a>
+                                      </div>
+                    
+                                      <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                                        <span class="card-sub-label slds-text-body--small">{!rec.Incap311__Service_Type_Code__c}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </article>
+                            </apex:repeat>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </div>
+        
+            <!--<h4 class="slds-text-title--caps" id="treeheading">Recommended Service Types</h4>-->
+        <h4 class="slds-text-title--caps left-panel-header" id="treeheading" onClick="toggleCollapsablePanel(this, 'knowledge-panel-container');">
+          <span class="slds-icon_container">
+            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/topic.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+          </span>
+          Recommended Service Types
+          <i class="fa fa-caret-up cs-caret-postional"></i>
+        </h4>
+            <div class="slds-tree-container side-panel-default  duplicate-requests-container collapsable-container" role="application">
+                <apex:repeat value="{! recommendations }" var="rec">
+                    <article class="slds-card slds-card--narrow">
+                      <div class="slds-card__body slds-grid">
+                        <div class="dupe-icon-container">
+                          <span class="slds-icon_container slds-icon-standard-contact">
+                            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/coaching.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                          </span>
+                        </div>
+        
+                        <div class="slds-col slds-grid-horizontal  slds-truncate">
+                          <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                              <a class="slds-card__header-link slds-truncate" href="javascript:void(0)" onClick="onClickCard('{!rec.Incap311__Service_Name__c}','{!rec.Name}')">
+                                <span class="card-sub-label card-sub-label-case-num  slds-truncate">{!rec.Incap311__Service_Name__c}</span>
+                              </a>
+                          </div>
+        
+                          <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                            <span class="card-sub-label slds-text-body--small">{!rec.Incap311__Service_Type_Code__c}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                </apex:repeat>
+            </div>
+        </div>                                              
+    </apex:outputPanel>
+</apex:component>

@@ -1,0 +1,8 @@
+<apex:page showHeader="false" sidebar="false" controller="test_alerts_controller">
+<div style="background-color: black; height: 100vh; width: 100vw">  
+    <apex:slds />
+  <c:Console311_Section_AlertValidation serviceTypeVersion="{! stv }"
+      context="{! context }"
+   />
+  </div>
+</apex:page>

@@ -1,0 +1,72 @@
+<apex:page showHeader="false"
+      sidebar="false"
+      standardStylesheets="false"
+      applyHtmlTag="false"
+      applyBodyTag="false">
+
+      <head>
+        
+          
+            <apex:stylesheet value="{! URLFOR($Resource.conditionBuilder, 'vendor.css') }" />
+          
+            <apex:stylesheet value="{! URLFOR($Resource.conditionBuilder, 'app.css') }" />
+          
+        
+      </head>
+      <body>
+        
+          <apex:remoteObjects jsNamespace="Incap311CB">
+            
+              
+              
+              
+              <apex:remoteObjectModel name="Incap311__Service_Type_Version__c" fields="Id,Incap311__Recommended_Types__c,Incap311__Is_Current_Version__c,Incap311__Service_Type_Code__c,Incap311__Service_Type_Name__c,Incap311__Service_Name__c,Incap311__Validations__c,Incap311__Alert_Validations__c" />
+            
+              
+              
+              
+              <apex:remoteObjectModel name="Incap311__Service_Type_Version_Question__c" fields="Incap311__Service_Type_Version__c,Incap311__Dependencies__c,Incap311__Question_Text__c,Incap311__Flex_Question_Code__c,Id,Incap311__Data_Type__c,Incap311__Override_Answer_Values__c,Incap311__Validations__c,Incap311__Question__c,Incap311__Is_Dependent__c,Incap311__Is_Controlling__c,Incap311__Order__c" />
+            
+              
+              
+              
+              <apex:remoteObjectModel name="Incap311__Question__c" fields="Incap311__Question__c,Id,Incap311__Answer_Values__c,Incap311__Flex_Question_Code__c" />
+            
+              
+              
+              
+              <apex:remoteObjectModel name="Incap311__Outcome_Question__c" fields="Id,Incap311__Validations__c,Incap311__Data_Type__c,Incap311__Question_Code__c,Incap311__Activity_Outcome__c,Incap311__Question__c,Incap311__Override_Answer_Values__c,Incap311__Is_Dependent__c,Incap311__Is_Controlling__c,Incap311__Dependencies__c,Incap311__Order__c" />
+            
+          </apex:remoteObjects>
+        
+
+        
+          <div id="app"></div>
+        
+
+        <script>
+          window['__STATIC_RESOURCE_ZIP'] = '{! URLFOR($Resource.conditionBuilder) }';
+          window['__ACCESS_TOKEN'] = '{!$Api.Session_ID}';
+          window['USER_INFO'] = {
+            display_name: '{! $User.FirstName } {! $User.LastName }',
+            first_name: '{! $User.FirstName }',
+            last_name: '{! $User.LastName }',
+            nick_name: '{! $User.CommunityNickname }',
+            addr_country: '{! $User.Country }',
+            email: '{! $User.Email }',
+            mobile_phone: '{! $User.MobilePhone }',
+            user_id: '{! $User.Id }'
+          };
+        </script>
+
+        
+          
+            <script src="{! URLFOR($Resource.conditionBuilder, 'manifest.js') }"></script>
+          
+            <script src="{! URLFOR($Resource.conditionBuilder, 'vendor.js') }"></script>
+          
+            <script src="{! URLFOR($Resource.conditionBuilder, 'app.js') }"></script>
+          
+        
+      </body>
+    </apex:page>

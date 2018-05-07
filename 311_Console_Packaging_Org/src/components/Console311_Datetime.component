@@ -1,0 +1,36 @@
+<apex:component >
+    <apex:attribute description="Date format String." name="name" type="String"></apex:attribute>
+    <apex:attribute description="Date format String." name="storeValue" type="String"></apex:attribute>
+    				<apex:outputpanel >
+                                        <div class="slds-form-element">
+
+                                            <apex:outputpanel styleclass="slds-form-element__control slds-input-has-icon slds-input-has-icon--left" layout="block">
+                                                <apex:image url="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/event.svg')}" styleclass="svg slds-input__icon slds-icon-text-default" />
+                                                <input name="{!name}"
+                                                       type="text"
+                                                       class="slds-input {!name}"
+                                                       value="{!storeValue}"
+                                                       onfocus="$('{!name}').datepicker({format: 'MM/DD/YYYY hh:mm a', onChange: onChangeDatetimeFunc});"
+                                                       onclick="$('{!name}').datepicker({format: 'MM/DD/YYYY hh:mm a', onChange: onChangeDatetimeFunc});"/>
+                                            </apex:outputpanel>
+                                        </div>
+                                        <span>
+                                            <script>
+                                                var onChangeDatetimeFunc = function(datetime) {
+                                                    //console.log(datetime);  
+                                                    if (datetime != null) {
+                                                        var d = new Date();
+                                                        datetime.selectedFullDate.hour(d.getHours());
+                                                        datetime.selectedFullDate.minute(d.getMinutes());
+                                                        datetime.selectedFullDate.second(d.getSeconds());
+                                                        $(datetime.$el[0]).val(datetime.selectedFullDate.format('MM/DD/YYYY hh:mm a'));
+                                                    }
+                                                };                  
+
+                                                $('.{!name}').on('focus', function() {
+                                                    $('.{!name}').datepicker({format: 'MM/DD/YYYY hh:mm a'});
+                                                });
+                                            </script>
+                                        </span>
+                                    </apex:outputpanel>
+</apex:component>

@@ -1,0 +1,110 @@
+<apex:page standardController="IncapRF__WorkflowRule__c" extensions="IncapRF.WorkflowRuleCriteriaController" showHeader="true" sidebar="true">
+    <apex:sectionHeader title="" subtitle="{!IF(ISBLANK(IncapRF__WorkflowRule__c.Id), 'New '&$ObjectType.IncapRF__WorkflowRule__c.Label,IncapRF__WorkflowRule__c.Name)}" />
+    <apex:stylesheet value="{!URLFOR($Resource.IncapRF__lightningcss, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}" />
+
+    <apex:pageMessages /> 
+
+    <!-- REQUIRED SLDS WRAPPER -->
+    <div class="IncapRF">
+
+        <style type="text/css" >
+            .popupBackground {
+                background-color:black;
+                opacity: 0.20;
+                filter: alpha(opacity = 20);
+                width: 100%; 
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 998;
+                position: absolute;
+            }
+
+            .popupPanel {
+                border: solid 1px;
+                background-color: white;
+                left: 50%;
+                width: 200px;
+                margin-left: -100px;
+                top: 50%;
+                height: 50px;
+                margin-top: -25px;
+                z-index: 999;
+                position:fixed;
+            }  
+
+            .delete, .delete:hover{
+                cursor:pointer;
+                color:#3CA8F5;
+                text-decoration:none;
+            }
+        </style>
+
+        <!-- "Loading" or "Processing" popup -->
+        <apex:actionStatus id="processingStatus" stopText="" >
+            <apex:facet name="start">
+                <div>
+                    <div class="popupBackground" />
+                    <div class="popupPanel">
+                        <table border="0" width="100%" height="100%">
+                            <tr>
+                                <td align="center" style="font-family: Calibri; font-size: 13px; font-weight: normal;"><b>Processing... Please Wait</b></td>
+                            </tr>
+                            <tr>
+                                <td align="center"><img src="/img/loading.gif"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+
+        <apex:form id="pbForm" >
+            <apex:pageBlock title="{!IF(ISBLANK(workflowRule.Id), 'New '&$ObjectType.IncapRF__WorkflowRule__c.Label,workflowRule.Name)}" >
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Save" action="{!saveWorkflowRule}" />
+                    <apex:commandButton value="Cancel" action="{!cancel}" />
+                </apex:pageBlockButtons>
+
+                <apex:pageBlockSection columns="2" collapsible="false" >
+                    <apex:inputField value="{!workflowRule.Name}" required="true" />
+                    <apex:inputField value="{!workflowRule.IncapRF__Evaluation_Rule__c}" required="true" />
+                    <apex:inputField value="{!workflowRule.IncapRF__Active__c}" />
+
+                    <!--<apex:selectList style="width:12em;" value="{!workflowRule.IncapRF__Object_Name__c}" multiselect="false" size="1" required="true">
+<apex:selectOption itemValue="" itemLabel="--None--" />
+<apex:selectOptions value="{!OrgObjects}" />
+<apex:actionSupport event="onchange" status="processingStatus" action="{!showCriteria}" rerender="pbForm" />
+</apex:selectList>-->
+                    <apex:outputField value="{!workflowRule.IncapRF__Object_Name__c}" />
+                    <apex:outputField value="{!workflowRule.IncapRF__Order__c}" />
+                    <apex:selectList style="width:12em;" value="{!workflowRule.IncapRF__Filter_Logic__c}" multiselect="false" size="1" >
+                        <apex:selectOption itemValue="AND" itemLabel="All" />
+                        <apex:selectOption itemValue="OR" itemLabel="Any" />
+                    </apex:selectList> 
+
+
+                    <apex:inputField value="{!workflowRule.IncapRF__Effective_Date__c}" /> 
+                    <apex:inputField value="{!workflowRule.IncapRF__Expiration_Date__c}" /> 
+
+
+
+                </apex:pageBlockSection>
+                <apex:outputpanel id="GroupPanels">
+                    <apex:repeat value="{!criteriaGroups}" var="group" >
+                        <c:WorkflowCriteriaGroups group="{!group}"/>
+                       
+                    </apex:repeat>
+                </apex:outputpanel>
+
+
+                    
+                    <div class="slds-card__footer">         
+                    <div  >
+                       <apex:commandButton value="Add Criteria Group" action="{!addCriteriaGroup}" rerender="GroupPanels" Status="status" immediate="true" />
+                    </div>
+                </div>
+            </apex:pageBlock>
+        </apex:form>
+    </div>
+</apex:page>

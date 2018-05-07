@@ -1,0 +1,138 @@
+<apex:component controller="Console311_Section_AccountCtrl">
+  <apex:attribute name="account" type="Account" description="Account object" assignTo="{!mAccount}"/>
+  <apex:attribute name="mAFAccountComponentFunc" type="String" required="true" description="Passed in action function name to store the account in the top level controller." />
+  <apex:attribute name="mLayoutConfigs" type="Console311_Wrap_Config[]" description="Configuration mapping for the contact sections." assignTo="{!mLayoutConfig}"/>
+
+  <style>
+ 
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+
+    .details-account-container .slds-section-title--divider {
+      cursor: pointer;
+      display: flex !important;
+      justify-content: space-between;
+      height: 39px;
+      align-items: center;
+      margin-top: 5px;
+    }
+
+    .details-account-container .slds-form-element__control p {
+      min-height: 25px
+    }
+
+    .account-new-edit-container-header i {
+      font-size: 2em;
+    }
+
+    .small-padding {
+      padding: 0px 7px;
+    }
+
+    .new-edit-account-container.collapsed {
+      display: none;
+    }
+  </style>
+  
+  <apex:outputPanel id="section-account-summary-container" layout="block" styleClass="details-account-container slds-container" style="padding-bottom: 0;" rendered="{!IF(InformationLayoutConfig != null, InformationLayoutConfig.Visible__c, true)}">
+  
+    <apex:outputPanel rendered="{!IF(InformationLayoutConfig != null, InformationLayoutConfig.Header__c, true)}" layout="block" styleClass="slds-size--1-of-1">
+      <h4 class="slds-text-title--caps" id="treeheading">
+        <span class="slds-icon_container">
+          <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/account.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+        </span>
+        {!IF(InformationLayoutConfig != null, InformationLayoutConfig.Title__c, 'Organization')}
+      </h4>
+    </apex:outputPanel>
+
+    <div class="slds-grid slds-wrap small-padding">
+      <!-- Lookup -->
+      <div class="slds-form-element slds-col slds-size--1-of-1" style="padding-bottom: 10px;">
+        <div class="slds-form-element slds-lookup" style="margin: 10px 0;">
+          <apex:outputPanel rendered="{!mAccount = null}" layout="none">
+            <div class="slds-form-element__control">
+              <div class="slds-input-has-icon slds-input-has-icon--right">
+                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" class="svg slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" onClick="accountLookupPopup();"/>
+                <input id="account-id-label" type="text" class="slds-lookup__search-input slds-input" value="{!mAccount.Name}" onkeyup="if(event.keyCode == 13){accountLookupPopup(); event.preventDefault();}"/>
+                <input id="account-id" type="text" class="hiddenInput" name="account-id" value="{!mAccount.Id}"/>
+              </div>
+            </div>
+          </apex:outputPanel>
+
+          <apex:outputPanel rendered="{!mAccount != null}" layout="none">
+            <div class="slds-form-element__control">
+              <div class="slds-pill_container">
+                <span class="slds-pill slds-size--1-of-1">
+                  <span class="slds-pill__label" title="{!mAccount.Name}">{!mAccount.Name}</span>
+                  <button class="slds-button slds-button--icon slds-pill__remove" title="Remove" type="button" onclick="handleAccountLookupResponse(null, null, null);">
+                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/close.svg')}" aria-hidden="true" class="slds-button__icon svg" />
+                    <span class="slds-assistive-text">Remove</span>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </apex:outputPanel>
+        </div>
+      </div>
+
+      <apex:outputPanel rendered="{!mAccount != null}" layout="none"> 
+        <apex:repeat value="{!fieldNamesList}" var="fieldname">
+          <div class="account-details-container slds-form-element slds-col slds-size--1-of-2">
+            <label class="slds-form-element__label" >{!sObjectFieldUtilMap[mAccount.Id][fieldname]['Label']}</label>
+            <div class="slds-form-element__control">
+              <p>{!IF(sObjectFieldUtilMap[mAccount.Id][fieldName]['Data_Type'] == 'DATE' && sObjectFieldUtilMap[mAccount.Id][fieldName]['Formatted_Date'] != 'null', sObjectFieldUtilMap[mAccount.Id][fieldName]['Formatted_Date'], mAccount[fieldName])}</p>
+            </div>
+          </div>
+        </apex:repeat>
+      </apex:outputPanel>
+    </div>
+  </apex:outputPanel>  
+
+  <apex:outputPanel id="section-account-main-container" layout="block" styleClass="details-account-container slds-container" rendered="{!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Visible__c, false)}">
+    <apex:outputPanel rendered="{!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Header__c, true)}" layout="none">
+      <h3 class="slds-section-title--divider account-new-edit-container-header" onClick="if({!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Incap311Console__Collapsible__c, true)}){toggleNewEditAccountPanel();}">
+        {!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Incap311Console__Title__c, 'New/Edit Account')}
+        <i class="fa fa-caret-up {!IF(NewEditLayoutConfig != null && !NewEditLayoutConfig.Incap311Console__Collapsible__c, 'slds-hide', '')}"></i>
+      </h3>
+    </apex:outputPanel>
+
+    <div class="new-edit-account-container slds-grid slds-wrap small-padding {!IF(NewEditLayoutConfig != null && NewEditLayoutConfig.Collapsible__c, 'collapsed', '')}">  
+      <c:Console311_Section_ConfiguredLayout objName="Account" object="{!mAccount}"/>
+    </div>
+  </apex:outputPanel>
+
+  <script>
+    // Callback function for lookup popups.
+    var handleAccountLookupResponse = function(objType, resultId, result) {
+      console.log(objType + ' <= Type, ' + resultId + ' <= Result Id, ' + JSON.stringify(result) + ' <= Result');
+      window['{!mAFAccountComponentFunc}'](JSON.stringify(result));
+    }
+
+    var accountLookupPopup = function() {
+      var lookupWindow = null;
+      var searchStr = encodeURI($('#account-id-label').val());
+      lookupWindow = window.open(
+          '/apex/Console311_Lookup?sobject=Account&callback=handleAccountLookupResponse&query=' + searchStr,
+          'Lookup',
+          'height=600,width=800'
+      );
+    }
+
+    // Case Parent lookup popup call.
+    $('body').on('click', '#account-lookup', function() {
+      accountLookupPopup();
+    });
+    
+    var toggleNewEditAccountPanel = function() {
+      $('.new-edit-account-container').toggleClass('collapsed');
+      $('.account-new-edit-container-header .fa').toggleClass('fa-caret-up').toggleClass('fa-caret-down');
+
+      if (!$('.new-edit-account-container').hasClass('collapsed')) {
+        $('.detail-view').animate({
+          scrollTop: $('.new-edit-account-container').offset().top - $('.detail-view').offset().top + $('.detail-view').scrollTop()
+        });
+      }
+    }
+  </script> 
+</apex:component>

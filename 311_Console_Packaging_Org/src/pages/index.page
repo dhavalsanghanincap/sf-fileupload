@@ -1,0 +1,45 @@
+<apex:page showHeader="false"
+      sidebar="false"
+      standardStylesheets="false"
+      applyHtmlTag="false"
+      applyBodyTag="false">
+
+      <head>
+        
+          
+            <apex:stylesheet value="{! URLFOR($Resource.SchedulerBundle, 'main.7d2e7b817f9fe8f5ca48.css') }" />
+          
+        
+      </head>
+      <body>
+        
+
+        
+          <div id="app"></div>
+        
+
+        <script>
+          window['SF_ZIP_NAME'] = '{! URLFOR($Resource.SchedulerBundle) }';
+          window['SF_ACCESS_TOKEN'] = '{!$Api.Session_ID}';
+          window['USER_INFO'] = {
+            display_name: '{! $User.FirstName } {! $User.LastName }',
+            first_name: '{! $User.FirstName }',
+            last_name: '{! $User.LastName }',
+            nick_name: '{! $User.CommunityNickname }',
+            addr_country: '{! $User.Country }',
+            email: '{! $User.Email }',
+            mobile_phone: '{! $User.MobilePhone }',
+            user_id: '{! $User.Id }'
+          };
+          
+        </script>
+
+        
+          
+            <script src="{! URLFOR($Resource.SchedulerBundle, 'main.js') }"></script>
+          
+        
+
+        
+      </body>
+    </apex:page>

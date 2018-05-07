@@ -1,0 +1,1360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Supports versioning of Service Types, allow structure of Service Type (questions, activities, outcomes) to remain in place for open Service Requests, when new versions of a Service Type are rolled out.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Alert_Validations__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Alert Validations</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Allow_Citizen_Web_Intake__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Makes the Service Type Version publicly available through the API for public API calls</description>
+        <externalId>false</externalId>
+        <label>Allow Citizen Web Intake</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Contact_Status__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(TEXT(Override_Contact_Status__c) != &apos;&apos;,
+    TEXT(Override_Contact_Status__c),
+    TEXT(Service_Type__r.Contact_Status__c))</formula>
+        <label>Contact Status</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Days_Of_Week__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <globalPicklist>Days_Of_The_Week</globalPicklist>
+        <label>Days Of Week</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Default_Method__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Default Method</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Phone</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>311-App</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Web</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Internal Transfer</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Internal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Default_Priority__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Default Priority</label>
+        <picklist>
+            <picklistValues>
+                <fullName>High</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Standard</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Low</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Emergency</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Default_Status__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Default Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Open</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Closed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>New</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Internal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Dependencies__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Dependencies</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Distribute_On__c</fullName>
+        <defaultValue>&apos;All&apos;</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Distribute On</label>
+        <picklist>
+            <picklistValues>
+                <fullName>All</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Create</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Edit</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Distribution_Matching_del__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Distribution Matching</label>
+        <length>131072</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Duplicate_Detection_Method__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Duplicate Detection Method</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Standard</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Duplicate_Match_Street__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Duplicate Match Street</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Duplicate_Radius_feet__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Duplicate Radius (feet)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Duplicate_Statuses__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Duplicate Statuses</label>
+        <picklist>
+            <picklistValues>
+                <fullName>New</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Working</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Escalated</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Closed</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hold</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MultiselectPicklist</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Duplicate_Threshold_Period_days__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Duplicate Threshold Period (days)</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Duplicate_Threshold_Period_hours__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Duplicate Threshold Period (hours)</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Body_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated in favor of Rich Email Body (Close)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Content for body merge field on Request Closing email notification (limit 4000 characters)</inlineHelpText>
+        <label>DEPRECATED - Email Body (Close)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Email_Body_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated in favor of Rich Email Body (Create)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Content for body merge field on Request Create email notification (limit 800 characters)</inlineHelpText>
+        <label>DEPRECATED - Email Body (Create)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Email_Closing_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated in favor of Rich Email Closing (Close)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Content for SR specific info merge field on Request Closing email notification (limit 800 characters)</inlineHelpText>
+        <label>DEPRECATED - Email Closing (Close)</label>
+        <length>4000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Email_Closing_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated in favor of Rich Email Closing (Create)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Content for SR specific info merge field on Request Create email notification (limit 4000 characters)</inlineHelpText>
+        <label>DEPRECATED - Email Closing (Create)</label>
+        <length>4000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Email_Intro_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated in favor of Rich Email Intro (Close)</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Content for the case created merge field for the &quot;intro&quot; portion to be used in the template</inlineHelpText>
+        <label>DEPRECATED - Email Intro (Close)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Intro_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Deprecated in favor of Rich Email Intro (Create)</description>
+        <externalId>false</externalId>
+        <label>DEPRECATED - Email Intro (Create)</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Template_Id_for_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Template Id for Close</label>
+        <length>25</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Template_Id_for_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Template Id for Create</label>
+        <length>25</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Email_Template_Id_for_Update__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Template Id for Update</label>
+        <length>25</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Enable_Business_Hours__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Enables business hours. This checks business hours configuration for the Service Type&apos;s code.</description>
+        <externalId>false</externalId>
+        <label>Enable Business Hours</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Enable_Distribution_del__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Enable Distribution</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Enable_Operational_SLA__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>To consider operation period for SLA calculations</description>
+        <externalId>false</externalId>
+        <inlineHelpText>To consider operation period for SLA calculations</inlineHelpText>
+        <label>Enable Operational SLA</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Enable_Sub_Units__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Enable Sub Units</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>External_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(
+NOT(ISBLANK(Service_Type__r.External_Name__c)), 
+Service_Type__r.External_Name__c,
+Service_Name__c
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>External Name</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Generate_All_Questions__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Specifies whether all questions should be included when the service type is submitted; even if they aren&apos;t enabled due to dependencies.</description>
+        <externalId>false</externalId>
+        <label>Generate All Questions</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Geo_Validations__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Geo Validations</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Group__c</fullName>
+        <defaultValue>&quot;&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Group</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Has_Metadata__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Question_Count__c != 0</formula>
+        <label>Has Metadata</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Hide_Contact__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Hide Contact</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Hide_Location__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Hide Location</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Include_System_Defaults_del__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Include System Defaults</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Is_Activatable__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Determines if the field &quot;Activatable&quot;. Many versions</description>
+        <externalId>false</externalId>
+        <formula>(
+  ( 
+   ( (NOT(ISNULL(Start_Date__c)) &amp;&amp; (TODAY() &gt;= Start_Date__c) ) || ISNULL(Start_Date__c)) 
+     &amp;&amp; 
+   ( ( NOT(ISNULL(Stop_Date__c)) &amp;&amp; (TODAY() &lt; Stop_Date__c) ) || ISNULL(Stop_Date__c) )
+  )
+)
+&amp;&amp;
+NOT(Is_Draft__c)</formula>
+        <label>Is Activatable</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Is_Current_Version__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Service_Type__r.Active_Service_Type_Version__c = Id</formula>
+        <label>Is Current Version</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Is_Draft__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Is Draft</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Is_Old_Version__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Service_Type__r.Active_Service_Type_Version__r.Version_Number__c &gt;  Version_Number__c</formula>
+        <label>Is Old Version</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Keywords__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Keywords</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Layer_Information__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Layer Information</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Map_Marker_Icon__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Map Marker Icon</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Object__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Object</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Case</fullName>
+                <default>true</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Override_Contact_Status__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Override Contact Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Available</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Visible</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Required (LN, FN, EM)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Question_Count__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Question Count</label>
+        <summaryForeignKey>Service_Type_Version_Question__c.Service_Type_Version__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Recommended_Types__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Recommended Types</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Resolution_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Resolution Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>realtime</fullName>
+                <default>true</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Rich_Email_Body_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rich Email Body (Close)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rich_Email_Body_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rich Email Body (Create)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>30</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rich_Email_Closing_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rich Email Closing (Close)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rich_Email_Closing_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rich Email Closing (Create)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rich_Email_Intro_Close__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rich Email Intro (Close)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Rich_Email_Intro_Create__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Rich Email Intro (Create)</label>
+        <length>6000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
+        <fullName>SLA_Detail__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(
+    SLA__c == 0,
+    &quot;No SLA Defined&quot;,
+    IF(
+       SLA__c  == 1,
+       TEXT(SLA__c) + &quot; &quot; + LEFT(TEXT(SLA_Type__c), LEN(TEXT(SLA_Type__c)) - 1),
+       TEXT(SLA__c) + &quot; &quot; + TEXT(SLA_Type__c))
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>SLA Detail</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SLA_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SLA Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Business Days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Calendar Days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hours</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SLA__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SLA</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SR_Alert_Message__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SR Alert Message</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Send_Email_On_SR_Closed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Send Email On SR Closed</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Send_Email_On_SR_Creation__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Send Email On SR Creation</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Service_Icon__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Icon</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Service_Location_Required__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Location Required</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Service_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Name</label>
+        <length>255</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Type_Code__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Service_Type__r.Service_Type_Code__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Service Type Code</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Type_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Service_Type__r.Name</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Service Type Id</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Type</label>
+        <referenceTo>Service_Type__c</referenceTo>
+        <relationshipLabel>Service Type Versions</relationshipLabel>
+        <relationshipName>Service_Type_Versions</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Start_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SLA: Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Start__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Start Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Stop_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SLA: Stop Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Stop__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Stop Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Track_SR_Closure_Email__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Track SR Closure Email</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Track_SR_Creation_Email__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Track SR Creation Email</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Validations__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Validations</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Version_Code__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Version Code</label>
+        <length>25</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Version_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Version Name</label>
+        <length>255</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Version_Number__c</fullName>
+        <defaultValue>0</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Version Number</label>
+        <precision>3</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Visible_Layers__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Visible Layers</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <label>Service Type Version</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Service_Type_Name__c</columns>
+        <columns>Service_Name__c</columns>
+        <columns>Version_Number__c</columns>
+        <columns>Is_Current_Version__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>SRTV-{00000000}</displayFormat>
+        <label>Service Type Version Id</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Service Type Versions</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Version_Number__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Is_Current_Version__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Service_Type_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>SLA__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>SLA_Type__c</customTabListAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Ensure_SLA_Is_Positive_Value</fullName>
+        <active>true</active>
+        <description>Ensure the value entered for SLA is positive and less than 10 million</description>
+        <errorConditionFormula>AND(
+        NOT(ISBLANK(SLA__c)),
+        OR(
+           SLA__c &lt;= 0,
+           SLA__c &gt; 10000000
+        )
+)</errorConditionFormula>
+        <errorMessage>The value for SLA must be a positive number greater than 0 and not greater than 10 million (10000000)</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Ensure_Version_Number_Is_Positive</fullName>
+        <active>true</active>
+        <description>Ensure the value is non-negative</description>
+        <errorConditionFormula>AND(
+       NOT(ISBLANK(Version_Number__c)),
+       Version_Number__c &lt; 0
+)</errorConditionFormula>
+        <errorDisplayField>Version_Number__c</errorDisplayField>
+        <errorMessage>Version number must be a non-negative number</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Is_Required</fullName>
+        <active>true</active>
+        <errorConditionFormula>TEXT(Resolution_Type__c) == &apos;&apos;</errorConditionFormula>
+        <errorDisplayField>Resolution_Type__c</errorDisplayField>
+        <errorMessage>Resolution Type is required.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Limit_Value_To_Under_366</fullName>
+        <active>true</active>
+        <description>If present, value should not exceed 365 days</description>
+        <errorConditionFormula>AND(
+       NOT(ISBLANK(Duplicate_Threshold_Period_days__c)),
+       OR(
+            Duplicate_Threshold_Period_days__c &lt; 0,
+            Duplicate_Threshold_Period_days__c &gt; 365
+       )
+)</errorConditionFormula>
+        <errorDisplayField>Duplicate_Threshold_Period_days__c</errorDisplayField>
+        <errorMessage>Value must be greater than or equal to 0 and less than or equal to 365</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Must_be_between_0_and_23</fullName>
+        <active>true</active>
+        <errorConditionFormula>OR(Duplicate_Threshold_Period_hours__c &lt; 0,Duplicate_Threshold_Period_hours__c &gt; 23)</errorConditionFormula>
+        <errorDisplayField>Duplicate_Threshold_Period_hours__c</errorDisplayField>
+        <errorMessage>Duplicate threshold hours must be between 0 and 23.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>No_Special_Chars_In_ST_Version_Code</fullName>
+        <active>true</active>
+        <description>Validates for only alphanumeric, hyphen, and underscore in Version Code field</description>
+        <errorConditionFormula>NOT(REGEX(Version_Code__c, &quot;[a-zA-Z0-9_-]+&quot;))</errorConditionFormula>
+        <errorDisplayField>Version_Code__c</errorDisplayField>
+        <errorMessage>You must only use alphanumeric (a-z, 0-9), hyphen, or underscore in the Version Code field.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Validate_Radius_Values</fullName>
+        <active>true</active>
+        <description>Ensure value for duplicate radius is non-negative, if present</description>
+        <errorConditionFormula>AND(
+       NOT(ISBLANK(Duplicate_Radius_feet__c)),
+       Duplicate_Radius_feet__c &lt; 0
+)</errorConditionFormula>
+        <errorDisplayField>Duplicate_Radius_feet__c</errorDisplayField>
+        <errorMessage>Duplicate radius must be greater than or equal to 0, if defined</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Validate_SLA_Fields</fullName>
+        <active>true</active>
+        <description>Ensure SLA and SLA Type are either both defined or undefined</description>
+        <errorConditionFormula>OR(
+     AND(
+            NOT(ISBLANK(SLA__c)),
+            ISBLANK(TEXT(SLA_Type__c))
+      ),
+      AND(
+             ISBLANK(SLA__c),
+             NOT(ISBLANK(TEXT(SLA_Type__c)))
+      )
+)</errorConditionFormula>
+        <errorMessage>SLA and SLA Type must both be completed or empty</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Validate_Start_and_Stop_Date_Order</fullName>
+        <active>true</active>
+        <description>Ensure the chronological order of start and stop dates</description>
+        <errorConditionFormula>AND(
+        NOT(ISBLANK(Start_Date__c)),
+        NOT(ISBLANK(Stop_Date__c)),
+        Stop_Date__c &lt;= Start_Date__c
+)</errorConditionFormula>
+        <errorMessage>Stop Date must be after Start Date</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Clone_Version</fullName>
+        <availability>online</availability>
+        <description>Clone a version, its questions and its activities</description>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Clone Version</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/apex.js&quot;)}
+
+
+var res = confirm(&apos;You are about to clone {!Service_Type_Version__c.Name} and its related Questions and Activities&apos;);
+
+if(res) {
+   sforce.apex.execute(
+      &quot;Incap311/Base311_Webservices&quot;,&quot;cloneServiceTypeVersion&quot;, 
+      { stvId: &quot;{!Service_Type_Version__c.Id }&quot;}, 
+      function(res) {
+         if(res.length &gt; 0 &amp;&amp; res[0] != null) {
+            window.location.href = res[0];
+            return;
+      }
+
+      alert(&apos;An unexpected error has occurred&apos;);
+   });
+}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Configure_Alert_Validations</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>Configure Alert Validations</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <url>/apex/Incap311__Flex_Builder?pid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;type=Service_Type_Version__c&amp;field=Alert_Validations__c&amp;oid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;retUrl=/{!Service_Type_Version__c.Id }</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Configure_Duplicate_Types</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Configure Duplicate Types</masterLabel>
+        <openType>sidebar</openType>
+        <page>Base311_DupeSTVConfig</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Configure_Geo_Validations</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>Configure Geo Validations</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <url>/apex/Incap311__Flex_Builder?&amp;oid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;retUrl=/{!Service_Type_Version__c.Id }&amp;field=Geo_Validations__c&amp;pid={! CASESAFEID(Service_Type_Version__c.Id) }&amp;type=Service_Type_Version__c</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Configure_Recommended_Types</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>Configure Recommended Types</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <url>/apex/Incap311__Flex_Builder?pid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;type=Service_Type_Version__c&amp;field=Recommended_Types__c&amp;oid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;retUrl=/{!Service_Type_Version__c.Id }</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Configure_Validation_Messages</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <linkType>url</linkType>
+        <masterLabel>Configure Validation Messages</masterLabel>
+        <openType>replace</openType>
+        <protected>false</protected>
+        <url>/apex/Incap311__Flex_Builder?pid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;type=Service_Type_Version__c&amp;field=Validations__c&amp;oid={!CASESAFEID(Service_Type_Version__c.Id)}&amp;retUrl=/{!Service_Type_Version__c.Id }</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Make_Active</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Make Version Current</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/connection.js&quot;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/30.0/apex.js&quot;)}
+
+
+var res = confirm(&apos;You are about to make {!Service_Type_Version__c.Name} the active Service Type Version. This will close all Service Activities assigned to Open Cases associated to this Service Type, and create new Activities for this version. Do you want to continue?&apos;);
+
+if(res) {
+sforce.apex.execute(
+&quot;Incap311/Base311_Webservices&quot;,&quot;markSTVAsActive&quot;, 
+{ stvId: &quot;{!Service_Type_Version__c.Id }&quot;}, 
+function(res) {
+
+if(res.length &gt; 0 &amp;&amp; res[0] != null) {
+ alert(res[0]);
+return;
+}
+
+alert(&apos;An unexpected error has occurred&apos;);
+
+});
+}</url>
+    </webLinks>
+</CustomObject>

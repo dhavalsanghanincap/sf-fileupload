@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>This object represents a single day in a collection schedule</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Capacity__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Capacity</label>
+        <precision>4</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Day_of_Week__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>CASE(
+  MOD(Schedule_Date__c - DATE(1900, 1, 7), 7),
+  0, &quot;Sunday&quot;,
+  1, &quot;Monday&quot;,
+  2, &quot;Tuesday&quot;,
+  3, &quot;Wednesday&quot;,
+  4, &quot;Thursday&quot;,
+  5, &quot;Friday&quot;,
+  &quot;Saturday&quot;
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Day of Week</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Item_Count__c</fullName>
+        <defaultValue>0</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Number of items currently schedule to be picked up</description>
+        <externalId>false</externalId>
+        <label>Count</label>
+        <precision>6</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>No_Service__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Indicates no collection service for this schedule date</description>
+        <externalId>false</externalId>
+        <label>No Service</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Number_of_Service_Requests__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Number of Service Requests</label>
+        <summaryForeignKey>Service_Request_Schedule__c.Schedule__c</summaryForeignKey>
+        <summaryOperation>count</summaryOperation>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Summary</type>
+    </fields>
+    <fields>
+        <fullName>Schedule_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The date this schedule record is used to manage collection for</description>
+        <externalId>false</externalId>
+        <label>Schedule Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Schedule_Override_Date__c</fullName>
+        <deprecated>false</deprecated>
+        <description>A date field to contain the alternate schedule date if necessary.</description>
+        <externalId>false</externalId>
+        <label>Schedule Override Date</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Service_Type__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <description>The service type for the schedule.</description>
+        <externalId>false</externalId>
+        <label>Service Type</label>
+        <referenceTo>Service_Type__c</referenceTo>
+        <relationshipLabel>Schedules</relationshipLabel>
+        <relationshipName>Schedules</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Zone__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Zone</label>
+        <length>100</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Schedule</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Service_Type__c</columns>
+        <columns>Day_of_Week__c</columns>
+        <columns>Schedule_Date__c</columns>
+        <columns>Schedule_Override_Date__c</columns>
+        <columns>Capacity__c</columns>
+        <columns>Zone__c</columns>
+        <columns>NAME</columns>
+        <columns>Item_Count__c</columns>
+        <columns>No_Service__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>SCH-{00000000}</displayFormat>
+        <label>Schedule Name</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Schedules</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Service_Type__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Schedule_Date__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Schedule_Override_Date__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Zone__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Capacity__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Item_Count__c</customTabListAdditionalFields>
+        <searchResultsAdditionalFields>Schedule_Date__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Day_of_Week__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Item_Count__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Capacity__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Zone__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

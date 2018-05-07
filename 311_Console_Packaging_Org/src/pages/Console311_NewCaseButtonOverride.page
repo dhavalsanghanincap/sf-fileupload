@@ -1,0 +1,35 @@
+<apex:page standardController="Case" extensions="Console311_NewCaseButtonController"  >
+  <!--apex:include pageName="Console311_Case" /-->
+  <apex:includeScript value="/support/console/28.0/integration.js"/>
+
+  <script type="text/javascript">
+    function testIsInConsole() {        
+      var redirectUrl = '/apex/Incap311Console__Console311_Case';
+
+      if (sforce.console.isInConsole()) {
+        sforce.console.openPrimaryTab(null, redirectUrl, true, 'New Case Creation', closeTab);
+      } else {
+        window.location.href = redirectUrl;
+      }
+    }
+
+    var closeTab = function closeTab() {
+        //First find the ID of the current tab to close it
+        sforce.console.getEnclosingTabId(closeSubtab);
+    }
+
+    var closeSubtab = function closeSubtab(result) {
+        //Now that we have the tab ID, we can close it
+        var tabId = result.id;
+        // If the tab has no id and success is false then we're on the navigation tab.
+        if (typeof tabId != "undefined" && tabId != "null") {
+            sforce.console.closeTab(tabId);
+            sforce.console.refreshPrimaryTabById(tabId, true);
+        } else {
+            sforce.console.refreshNavigationTab(null);
+        }
+    };
+
+    testIsInConsole();
+  </script>
+</apex:page>

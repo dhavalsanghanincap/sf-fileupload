@@ -1,0 +1,36 @@
+<apex:page standardController="Incap311__Service_Type__c" extensions="Incap311.Base311_Controller_ReallocateConfig">
+  <apex:form >
+    <apex:pageBlock title="Reallocation Queues">
+        <apex:pageBlockButtons >
+            <apex:commandButton action="{! cancel }" value="Cancel" />
+            <apex:commandButton action="{! save }" value="Save" />
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Service Request Reallocation" />
+                <c:MultiselectPicklist leftLabel="Available Queues"
+                   leftOption="{! availableQueues}"
+                   rightLabel="Selected Queues"
+                   rightOption="{! selectedQueues}"
+                   showMoveAll="true"
+                   size="8"
+                   width="300px"
+                />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Service Activity Reallocation" />
+                <c:MultiselectPicklist leftLabel="Available Queues for Activites"
+                   leftOption="{! availableQueuesActivites }"
+                   rightLabel="Selected Queues"
+                   rightOption="{! selectedQueuesActivites }"
+                   showMoveAll="true"
+                   size="8"
+                   width="300px"
+                />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

@@ -1,0 +1,40 @@
+<apex:component layout="none">
+  <apex:attribute name="mDistributionList" 
+      type="String"
+      required="true" 
+      description="List of email addreses that will receive the distribution." /> 
+  <apex:attribute name="mCoordinatorList" type="String" required="true" description="Current coordinator." /> 
+  <apex:attribute name="mInputLabel" type="String" description="Label for the email input." default="Distribution"/> 
+
+  <style>
+    .distribution-container.slds {
+      padding: 0;
+    }
+
+    .details-information-container .slds-container {
+      margin: 0;
+    }    
+  </style>
+  
+  <div class="distribution-container slds">
+    <div class="details-information-container slds-container">
+      <!--<div class="slds-text-heading--small">Distribution List</div>-->
+
+      <apex:outputPanel rendered="{! mCoordinatorList != null }" layout="none">
+        <div class="slds-form-element slds-col slds-size--1-of-1">
+          <label class="slds-form-element__label" for="case-coordinator">Coordinators/Supervisiors</label>
+          <div class="slds-form-element__control">
+            <input type="text" value="{! mCoordinatorList }" name="ai-coordinatorList" class="slds-input" id="case-coordinator" readonly="true" disabled="disabled" />
+          </div>
+        </div>
+      </apex:outputPanel>
+          
+      <div class="slds-form-element slds-col slds-size--1-of-1">
+          <label class="slds-form-element__label" for="case-distribution-list">{!mInputLabel}</label>
+          <div class="slds-form-element__control">
+              <textarea value="{! mDistributionList }" name="ai-distributionList" class="slds-textarea" id="case-distribution-list">{! mDistributionList }</textarea>
+          </div>
+      </div>
+    </div>
+  </div>
+</apex:component>

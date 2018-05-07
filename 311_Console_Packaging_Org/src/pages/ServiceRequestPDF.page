@@ -1,0 +1,417 @@
+<apex:page controller="ServiceRequestPDFController" applyBodyTag="false">
+     <head>
+        <style>
+            div.page, div.page-no-break {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-flow: row wrap;
+            font-family: "Helvetica", "Ariel", "Sans-serif";
+            }
+            
+            div.page {
+            page-break-after: always;
+            }
+            
+            .text-center {
+            text-align: center
+            }
+            
+            /* Header CSS */
+            #header {
+            float: left;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            font-size: 12px;
+            font-family: "Helvetica", "Ariel", "Sans-serif";
+            }
+            
+            #header .header-title {
+            width: 100%;
+            margin-bottom: 5px;
+            text-align: center;
+            }
+            
+            .page-header{
+            width: 100%;
+            font-size: 20px;
+            font-family: "Helvetica", "Ariel", "Sans-serif";
+            text-align: center;
+            color: #ffffff;
+            background: #000000;
+            border: solid black;
+            }
+            
+            #header .sub-heading{
+            font-size: 16px;
+            font-weight: bold;
+            font-family: "Helvetica", "Ariel", "Sans-serif";
+            text-align: left;
+            margin: 20px 0 15px 0;
+            }
+            
+            .full-col{
+            width: 100%;
+            float: left;
+            }
+            
+            #header .header-title h3 {
+            width: 100%;
+            font-size: 13px;
+            font-weight: bold;   
+            }
+            
+            #header p {
+            margin: 0;
+            font-size: 13px;
+            }
+            
+            #header .left-col, #header .right-col{
+            width: 49%;
+            float: left;
+            border-top: 3px solid #b2b2b2;
+            padding: 5px 0 0 0px;
+            }
+            
+            #header .left-col1, #header .right-col1{
+            width: 40.2%;
+            }
+            
+            #header .left-col1, #header .right-col1, #header .mid-col1{            
+            float: left;
+            padding: 5px 0 5px 5px;
+            border-left: 1px solid; 
+            border-right: 1px solid;
+            margin-left: -1px;
+            }
+            
+            #header .mid-col1{
+            width: 17%;
+            }
+            
+            #header .right-col{
+            padding: 5px;
+            border-left: 1px solid;   
+            }
+            
+            #header .row-title {
+            width: 30%;
+            float: left;
+            }
+            
+            #header .row .row-value {
+            float: left;
+            max-width: 47%;
+            margin-left: 10px;
+            font-size: 12px;
+            margin: 5px 0 5px 0;
+            
+            }
+            
+            #header .row , #header .location-comments {
+            width: 100%;
+            float: left;
+            border-top: 1px solid;
+            border-bottom: 1px solid;
+            margin-bottom: -1px;
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            box-sizing: border-box;         /* Opera/IE 8+ */
+            }
+            
+            #header .row-title {
+            margin: 5px 0 5px 0;
+            font-size: 12px;
+            }
+            
+            #header .row-location-title {
+            float: left;
+            width: 25%;
+            text-align: right;
+            font-weight: bold;
+            font-size: 12px;
+            }
+            
+            #header .location-comments .row-value {
+            max-width: 70%;        
+            }
+            
+            /* Body CSS */
+            .body {
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            }
+            
+            .body .table-title {
+            width: 100%;
+            float: left;
+            margin-bottom: 2px;
+            margin-left: 2px;
+            font-size: 12px;
+            }
+            
+            .body .flex-note-table {
+            border-top: 2px solid #000; 
+            }
+            
+            .body .flex-note-table, .body .participants-table, .body .activities-table {
+            width: 100%;
+            clear: left;
+            flex-flow: row wrap;
+            flex-direction: column;
+            page-break-inside: avoid;
+            /*border-left: 1px solid #eee;
+            border-right: 1px solid #eee;*/
+            }
+            
+            .body .flex-note-table .table-header {
+            float: left;
+            width: 100%;
+            background: #b2b2b2;
+            box-sizing: border-box;         /* Opera/IE 8+ */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            }
+            
+            .body .flex-note-table .table-header .table-header-container1 {
+            width: 23.7%;
+            float: left;
+            font-weight: bold;
+            padding: 0 0 0 5px;
+            box-sizing: border-box;         /* Opera/IE 8+ */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            }
+            
+            .body .table-header-container2{
+            width: 50%;
+            float: left;
+            font-weight: bold;
+            padding: 0 0 0 5px;
+            box-sizing: border-box;         /* Opera/IE 8+ */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            
+            }
+            
+            .body .flex-note-table .table-header .table-header-container1 h3 {
+            font-size: 12px; 
+            padding: 0 0 0 5px;
+            margin: 0;
+            }
+            
+            .body .flex-note-table .question-container {
+            width: 99.8%; 
+            float: left;    
+            margin-top: -1px;
+            /*border-top: 1px solid;
+            border-left: 1px solid; */
+            border-right: 1px solid;
+            border-bottom: 1px solid;
+            }
+            
+            .body .flex-note-table .question-container .question, .body .flex-note-table .question-container .answer {
+            float: left; 
+            font-size: 11px;
+            overflow: hidden;
+            box-sizing: border-box;         /* Opera/IE 8+ */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            }
+            
+            .body .flex-note-table .question-container .question {
+            width: 23.7%;
+            margin-left: -1px;
+            border-left: 1px solid;
+            padding: 5px 0 5px 5px;
+            }
+            
+            .body .flex-note-table .question-container .answer {
+            width: 50%; 
+            border-left: 1px solid;
+            padding: 5px 0 5px 5px;
+            }
+            
+            .body .flex-note-table .question-container:last-child {
+            
+            }  
+            
+            .body .flex-note-table .question-container .question p, .body .flex-note-table .question-container .answer p {
+            margin: 0;
+            padding: 5px;
+            }
+            
+            /* ---Participants Table--- */
+            .participants-table, .activities-table {
+            /*border-top: 2px solid #000;  */
+            border-bottom: none;
+            }
+            
+            .participants-table .row, .activities-table .row {
+            width: 100%;
+            /*float: left;*/
+            clear: left;
+            }
+            
+            .participants-table .row .column, .activities-table .row .column {
+            float: left;
+            width: 19.83%;
+            width: calc(100%/5);
+            width: -webkit-calc(100%/5);
+            width: -moz-calc(100%/5);
+            font-size: 12px;
+            margin: 0 auto;
+            padding: 0;
+            border-right: 1px solid #eeeeee;
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            box-sizing: border-box;         /* Opera/IE 8+ */
+            }
+            
+            .participants-table .row-data, .activities-table .row-data {
+            
+            }
+            
+            .participants-table .row-data:last-child, .activities-table .row-data:last-child {
+            
+            }
+            
+            .participants-table .row-data .column:first-child, .activities-table .row-data .column:first-child {  
+            border-left: 1px solid #eeeeee;
+            }
+            
+            .participants-table .row-data .column {
+            min-height: 50px;  
+            border-bottom: 1px solid #eeeeee;
+            overflow: hidden;
+            word-break: break-word;
+            }
+            
+            .activities-table .row-data .column {
+            min-height: 75px;  
+            border-bottom: 1px solid #eeeeee;
+            }
+            
+            .participants-table .row-header .column, .activities-table .row-header .column {
+            text-align: center; 
+            background: #b2b2b2;
+            padding: 0;
+            margin: 0;
+            font-weight: bold;
+            /*border: 1px solid black;*/
+            }
+            
+            .participants-table .row-header .column p, .activities-table .row-header .column p {
+            margin: 0;
+            padding: 0;
+            }
+            
+            .participants-table .row-data .column p, .activities-table .row-data .column p { 
+            padding: 0 0 0 5px; 
+            text-overflow: ellipsis;
+            overflow: hidden;
+            word-wrap: break-word;
+            }
+            
+            /* ---Activities Table--- */
+            .activities-table .row {
+            width: 100%; 
+            }
+            
+            /* ---Footer--- */
+            .footer {
+            clear: left;
+            width: 100%;
+            }
+            
+            .footer h6 {
+            font-size: 10px;
+            font-weight: 400;
+            }
+        </style>
+    </head>
+    <div class="page-header">Service Request</div>
+    <div id="header">
+        <div class="sub-heading">Nature of Request</div>
+        <div class="row">
+            <p class="row-title">Service Request Type: </p>
+            <p class="row-value">{!case.Incap311__Service_Type_Version__r.Incap311__Service_Name__c}; Case #: {!case.Incap311__Service_Request_Number__c}</p>
+        </div>
+        <div class="row">
+            <p class="row-title">Referred to: </p>
+            <p class="row-value">{!case.Incap311__Service_Type_Version__r.Incap311__Version_Code__c} (<a href="mailto:{!case.CreatedBy.Email}">{!case.CreatedBy.Email}</a>)</p>
+        </div>
+        <div class="row">
+            <p class="row-title">Description: </p>
+            <p class="row-value">{!case.Description}</p>
+        </div>
+        <div class="row">
+            <p class="row-title">Case Created By: </p>
+            <p class="row-value">{!case.CreatedBy.Name}</p>
+        </div>
+    </div>
+    <div id="header">
+        <div class="sub-heading" style="text-decoration: underline">Location of Request</div>
+        <div class="row">
+            <p class="row-title">Address/Intersection: </p>
+            <p class="row-value">{!case.Incap311__Address__c}</p>
+        </div>
+        <div class="row">
+            <p class="row-title">Address Location: </p>
+            <p class="row-value">{!case.Incap311__Location_Details__c}</p>
+        </div>
+        <div class="left-col">
+           X Coordinate: {!case.Incap311__X_Coordinate__c}
+        </div>
+        <div class="right-col">
+           Y Coordinate: {!case.Incap311__Y_Coordinate__c}
+        </div>
+    </div>
+    
+    <div id="header">
+        <div class="sub-heading" style="text-decoration: underline">Case History</div>
+        <div class="body">
+            <apex:outputPanel styleClass="flex-note-table" layout="block">
+                <div class="table-header">
+                    <div class="table-header-container1">
+                        Agent 
+                    </div>
+                    <div class="table-header-container2">
+                        Event Description    
+                    </div>
+                    <div class="table-header-container1">
+                        Date
+                    </div>
+                </div>
+                
+                <apex:repeat value="{!caseHistory}" var="casHistory">
+                    <div class="question-container">
+                        <div class="question">
+                            {!casHistory.CreatedBy.LastName}, {!casHistory.CreatedBy.FirstName}
+                        </div>
+                        <div class="answer" >
+                            Changed {!casHistory.Field} from {!casHistory.OldValue} to {!casHistory.NewValue}
+                        </div>
+                        <div class="question">
+                            {!casHistory.CreatedDate}
+                        </div>
+                    </div>
+                </apex:repeat> 
+            </apex:outputPanel>
+        </div>
+    </div>
+    <div id="header">
+        <div class="participants-table panel-success">
+            <div class="sub-heading" style="text-decoration: underline">Contact Details</div>
+            <div class="row row-data">
+                <div class="left-col1"><p>Name: {!case.Contact.LastName} {!case.Contact.FirstName}</p></div>
+                <div class="mid-col1"><p>Phone: {!case.Contact.Phone}</p></div> 
+                <div class="left-col1"><p>Email: {!case.Contact.Email}</p></div>
+            </div>
+        </div>
+    </div>
+</apex:page>

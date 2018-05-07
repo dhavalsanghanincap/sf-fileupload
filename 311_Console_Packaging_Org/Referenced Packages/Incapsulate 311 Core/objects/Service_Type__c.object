@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>The basic service type object.  Contains more static data.  Data more likely to change over time is stored in Service Type Version Records.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Active_Service_Type_Version__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Active Service Type Version Id</label>
+        <lookupFilter>
+            <active>true</active>
+            <errorMessage>The active version must be marked as Is Active</errorMessage>
+            <filterItems>
+                <field>Service_Type_Version__c.Is_Activatable__c</field>
+                <operation>equals</operation>
+                <value>True</value>
+            </filterItems>
+            <filterItems>
+                <field>Service_Type_Version__c.Service_Type__c</field>
+                <operation>equals</operation>
+                <valueField>$Source.Id</valueField>
+            </filterItems>
+            <infoMessage>Manually updating the Active Version will not trigger updates to open Service Request activities. If you want activities to be updates as well, click the &quot;Activate&quot; button on the Service Type Version you wish to make active.</infoMessage>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Service_Type_Version__c</referenceTo>
+        <relationshipName>Service_Types</relationshipName>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Active_Version_Number__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>Active_Service_Type_Version__r.Version_Number__c</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Active Version Number</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Auto_Close_Days__c</fullName>
+        <defaultValue>0</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Number of days until a case with this type is auto closed.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Enter the number of days until a Service Request is auto closed.</inlineHelpText>
+        <label>Auto Close Days</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Auto_Close__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Boolean to auto close any cases associated with this service type.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check this is you wish to have all Service Requests under this type to auto close after a specified amount of days.</inlineHelpText>
+        <label>Auto Close</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Contact_Status__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Contact Status</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Available</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Not Visible</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Required (LN, FN, EM)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Daily_Request_Limit__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The number of Service Requests allowed per scheduled day for pickups. This is different from &quot;Items Limit&quot; in that it is the # of requests vs items on the trucks.</description>
+        <externalId>false</externalId>
+        <label>Daily Request Limit</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Enable_Scheduling_Hours__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This checkbox will determine if scheduling hours should be considered when applying for a new schedule on a type.</description>
+        <externalId>false</externalId>
+        <label>Enable Scheduling Hours</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>External_Description__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>External Description</label>
+        <length>100000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>External_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>External Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Is_Bulk_Type__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This checkbox determines if the service type is of a schedule type or not.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check this box if the current service type is meant to be flagged as a bulk collection type.</inlineHelpText>
+        <label>Is Schedule Type</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Item_Limit__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The number of items allowed per request made for a bulk item.</description>
+        <externalId>false</externalId>
+        <label>Item Limit</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Reset_SLA_on_Transfer__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Indicates the SLA should be restarted when a Service Request is transferred to this Service Type</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check to cause SLA to be recalculated when a Service Request is transferred</inlineHelpText>
+        <label>Reset SLA on Transfer?</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Schedulable_Requests_Limit_Month__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Schedulable Requests Limit/Month</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Schedulable_Requests_Limit_Year__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Schedulable Requests Limit/Year</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Schedule_After_Days__c</fullName>
+        <defaultValue>1</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Schedule After (Days)</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Schedule_Duplicate_Detection__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Schedule Duplicate Detection</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Schedule_Matching__c</fullName>
+        <deprecated>false</deprecated>
+        <description>This should be a json for matching layer information fields to specifics for the scheduling.</description>
+        <externalId>false</externalId>
+        <label>Schedule Matching</label>
+        <length>32768</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Schedule_Range__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Schedule range in days</description>
+        <externalId>false</externalId>
+        <label>Schedule Range</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Schedule_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The type of schedules available to process.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Description of types available for scheduled pickup: 
+Items - The number of items to pick up.
+Requests - The number of requests.</inlineHelpText>
+        <label>Schedule Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Items</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Requests</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Service_Description__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Description</label>
+        <length>100000</length>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>5</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Service_Location_Required__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Location Required</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Service_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Name</label>
+        <length>255</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Service_Type_Code__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Service Type Code</label>
+        <length>20</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Set_Expected_Date__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Enables capturing the scheduled date as the expected completion date for Service Requests of this type</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Check this box to capture the scheduled date as the expected completion date for Service Requests of this type</inlineHelpText>
+        <label>Set Expected Date</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Show_Schedule_Calendar__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Show Schedule Calendar</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>System_Generated__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>Service Request which would be generated by system only (automated process)</description>
+        <externalId>false</externalId>
+        <label>System Generated</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>Service Type</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Service_Name__c</columns>
+        <columns>Service_Type_Code__c</columns>
+        <columns>NAME</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>SRT-{00000000}</displayFormat>
+        <label>Service Type Id</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Service Types</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Service_Name__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Active_Service_Type_Version__c</customTabListAdditionalFields>
+        <lookupDialogsAdditionalFields>Service_Name__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Service_Type_Code__c</lookupDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Service_Name__c</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>Service_Type_Code__c</lookupPhoneDialogsAdditionalFields>
+        <searchResultsAdditionalFields>Service_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Service_Type_Code__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>No_Special_Chars_In_ST_Code</fullName>
+        <active>true</active>
+        <description>Validates for only alphanumeric, hyphen, and underscore in Service Type Code field</description>
+        <errorConditionFormula>NOT(REGEX(Service_Type_Code__c, &quot;[a-zA-Z0-9_-]+&quot;))</errorConditionFormula>
+        <errorDisplayField>Service_Type_Code__c</errorDisplayField>
+        <errorMessage>You must only use alphanumeric (a-z, 0-9), hyphen, or underscore in the Service Type Code field.</errorMessage>
+    </validationRules>
+    <webLinks>
+        <fullName>Configure_Reallocate_Queues</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Configure Reallocate Queues</masterLabel>
+        <openType>sidebar</openType>
+        <page>Service_Type_Reallocate_Config</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Configure_Transfer_Types</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Configure Transfer Types</masterLabel>
+        <openType>sidebar</openType>
+        <page>Base311_ServiceTypeTransferConfig</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>

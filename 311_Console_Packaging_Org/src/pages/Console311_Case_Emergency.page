@@ -1,0 +1,809 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false" docType="html-5.0" controller="Console311_CaseController">
+    <html lang="en" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <c:Console311_Header />
+            <apex:slds />
+        </head>
+          <style>
+            .slds .slds-section-title--divider {
+              margin-bottom: 10px !important;
+              color: #16325c !important;
+            }
+
+            .loading-spinner img {
+              position: fixed;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              margin: auto;
+            }
+          </style>
+        <body>
+            <!-- Action Functions -->
+            <apex:form >
+                <apex:actionFunction name="refreshFlexNotePanels" action="{!setServiceType}" reRender="flexNoteComponentContainer" oncomplete="console.log('Flexnote panels have been refreshed. Presenting questions...'); $('.loading-spinner').hide();">
+                    <apex:param name="activeServiceType" value="" />
+                </apex:actionFunction>
+
+                <apex:actionFunction name="StoreNumberOfBulkItems" action="{!storeNumberOfBulkItems}" reRender="refresh" oncomplete="validationAndProcessForm();">
+                    <apex:param name="numberOfBulkItemsToProcess" value="" />
+                </apex:actionFunction>
+
+                <apex:actionFunction name="saveCase" action="{!saveCase}" reRender="refresh_panel, onSaveScripts" oncomplete="verifyResultOfSave();">
+                    <apex:param name="caseJson" assignTo="{!mCaseJson}" value=""/>
+                </apex:actionFunction>  
+
+
+                <apex:actionFunction name="storeKnowledgeKeyword" action="{!refreshPanel}" reRender="locationMapContainer" onComplete="convertSVGtoInlineSVG();">
+                    <apex:param name="keyword" assignTo="{!mKnowledgeKeyword}" value="" />
+                </apex:actionFunction>
+
+                <apex:actionFunction name="storeFlexnoteAnswers" action="{!refreshFlexnotesWithAnswers}" rerender="flexNoteComponentContainer, duplicateScriptId" onComplete="$('.loading-spinner').hide()">
+                    <apex:param name="flexnoteAnswersJson" value="" />
+                </apex:actionFunction>      
+
+                <apex:actionFunction name="storeLocation" action="{!storeLocationInformation}" reRender="refresh_panel, duplicateComponentContainer, locationMapContainer,duplicateScriptId" onComplete="updateMapContent();">
+                    <apex:param name="addressStr" value=""/>
+                </apex:actionFunction> 
+
+                <apex:actionFunction name="fetchDisList" action="{!retrieveDistributionListFromDistrictWithLocation}" rerender="distributionComponentContainer" onComplete="console.log('----> Retrireved the distrubution list.');">
+                    <apex:param name="districtName" value="" />
+                </apex:actionFunction>
+
+                <apex:actionFunction name="feedContactInformationToPage" action="{!feedContactInformationToPage}" rerender="contactConponentContainer" onComplete="convertSVGtoInlineSVG();">
+                    <apex:param name="contactJson" value="" />
+                </apex:actionFunction>
+            </apex:form>
+
+            <!-- Loading Indicator -->
+            <div class="loading-spinner">
+                <img src="{!URLFOR($Resource.LightningDesign, 'assets/images/spinners/slds_spinner.gif')}" />
+            </div>
+
+            <!-- Generic Form Panel -->
+            <form id="generic-case-form" class="primary-form slds" data-parsley-validate="true">
+                <div class="slds-grid">
+                    <div class="slds-col slds-text-heading--medium" style="text-transform: capitalize;">
+                        Emergency Service Request
+                    </div>
+                </div>
+
+                <hr/>
+
+                <apex:outputPanel id="refresh_panel">
+                  <div class="errorContainer slds-size--1-of-1">
+                    <p class="errorMsg apex_error_message_container">{!mErrorMsg}</p>
+                  </div>
+                </apex:outputPanel>
+
+                <div class="case-record-types slds-grid">
+
+                    <apex:outputPanel id="serviceTypeContainer" layout="none">
+                        <apex:outputPanel styleClass="left-panel-container master-view slds-size--1-of-3" layout="block">
+                            <c:Console311_Section_ServiceType mServiceRequestItems="{!ServiceRequestItems}" />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+
+                    <div class="detail-view slds-col slds-size--2-of-3">
+
+                        <div class="slds-container">
+                            <h3 class="slds-section-title--divider slds-size--1-of-1">Service Type</h3>
+                            <div class="slds-form-element">
+                                <div class="slds-form-element__control">
+                                    <input id="search-input" class="slds-input" type="text" placeholder="Search Services.." value="{!mGenericSRType.Incap311__Service_Name__c  }" disabled="disabled" />
+                                    <input id="case-SLA__c" type="text" class="slds-input hiddenInput" name="c-SLA__c" value="{!mGenericSRType.Incap311__SLA__c}"/>
+                                    <input id="case-Service_Type_Version__c" type="text" class="slds-input hiddenInput" name="c-Service_Type_Version__c" value="{!mGenericSRType.Id}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="details-view-form" style="visibility: visible">
+
+                            <c:Console311_Section_Location mLocation="{! mLocation }" mSubLocation="{! mSubLocation }" showSubUnit="{! showSubUnit }"
+                               mAddress="{!mLocation.address}" mZipcode="{!mLocation.zipcode}" mNeighbourhood="{!mLocation.neighbourhood}"
+                               mLayers="{! CaseLayers}" mpageLayout="{!pageLayout}" mLocationDetails="{!InprogressCase.Incap311__Location_Details__c}" mServiceTypeId="{! mActiveTypeVersion.Id }"/>
+
+                            <apex:outputPanel id="infoComponentContainer">
+                                <c:Console311_Section_Information mStatusOptions="{!StatusOptions}" mOriginOptions="{!OriginOptions}" mDefaultStatusByType="{!mTypeActiveStatus}" mOrigin="{!mActiveOrigin}"/>
+                            </apex:outputPanel>
+
+
+                            <apex:outputPanel id="flexNoteComponentContainer">
+                                <apex:outputPanel layout="none" rendered="{!IsActiveSerivceTypeSet}">
+                                    <!-- Flexnote component goes here.-->
+                                   <c:Console311_Section_FlexNoteV2 mFlexnotesList="{!mFNQuestionAnswerList}"/>              
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+
+                            <apex:outputPanel id="descriptionComponentContainer">
+                                <c:Console311_Section_Description mDescription="{!mSavedCase.Description}"/>
+                            </apex:outputPanel>
+
+                            <apex:outputPanel id="distributionComponentContainer">
+                                <c:Console311_Section_DistributionList mDistributionList="{!mDistributionListStr}" mCoordinatorList="{!mCordinatorListStr}"/>
+                            </apex:outputPanel>
+
+                            <apex:outputPanel id="contactConponentContainer">
+
+                                  <c:Console311_Section_Contact contact="{!mContactToPass}" mAFContactComponentFunc="feedContactInformationToPage" mContactLayoutConfigs="{!ContactConfigs}"/>
+                            </apex:outputPanel>
+
+                            <div class="details-button-container slds-container">
+                                <div class="slds-button-group demo-space" role="group">
+                                    <button class="slds-button slds-button--neutral" type="button" onclick="cancel()">Cancel</button>
+                                    <apex:outputpanel id="save-button-refresh">
+                                        <button class="slds-button slds-button--brand slds-button--last" onclick="if(confirmDuplicate()){/*validationAndProcessForm();*/ saveNumOfBulkItems();}" type="button">Save</button>
+                                    </apex:outputpanel>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <apex:outputpanel id="locationMapContainer" layout="block" styleclass="slds-col slds-grid-vertical slds-wrap slds-size--1-of-3 ">
+                        <div class="slds-col slds-size--1-of-1 knowledge-container-root">
+                            <c:Console311_Section_Knowledge mKnowledgeKeyword="{!mGenericSRType.Incap311__Service_Name__c}" mAfRefreshComponentFunc="storeKnowledgeKeyword"/>
+                        </div>
+
+                        <div class="slds-col slds-size--1-of-1 map-container-root">
+                            <c:Console311_Section_ESRI centerLat="{! mapCenterLatitude }"
+                                                       centerLng="{! mapCenterLongitude }"
+                                                       defaultZoom="{! mapZoom }"
+                                                       currentCase="{! inprogressCase }" 
+                                                       arcgisLayers="{! mapLayers }"
+                                                       onSelectAddress="updateCurrentLocation"/>
+                        </div>
+                    </apex:outputpanel>
+
+
+                </div>
+
+            </form>
+
+            <c:Console311_Scripts datatableenabled="false" datatablesettings=""/>
+
+            <script>
+                // Variable Initials.
+                var $ = jQuery;
+                var addressLookup = {};
+                var isSubmitted = false;
+
+                $(window).load(function() {
+                  autocompleteSelect(null, null);
+                });
+
+                $("#contact-phone").mask("(999) 999-9999");
+
+                // Initial Parsley Form.
+                var form = $('.primary-form').parsley({
+                    errorsWrapper: '<div class="parsley-errors-list"></div>',
+                    errorTemplate: '<p class="errorMsg"></p>'
+                });
+                // Auto complete select function for Service Type.
+                var autocompleteSelect = function (event, ui) {
+                    
+                        $('.master-view').show();
+                        $('.details-view-form').css('visibility', 'visible');
+                        $('.service-type-description.active').removeClass('active');
+                        var typeDescriptionView = $(".service-type-description[data-type-description-name='{!mGenericSRType.Incap311__Service_Name__c  }']");
+                        typeDescriptionView.addClass('active');
+                        $('#case-Service_Type_Version__c').val(typeDescriptionView.data('typeDescriptionName'));
+                        $('#case-SLA__c').val(typeDescriptionView.data('sla'));
+                        $('.flexNoteQuestionContainer').html(' ');
+                        $('#flexnotes-loading').show();
+
+                        var addressRequiredForType = typeDescriptionView.data('addressrequired');
+                        $('#case-address-street').attr('data-parsley-required', addressRequiredForType);
+                        $('.case-address-street-label').css('display', addressRequiredForType
+                                                            ? 'inline-block'
+                                                            : 'none');
+
+                        // Verify the contact information to validate if type requires contact information.
+                        var contactRequired = typeDescriptionView.data('contactstatus') == 'Required (LN, FN, EM)' ? true : false;
+                        var contactHidden = typeDescriptionView.data('contactstatus') == 'Not Visible' ? 'none' : 'block';
+                        $('.primary-form').parsley().destroy();
+                        $('#contact-first-name').attr('data-parsley-required', contactRequired);
+                        $('#contact-last-name').attr('data-parsley-required', contactRequired);
+                        $('#contact-email').attr('data-parsley-required', contactRequired);
+                        // Show the error asterisk if fields are now required.
+                        $('.contact-error-star').css('display', (contactRequired ? 'inline' : 'none'));
+                        // Check if the contact view should even be shown.
+                        $('.details-contact-container').css('display', contactHidden);           
+
+                        form = $(".primary-form").parsley({errorsWrapper: '<div class="parsley-errors-list"></div>', errorTemplate: '<p class="errorMsg"></p>'});
+                        // Get flexnotes for type. getFlexnotes(typeDescriptionView.data('id'));
+
+                        //if ("{config.Value__c}") {
+                        $('[id*=locationMapContainer]').removeClass('slds-hide');
+                        storeKnowledgeKeyword(typeDescriptionView.data('typeDescriptionName'));
+                        //}
+                        console.log('----> typeDescriptionView.data(service-code): ' + typeDescriptionView.data('service-code'))
+                        //setServiceTypeName(typeDescriptionView.data('service-code'));
+                        refreshFlexNotePanels(typeDescriptionView.data('service-code'));
+                    
+                };
+                
+                // Addess autocomplete from MAR.
+                var queryTerm5;
+                $('#case-address-street').autocomplete({
+                    source: function( request, response ) {
+                        queryTerm5 = request.term;  
+                        $("#case-address-street-loading").addClass('active');
+
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.Console311_CaseController.getAddressAutocomplete}', 
+                            request.term, 
+                            function(result, event){
+                                if (event.status) {
+                                    if (typeof result != "undefined" && result != null) {
+                                        for (z = 0; z < result.length; z++) {
+                                            addressLookup[result[z].address] = result[z];
+                                        }
+                                    }
+                                    $("#case-address-street-loading").removeClass('active');
+                                    response(result);
+                                    console.log(result);
+                                } else if (event.type === 'exception') {
+                                    console.log('Exception: ' + event.message);
+                                } else {
+                                    console.log('Error: ' + event.message);
+                                }
+                            },{escape: true}
+                        );
+                    },
+                    select: function(event, ui) {
+                        event.preventDefault();
+                        $('#case-address-street').val(getFinalAddressValue(ui.item));
+                        var addressQueryStr = getFinalAddressValue(ui.item);
+
+                        // Check for interstate. If it is one then trim the first bit so the API returns the proper object.  
+                        if (addressQueryStr.includes("INTERSTATE")) {
+                            addressQueryStr = addressQueryStr.substring(addressQueryStr.indexOf("INTERSTATE"));
+                        }
+                        storeLocation(addressQueryStr);
+                        //forwardDistrictToController();
+                    }
+                }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                    var aliasFulladdrss = getFinalAddressValue(item);
+                    var entry = "<a>" + aliasFulladdrss;
+                    entry = entry + "</a>";
+                    entry = entry.replace(queryTerm5, "<b>" + queryTerm5 + "</b>");
+
+                    return $( "<li></li>" )
+                        .data( "item.autocomplete", item )
+                        .append( entry )
+                        .appendTo( ul );
+
+                };
+
+                // Case Parent lookup popup call.
+                $('#case-parent-lookup').on('click', function () {
+                    var lookupWindow = null;
+
+                    // TODO: Implement the popup in another story.
+                    //lookupWindow = window.open('/apex/Console311_Lookup?sobject=Case&sortfield=Service_Request_Number__c', 'Lookup', 'height=500,width=500');
+
+                    alert('Feature coming soon');
+                });
+
+                // Toggle Dropdowns.
+                $(".case-record-types").on('click', '.slds-picklist__label', function (e) { 
+                    e.preventDefault();
+                    toggleDropdown(this);
+                });
+                // Toggle Dropdowns.
+                $(".case-record-types").on("mousedown", '.slds-dropdown ul li', function (e) {
+                    var menuItem = $(this);
+                    var buttonTxt = menuItem.children('a').text();
+                    e.preventDefault();
+
+                    menuItem.parents('.slds-picklist').find('.slds-picklist__label span').text(buttonTxt);
+                    toggleDropdownAdv(menuItem.parents('.slds-picklist').find('.slds-picklist__label'), 'selected');
+                    setDropdownInputValue(menuItem);
+                });
+
+                $(".slds-button-type-selection").on("click", function () {
+                    // Get details of service request type and present in the detail flow.
+                    $('.detail-view').css('visibility', 'visible');
+                });
+
+                // On click of a flex note selection add the attribute to the hidden input.
+                $('body').on('click', '.flexNoteQuestionContainer .slds-dropdown ul li', function () {
+                    //setDropdownInputValue($(this));
+                });
+
+                // This on click function will trigger when an entry in a flexnote multil list is selected.
+                $("body").on("click", ".flexNoteQuestionContainer .slds-row-select .slds-checkbox--faux", function () {
+                    // Grab all selected checkboxes and their values. Add the values to the input in a comma seperated string.
+                });
+ 
+                /*----------------------------Functions-------------------------------*/
+
+                function getFinalAddressValue(item) {
+                    var aliasFulladdress;
+
+                    if (item.address != null && item.zipCode != null) {
+                        aliasFulladdress = item.address;
+                    }
+
+                    if (item.address == null && item.zipCode == null) {
+                        aliasFulladdress = item.intersection;
+                    }
+
+                    if (item.aliasName != null && item.zipCode != null) {
+                        aliasFulladdress = item.aliasName;
+                    }
+
+                    if (item.intersection != null && item.intersectionId != null) {
+                        aliasFulladdress = item.intersection;
+                    }
+
+                    if (item.block != null && item.blockName != null) {
+                        aliasFulladdress = item.blockName;
+                    }
+                    return aliasFulladdress;
+                }
+
+                function toggleDropdownAdv(ele, type) {
+                    if (type === 'selected') {
+                        var btn = $(ele);
+                        var dropdown = btn.parent().children('.slds-dropdown');
+
+                        btn.parent().attr('aria-expanded', !btn.parent().attr('aria-expanded'));
+                        dropdown.toggleClass('slds-hide');
+
+                        if (dropdown.hasClass('active')) {
+                            dropdown.removeClass('active');
+                        } else {
+                            $('.slds-dropdown.active').addClass('slds-hide');
+                            $('.slds-dropdown.active').removeClass('active');
+
+                            dropdown.addClass('active');
+                        }
+                    } else {
+                        $('.slds-dropdown.active').addClass('slds-hide');
+                        $('.slds-dropdown.active').removeClass('active');
+                    }
+                }
+
+                /*
+         * ToggleDropdown
+         *
+         * This function will show and hide a dropdown that is passed in.
+         * @author Darkis
+         */
+                function toggleDropdown(ele) {
+                    var btn = $(ele);
+                    var dropdown = btn.parent().children('.slds-dropdown');
+
+                    btn.parent().attr('aria-expanded', !btn.parent().attr('aria-expanded'));
+                    dropdown.toggleClass('slds-hide');
+
+                    if (dropdown.hasClass('active')) {
+                        dropdown.removeClass('active');
+                    } else {
+                        $('.slds-dropdown.active').addClass('slds-hide');
+                        $('.slds-dropdown.active').removeClass('active');
+
+                        dropdown.addClass('active');
+                    }
+                };
+
+                // Search for tree inputs.
+                $('#search-input').keyup(function () {
+                    // get the value from text field
+                    var input = $(this).val().toLowerCase();
+                    // by default all services will be shown
+                    $(".slds-tree").show();
+                    // Non related services will be hidden after input
+                    $(".slds-tree").not("[data-service*=" + input + "]").hide();
+                });
+                // Function to update the map with the given coords.
+                var updateMapContent = function () {
+                    $('[id*=locationMapContainer]').removeClass('slds-hide');
+                    var addressInfo = addressLookup[$('#case-address-street').val()];
+                    // Change the zipcode field.
+                    $('#case-address-zipcode').html(addressInfo.zipCode);
+                    $('#case-address-zipcode-input').val(addressInfo.zipCode);
+                    // Change the neighbourhood.
+                    $('#case-address-neighbourhood').html(addressInfo.neighbourhood);
+                    $('#case-address-neighbourhood-input').val(addressInfo.neighbourhood);
+                }
+                // Callback function for lookup popups.
+                var handleParentLookup = function (objType, resultId, resultName) {
+                    var inputEle;
+
+                    if (objType == 'Case') {
+                        inputEle = $('#case-parent');
+                        inputEle.val(resultName);
+                        inputEle.data('id', resultId);
+                    } else {
+                        // Set the inputs return value.
+                        inputEle = $('#contact-contact-id');
+                        inputEle.val(resultId);
+                        inputEle.data('id', resultId);
+                    }
+                }
+
+                function setDropdownInputValue(ele) {
+                    console.log(ele);
+                    var value = ele.children('a').html();
+
+                    if (ele.data('state')) {
+                        value = ele.children('.slds-lookup__result-text').data('value');
+                    }
+
+                    value = value == '--None--'
+                        ? ''
+                    : value;
+
+                    var childEle = ele.parent().parent().parent().children('.picklist-input');
+
+                    childEle.val(value);
+                    childEle.trigger('change');
+
+                    if (isSubmitted) {
+                        form.validate();
+                    }
+                }
+
+                var transferBackButtonFunc = function() {
+                    if(!sforce.console.isInConsole()) { 
+                        window.history.back() 
+                    } else {
+                        sforce.console.getEnclosingTabId(function(result) {
+                            sforce.console.closeTab(result.id);
+                        });
+                    }
+                }
+
+                function saveNumOfBulkItems() {
+                    var bulkNumberInputs = $("input[data-datatype='Number']");
+                    var numOfItems = 0;
+
+                    for (var i = 0; i < bulkNumberInputs.length; i++) {
+                        numOfItems += parseInt($(bulkNumberInputs[i]).val());
+                    }
+                    StoreNumberOfBulkItems(numOfItems);
+                }
+
+                function validationAndProcessForm(duplicatesAvailable) {
+                    $('.loading-spinner').show();
+                    isSubmitted = true;
+                    console.log(form);
+
+                    if (form.validate()) {
+                        console.log("Form is valid");
+                        //data = {  case: {type: '', latitude: '', longitude: '', ...},  flexnotes: {...},  contact: {firstName: '', lastName: '', ...} }
+                        var formData = buildFormJson();
+                        // Verify there is a contact. If not then remove the country reference.
+                        if (!formData.contact.hasOwnProperty('FirstName') && !formData.contact.hasOwnProperty('ContactId')) {
+                            delete formData.contact.MailingCountryCode;
+                        }
+                        // TODO: Remove and re-add with proper custom field once added.
+                        if (formData.c.hasOwnProperty('DistributionList')) {
+                            delete formData.c.DistributionList;
+                        }
+
+                        saveCase(JSON.stringify(formData));
+                    } else {
+                        $('.loading-spinner').hide();
+                    }
+                }
+
+                $('body').on('change', '.answer-container input, .answer-container textarea, .answer-container .slds-dropdown__list li .picklist-input', function(e) {
+                    if ($(this).data('is-controlling')) {
+                        refreshFlexNotes()
+                    }                    
+                });
+
+                var refreshFlexNotes = function(){
+                    console.log('----> This element is controlling! Refreshing flexnotes...');
+                    // Call to refresh the flexnotes section based off the current form json.
+                    $('.loading-spinner').show();
+                    var json = JSON.stringify(buildFormJson());
+                    //console.log(json);
+                    storeFlexnoteAnswers(json);        
+                } 
+
+                var buildFormJson = function() {
+                    // Destroy and recreate the form to ensure that all validation and fields are present.
+                    $('.primary-form').parsley().destroy();
+                    $('.primary-form').parsley();
+
+                    var formData = {
+                        "c": {},
+                        "serviceQuestions": [],
+                        "contact": {},
+                        "shouldSetDupe": (typeof(window.shouldSetDupe) === 'undefined' ? true : window.shouldSetDupe),
+                        "schedule": {},
+                        "ai": {}
+                    };
+                    var formsCollection = document.forms;
+                    //console.log(formsCollection);
+                    for(var x=0;x<formsCollection.length;x++)
+                    {
+                        if(formsCollection[x] != null && formsCollection[x].elements != null){
+                            for (i = 0; i < formsCollection[x].elements.length; i++) {
+                                var fieldName = formsCollection[x].elements[i].name;
+                                var value = formsCollection[x].elements[i].value;
+                                var datatype = formsCollection[x].elements[i].dataset['datatype'];
+
+                                // Split the field name so we know what the value applies to.
+                                var fieldObj = fieldName.substr(0, fieldName.indexOf('-'));
+                                var nameWithoutObject = fieldName.substr(fieldName.indexOf('-') + 1);
+                                //console.log(fieldName+' '+value+' '+fieldObj+' '+nameWithoutObject);
+
+                                if (typeof value != "undefined" && value) {
+                                    if (typeof fieldObj != "undefined" && fieldObj && typeof nameWithoutObject != "undefined" && nameWithoutObject) {
+                                        if (fieldObj == 'serviceQuestions') {
+                                            var flexNote = {};
+
+                                            // Validate if the current value is a json object or array.
+                                            try {
+                                                value = JSON.parse(value);
+                                            } catch (e) {
+
+                                            }
+
+                                            if (isArray(value)) {
+                                                flexNote['Incap311__Answer__c'] = '';
+                                                for (var z = 0; z < value.length; z++) {
+                                                    flexNote['Incap311__Answer__c'] += value[z];
+
+
+                                                    if (z != value.length) {
+                                                        flexNote['Incap311__Answer__c'] += ',';
+                                                    }
+                                                }
+                                            } else {
+                                                if (datatype && datatype == 'Boolean (checkbox)') {
+                                                    flexNote['Incap311__Answer__c'] = formsCollection[x].elements[i].checked;
+                                                } else {
+                                                    flexNote['Incap311__Answer__c'] = value;
+                                                }
+                                            }
+                                            flexNote['Incap311__Service_Type_Version_Question__c'] = formsCollection[x].elements[i].dataset.serviceTypeVersionQuestionId;
+
+                                            var serviceQuestionWrapperObj = {
+                                                "mSRTypeVQuestionName": formsCollection[x].elements[i].dataset.serviceTypeVersionQuestionName,
+                                                "question": flexNote,
+                                                "mDataType": datatype
+                                            }; 
+
+                                            // Add flexnote obj to flexnotes array.
+                                            formData[fieldObj].push(flexNote);
+                                            formData[fieldObj].push(serviceQuestionWrapperObj);
+                                        } else if (fieldObj == 'c') {
+                                            if ( fieldName.indexOf('address') <= -1) {
+                                                formData[fieldObj][nameWithoutObject] = value;
+                                            }
+                                        } else {
+                                            formData[fieldObj][nameWithoutObject] = value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return formData;
+                }
+
+                /**
+        * isArray
+        *
+        * @description A function to verify if the current value is an array or not.
+        * @author Darkis
+        * @param {object} subject is the variable that is tested for Array identity check
+        */
+                var isArray = (function () {
+                    // Use compiler's own isArray when available
+                    if (Array.isArray) {
+                        return Array.isArray;
+                    }
+                    // Retain references to variables for performance optimization
+                    var objectToStringFn = Object.prototype.toString;
+                    var arrayToStringResult = objectToStringFn.call([]);
+
+                    return function (subject) {
+                        return objectToStringFn.call(subject) === arrayToStringResult;
+                    };
+                }());
+            </script>
+
+            <apex:outputpanel id="convertSvg">
+                <script>
+                    /*
+           * Replace all SVG images with inline SVG
+           */
+                    var convertSVGtoInlineSVG = function () {
+                        jQuery('img.svg').each(function () {
+                            var $img = jQuery(this);
+                            var imgID = $img.attr('id');
+                            var imgClass = $img.attr('class');
+                            var imgURL = $img.attr('src');
+                            var imgClickEvent = $img.attr('onclick');
+
+                            jQuery.get(imgURL, function (data) {
+                                // Get the SVG tag, ignore the rest
+                                var $svg = jQuery(data).find('svg');
+
+                                // Add replaced image's ID to the new SVG
+                                if (typeof imgID !== 'undefined') {
+                                    $svg = $svg.attr('id', imgID);
+                                }
+                                // Add replaced image's classes to the new SVG
+                                if (typeof imgClass !== 'undefined') {
+                                    $svg = $svg.attr('class', imgClass + ' replaced-svg');
+                                }
+
+                                if (typeof imgClickEvent !== 'undefined') {
+                                    $svg = $svg.attr('onclick', imgClickEvent);
+                                }
+
+                                // Remove any invalid XML tags as per http://validator.w3.org
+                                $svg = $svg.removeAttr('xmlns:a');
+                                $svg = $svg.attr('height', '1.25rem');
+                                $svg = $svg.attr('width', '1.25rem');
+
+                                // Replace image with new SVG
+                                $img.replaceWith($svg);
+                            }, 'xml');
+                        });
+                    }
+                    convertSVGtoInlineSVG();
+                </script>
+            </apex:outputpanel>
+
+            <apex:outputpanel id="duplicateScriptId">
+                <script>
+                    function confirmDuplicate() {
+                        // Check for duplicates using the apex value.
+                        var duplicatesAvailable = {!DuplicatesAvailable};
+                        console.log(duplicatesAvailable);
+
+                        if (duplicatesAvailable) {
+                            var selectEle = $(".picklist-input-status");
+                            // Filter to check for an select option that contains duplicate and open.
+                            var result = $(".picklist-status-list li").filter(function(i, e) {
+                                var option = $(e);
+                                var duplicateOption = option.text().match(/Duplicate/i);
+                                // If the option has the word duplicate in it.
+                                if (typeof duplicateOption != undefined && duplicateOption != null) {
+                                    var matched;
+                                    if ($(".picklist-input-status").val().match(/close/i) != null) {
+                                        matched = option.text().match(/close/i);
+                                    } else {
+                                        matched = option.text().match(/open/i);
+                                    }
+                                    // If the duplicate option has
+                                    if (typeof matched != 'undefined' && matched != null) {
+                                        return option;
+                                    }
+                                }
+                                return null;
+                            });
+                            // If the result is available then use it.
+                            if (typeof result != 'undefined' && result != null && result.length > 0) {
+                                selectEle.val($(result).text());
+                            }
+                            // Show a confirm box to ensure the user wants to save the duplicate value.
+                            if(!confirm('Duplicate records have been detected at this address. Are you sure you would like to save this record?')){
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                </script>
+            </apex:outputpanel>
+
+            <apex:outputpanel id="onSaveScripts">
+                <script>
+                    function verifyResultOfSave() {
+                        console.log('----> Returned from Save. Checking for ID and error messages...');
+                        var caseId = '{!mSavedCase.Id}';
+                        var errorMsg = '{!mErrorMsg}';
+                        console.log('----> Case Id: [{!mSavedCase.Id}] and Error Message: {!mErrorMsg}');
+
+                        if (typeof caseId != "undefined" && caseId != null && errorMsg == '') {
+                            $('.apex_error_message_container').html(' ');
+                            openNewTab();
+                        } else {
+                            console.log('----> Error found: ' + errorMsg);
+                            $('.apex_error_message_container').html(errorMsg);
+                            $('.loading-spinner').hide();
+
+                            if (errorMsg.indexOf('address') !== -1) {              
+                                //$('#case-address-street').val('');
+                                $('html, body, #case-address-street').animate({scrollTop:0},500);
+                            } else {
+                                $('html, body').animate({scrollTop:0},500);
+                            }
+                            form.validate();
+                        }
+                    }
+
+                    var closeTab = function closeTab() {
+                        //First find the ID of the current tab to close it
+                        sforce.console.getEnclosingTabId(closeSubtab);
+                    }
+
+                    var closeSubtab = function closeSubtab(result) {
+                        //Now that we have the tab ID, we can close it
+                        var tabId = result.id;
+                        // If the tab has no id and success is false then we're on the navigation tab.
+                        if (typeof tabId != "undefined" && tabId != "null") {
+                            sforce.console.getEnclosingPrimaryTabId(function (primaryTabRes) {
+                                sforce.console.refreshPrimaryTabById(primaryTabRes.id, true);
+                            sforce.console.closeTab(tabId);
+                            });
+                        } else {
+                            sforce.console.refreshNavigationTab(null);
+                        }
+                    };
+
+                    var openNewTab = function openNewTab() {
+                        var caseId = '{!mSavedCase.Id}';
+                        var caseNum = '{!mSavedCase.Incap311__Service_Request_Number__c}';
+                        sforce.console.openPrimaryTab(null, '/' + caseId, true, 'SR #: ' + caseNum, closeTab);
+                    }
+                </script>
+            </apex:outputpanel>
+
+            <script>
+                $('body').on('click', '.question-container[data-order=1] .answer-container .slds-dropdown ul li', function() {
+                    var ddInputVal = $(this).parents('.slds-dropdown-trigger').find('.picklist-input').val();
+                    fetchDisList(ddInputVal);
+                });
+
+
+
+                $('.master-view').show();
+                $('.details-view-form').css('visibility', 'visible');
+                $('.service-type-description.active').removeClass('active');
+                var typeDescriptionView = $(".service-type-description[data-type-description-name='Generic']");
+                typeDescriptionView.addClass('active');
+                $('#case-Service_Type_Version__c').val(typeDescriptionView.data('typeDescriptionName'));
+                $('#case-SLA__c').val(typeDescriptionView.data('sla'));
+                $('.flexNoteQuestionContainer').html(' ');
+            </script>
+
+            <script>$('.loading-spinner').show(); refreshFlexNotePanels('{!mGenericSRType.Name}');</script>
+
+
+
+
+            <script>
+                function cancel() {        
+                    var redirectUrl = '/apex/Incap311Console__Console311_Case';
+
+                    if (sforce.console.isInConsole()) {
+                        sforce.console.openPrimaryTab(null, redirectUrl, true, 'New Case Creation', closeTab);
+                    } else {
+                        window.location.href = redirectUrl;
+                    }
+                }
+
+                var closeTab = function closeTab() {
+                    //First find the ID of the current tab to close it
+                    sforce.console.getEnclosingTabId(closeSubtab);
+                }
+ 
+            if({! IF(mAction == 'edit', 'true', 'false') }) {
+              $('.master-view').show();
+              $('.details-view-form').css('visibility', 'visible');
+                console.log('test');
+              fetchDisList($('.question-container[data-order=1] .answer-container .slds-dropdown ul li').parents('.slds-dropdown-trigger').find('.picklist-input').val());
+            }
+                
+                var addressRequiredForType = typeDescriptionView.data('addressrequired');
+                        $('#case-address-street').attr('data-parsley-required', addressRequiredForType);
+                        $('.case-address-street-label').css('display', addressRequiredForType
+                                                            ? 'inline-block'
+                                                            : 'none');
+                $('.service-type-description').show();
+            </script>
+        </body>
+    </html>
+</apex:page>

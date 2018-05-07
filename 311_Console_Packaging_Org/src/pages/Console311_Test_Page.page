@@ -1,0 +1,22 @@
+<apex:page extensions="Console_Test" standardController="Incap311__Activity__c" showHeader="false" sidebar="false" docType="html-5.0" standardStylesheets="false">
+    <script>
+        function toggleConsole() {
+            var ele = document.getElementById('console-container');
+            var current = ele.style.display;
+            
+            if(current == 'block') {
+                ele.style.display = 'none';
+            } else {
+                ele.style.display = 'block';
+            }
+        }
+    </script>
+    
+    <apex:form >
+        <button id="show-console" type="button" onClick="toggleConsole()">Show Console</button>
+    </apex:form>
+    <div id="console-container" style="display:none">
+        <c:Console311_Section_Console />
+    </div>
+    
+</apex:page>

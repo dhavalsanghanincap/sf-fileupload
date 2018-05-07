@@ -1,0 +1,83 @@
+<apex:component controller="Console311_Controller_AlertValidation">
+    <apex:attribute name="serviceTypeVersion" assignTo="{! mServiceTypeVersion }" type="Incap311__Service_Type_Version__c" description="The service type version to run validations against" />
+    <apex:attribute name="context" assignTo="{! mContext }" type="Object" description="The context of the request; a Map from code => key" />
+    
+    <style>
+        .duplicate-requests-container {
+            max-height: 400px;
+            overflow-y: scroll;
+            display: block;
+            position: relative;
+        }
+        
+        .slds-section-title--divider {
+            margin-bottom: 10px;
+        }
+        
+        .card-sub-label { 
+            display: block;
+            padding: 1px 10px;
+        }
+        
+        .dupe-card-icon.svg path {
+            fill: #ffffff;
+        }
+        
+        .dupe-container {
+            margin: 10px 0px 15px 0px;
+        }
+        
+        .dupe-container .slds-text-title--caps {
+            margin-bottom: 3px;
+        }
+        
+        .dupe-icon-container {
+            padding-left: 7px;
+            padding-top: 7px;
+        }
+        
+        .slds .slds-card+.slds-card {
+            margin-top: 0.5rem;  
+        }
+        
+         .slds-modal__header .dupe-card-icon.svg path {
+            fill: rgba(0, 0, 0, 0.6);
+        }
+        
+        .card-sub-label-case-num {
+            font-size: .875rem;
+            text-decoration: none;
+            color: #16325c;
+        }
+    </style>
+
+    <apex:outputPanel style="block" styleClass="slds-col" rendered="{! AlertValidationMessage != null && AlertValidationMessage.size > 0 }">
+        <div class="validation-alerts-modal">
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <div role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        
+                        <h2 id="header43" class="slds-text-heading--medium">Alert <button type="button" class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onClick="$('.validation-alerts-modal').addClass('slds-hide')">
+                            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/action/close.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                            <span class="slds-assistive-text">Close</span>
+                        </button></h2>
+                    </div>
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <p>
+                            <apex:repeat value="{! AlertValidationMessage }" var="msg" >
+                                <div>{! msg.message }</div>
+                                
+                                <script>
+                                    if(!{! IF(msg.reportOnly == null, false, msg.reportOnly) }) {
+                                        disableSaveButton();
+                                    }
+                                </script>
+                            </apex:repeat>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:outputPanel>
+</apex:component>

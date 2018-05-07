@@ -1,0 +1,18 @@
+<aura:component controller="Incap311.Base311_Webservices"  
+                access="global"
+                implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction">
+	<aura:attribute name="recordId" type="String" />
+	<aura:attribute name="recordName" type="String" />
+	
+   <div class="slds-form--stacked">
+      <label class="slds-form-element__label" for="instructMsg">
+          You are about to make {! v.recordName } the active Service Type Version. 
+          This will close all Service Activities assigned to Open Cases associated to this Service Type, and create new Activities for this version. 
+          Do you want to continue?
+       </label>
+      <br/>
+      <div class="centered">
+         <ui:button class="slds-button slds-button--brand" label="Make Active" press="{!c.makeActive}"/>
+      </div>
+   </div>
+</aura:component>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalPicklist xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Mirrors Case Reason</description>
+    <globalPicklistValues>
+        <fullName>Resolved</fullName>
+        <default>false</default>
+    </globalPicklistValues>
+    <globalPicklistValues>
+        <fullName>Voided</fullName>
+        <default>false</default>
+    </globalPicklistValues>
+    <masterLabel>Service Reason</masterLabel>
+    <sorted>false</sorted>
+</GlobalPicklist>

@@ -1,0 +1,122 @@
+<apex:component controller="Console311_Section_DistributionCtrl">
+  <apex:attribute name="srtypeCode" assignTo="{!mSrTypeCode}" description="The SR Type Code for the available distribution." type="String"/>
+  <apex:attribute name="afFetchDist" description="The name of the action function from the page controller to call on dist selection." type="String" />
+  <apex:attribute name="selectedDistPicklistValue" assignTo="{!mDistPicklistSelected}" description="The selected value from the picklist." type="String" />
+  <apex:attribute name="mDistributionList" type="String" required="true" description="List of email addreses that will receive the distribution." /> 
+  <apex:attribute name="mCoordinatorList" type="String" required="true" description="Current coordinator." /> 
+  <apex:attribute name="mEditMode" type="Boolean" description="What mode the SR step is in." default="false" />
+
+  <style>
+    .dist-information-container {
+      margin: 0;
+    }
+  </style>
+
+  <apex:form >
+    <div class="slds slds-scope slds-grid slds-wrap" style="padding: 0px 10px 0px 5px;">
+      <div class="slds-form-element picklist picklist-dist slds-col slds-size--1-of-1 slds-medium-size--1-of-1">
+          <h4 class="slds-text-title--caps" id="treeheading">
+            <span class="slds-icon_container">
+              <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/info.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+            </span>
+            Refer To
+          </h4>
+
+          <div aria-expanded="true" class="slds-picklist" style="padding: 5px;">
+            <label class="slds-form-element__label slds-picklist__label--full" for="refer-to">Distribution(s)</label>
+
+            <button id="case-origin" class="slds-button slds-button--neutral slds-picklist__label slds-size--1-of-1" aria-haspopup="true" type="button" onBlur="toggleDropdownAdv(null, null);">
+              <span class="slds-truncate" style="min-height: 30px;">{!mDistPicklistSelected}</span>
+              <img aria-hidden="true" class="slds-icon svg" src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/down.svg')}" />
+            </button>
+
+            <apex:outputPanel layout="block" styleClass="dist-description-container" style="margin: 5px 0px;" rendered="{!DistDescription != ''}">
+              <label class="slds-form-element__label slds-picklist__label--full" for="refer-to">Description</label>
+              <p>{!DistDescription}</p>
+            </apex:outputPanel>
+
+            <div class="slds-dropdown slds-dropdown--left slds-dropdown--small slds-dropdown--menu slds-hide">
+              <ul class="slds-dropdown__list" role="menu">
+                <apex:repeat value="{!DistributionPicklist}" var="option">
+                  <li href="#" class="slds-dropdown__item slds-has-icon--left">
+                    <a href="#" class="slds-truncate" data-value="{!option.Value}" role="menuitemradio">{!option.Label}</a>
+                  </li>
+                </apex:repeat>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      <apex:outputPanel id="distributionComponentContainer" layout="block" styleClass="slds-col slds-size--1-of-1">
+          <c:Console311_Section_DistributionList mDistributionList="{!mDistributionList}" mCoordinatorList="{!mCoordinatorList}" mInputLabel="Distribution Email List"/>
+      </apex:outputPanel>
+
+      <apex:outputPanel layout="none" styleClass="distribution-update-notes-container" rendered="{!mEditMode}">
+        <div class="slds-form-element slds-col slds-size--1-of-1" style="padding: 0px 5px 5px 5px; margin-top: -10px;">
+          <label class="slds-form-element__label" for="case-distribution-list">Update Notes</label>
+          <div class="slds-form-element__control">
+            <textarea value="" name="ai-distUpdateNotes" class="slds-textarea" id="case-distribution-update-notes"></textarea>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </div>
+  </apex:form>
+
+  <script>
+    $('.picklist-dist .slds-dropdown ul li').on('mousedown', function (e) {
+      e.stopPropagation();
+      $('.loading-spinner').show();
+
+      console.log('----> Click event for picklist!');      
+      console.log('----> Click event for picklist - data-value:' + $(this).children('a').data('value'));
+      if (typeof '{!afFetchDist}' != 'undefined') {
+        window['{!afFetchDist}']($(this).children('a').data('value'), $(this).children('a').html());
+      }
+    });
+  </script>
+
+  <apex:outputpanel id="convertSvg">
+    <script>
+      /*
+      * Replace all SVG images with inline SVG
+      */
+      var convertSVGtoInlineSVG = function () {
+        jQuery('img.svg').each(function () {
+            var $img = jQuery(this);
+            var imgID = $img.attr('id');
+            var imgClass = $img.attr('class');
+            var imgURL = $img.attr('src');
+            var imgClickEvent = $img.attr('onclick');
+
+            jQuery.get(imgURL, function (data) {
+                // Get the SVG tag, ignore the rest
+                var $svg = jQuery(data).find('svg');
+
+                // Add replaced image's ID to the new SVG
+                if (typeof imgID !== 'undefined') {
+                    $svg = $svg.attr('id', imgID);
+                }
+                // Add replaced image's classes to the new SVG
+                if (typeof imgClass !== 'undefined') {
+                    $svg = $svg.attr('class', imgClass + ' replaced-svg');
+                }
+
+                if (typeof imgClickEvent !== 'undefined') {
+                    $svg = $svg.attr('onclick', imgClickEvent);
+                }
+
+                // Remove any invalid XML tags as per http://validator.w3.org
+                $svg = $svg.removeAttr('xmlns:a');
+                $svg = $svg.attr('height', '1.25rem');
+                $svg = $svg.attr('width', '1.25rem');
+
+                // Replace image with new SVG
+                $img.replaceWith($svg);
+
+            }, 'xml');
+          });
+        }
+        convertSVGtoInlineSVG();
+    </script>
+  </apex:outputpanel>
+</apex:component>

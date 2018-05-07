@@ -1,0 +1,867 @@
+<apex:component controller="Console311_Section_ESRI" access="global" >
+
+    <apex:attribute access="global" type="Double" name="centerLat" description="Latitude of the primary point" required="true" />
+    <apex:attribute access="global" type="Double" name="centerLng" description="Longitude of the primary point" required="true" />
+    <apex:attribute access="global" type="Integer" name="defaultZoom" description="Zoom level to start the map at" default="13" />
+    <apex:attribute access="global" type="Integer" name="defaultSelectedZoom" description="Zoom level to start the map at when a location is provided" default="18" />
+    <apex:attribute access="global" type="String" name="basemap" description="ESRI basemap to use for tiles" default="streets" />
+    <apex:attribute access="global" type="Object" name="arcGISLayers" description="Map of layerName => layerUrl for GIS layers" assignTo="{! intakeMap }" />
+    <apex:attribute access="global" type="Case" name="currentCase" description="The currently active case" assignTo="{! activeCase }"/> 
+    <apex:attribute access="global" type="Boolean" name="expanded" description="Indicates if layer details should be shown beside map" />
+    <apex:attribute access="global" type="Object" name="customBasemaps" description="Map of basemaps key => config" assignTo="{! mCustomBasemaps  }" />
+    <apex:attribute access="global" type="String" name="onSelectAddress" description="Function to call when the user selects an address from the map" default="storeLocation" />
+    
+    <div id="location-report-modal" class="slds-hide">
+            <div role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <button type="button" class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onClick="$('#location-report-modal').addClass('slds-hide')">
+                            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/action/close.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="header43" class="slds-text-heading--medium">Report Missing Location</h2>
+                    </div>
+                    <div class="slds-modal__content slds-p-around--medium"> 
+                            <h3>Location</h3>
+                        <div class="slds-grid">
+                            <div class="slds-col">
+                                <label>Latitude:</label>
+                                <span id="latitude-value"></span>
+                                <br />
+                                <label>Longitude:</label>
+                                <span id="longitude-value"></span>
+                            </div>
+                            <div class="slds-col">
+                                <label>X Coordinate:</label>
+                                <span id="x-coord-value"></span>
+                                <br />
+                                <label>Y Coordinate:</label>
+                                <span id="y-coord-value"></span>
+                            </div>
+                        </div>    
+                            
+                        <h3>Reason</h3>
+                        <textarea id="loc-report-reasons" /> 
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button id="loc-report-submit" class="slds-button slds-button_brand">Submit</button>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>
+        </div>
+    
+    <div id="map-body" class="claro"> 
+        
+        <div class="loader-container loader-hidden">
+            <div class="loader"></div>
+        </div>
+        <div class="flex-body-map slds-grid">
+            <div class="layer-info">
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped">
+                    <thead>
+                        <tr>
+                            <th>Layer Name</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="container slds-size--8-of-8">
+                <div id="layerListPane" class="collapsed ">
+                               
+                    <apex:outputPanel layout="none" rendered="{! SerializedCustomBasemaps != null  }">
+                        <label class="basemapHeader" for="layerList_checkbox_0">Basemaps</label>
+                        <div id="basemapGallery"></div>
+                    </apex:outputPanel>
+                    <div id="expand-button" onclick="toggleLayerList()"></div>
+                    <div id="layerList"></div>
+                </div>
+               
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/dijit/themes/claro/claro.css"></link>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css"></link>
+
+    <script src="https://js.arcgis.com/3.20/"></script>
+     
+    <script>
+		function reportLocation(lat, lng, xCoord, yCoord) {
+        	
+			var location = { xCoord: xCoord, yCoord: yCoord, lat: lat, lng: lng };
+        
+        	var onFinish = function() {
+                $('#location-report-modal').addClass('slds-hide');
+                finalizeReport(location, $('#loc-report-reasons').val());
+			}
+        	
+            $('#loc-report-submit').on('click', onFinish);
+        	$('#latitude-value').text(lat);
+        	$('#longitude-value').text(lng);
+        	$('#x-coord-value').text(xCoord);
+        	$('#y-coord-value').text(yCoord);
+        	$('#location-report-modal').removeClass('slds-hide');
+        }
+    
+    	function finalizeReport(loc, reason) {
+            toggleFullloader();
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.Console311_Section_ESRI.recordLocation}',
+                loc, reason,
+                function(res) {
+            		toggleFullloader();  
+                }
+            );          
+        }
+             
+             function callESRIOpenSubtab(result, destination, title) {
+                 sforce.console.openSubtab(result.id, destination, true, title);
+             };
+    
+            function openESRISubtab(destination, title) {
+                sforce.console.getEnclosingPrimaryTabId(function(result) {
+                    callESRIOpenSubtab(result, destination, title);
+                });
+            }
+        
+        function toggleLayerList() {
+            document.getElementById('layerListPane').classList.toggle('collapsed');
+        }
+     function toggleBasemapGallery() {            
+         document.getElementById('basemapGallery').classList.toggle('galleryVisible');
+     }
+     
+     function toggleFullloader() {
+         document.getElementsByClassName('loader-container')[0].classList.toggle('loader-hidden');
+     }
+       var showLayers = false;
+       var mapWidthEnough = false;
+           
+     
+        require(
+         [
+            "esri/map", "esri/arcgis/utils", "esri/dijit/LayerList", "esri/geometry/Point", "esri/geometry/webMercatorUtils",
+            "esri/symbols/PictureMarkerSymbol", "esri/InfoTemplate", "esri/graphic", "esri/layers/GraphicsLayer", "esri/dijit/Scalebar",
+            "esri/symbols/SimpleMarkerSymbol", "esri/Color", "esri/layers/ArcGISDynamicMapServiceLayer",
+            "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!","esri/tasks/IdentifyTask",
+            "esri/tasks/IdentifyParameters", "esri/dijit/Popup", "dojo/_base/array", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+            "dojo/dom-construct", "esri/basemaps", "esri/dijit/BasemapGallery", "esri/dijit/Basemap", "esri/dijit/BasemapLayer"
+         ],
+         function(
+             Map, arcgisUtils, LayerList, Point, mercator, PictureMarkerSymbol, 
+             InfoTemplate, Graphic, GraphicsLayer, Scalebar, SimpleMarkerSymbol, 
+             Color, ArcMapLayer, BorderContainer, ContentPane, domReady, 
+             IdTask, IdentifyParameters, Popup, arrayUtils, SimpleFillSymbol,
+             SimpleLineSymbol, domConstruct, esriBasemaps, BasemapGallery,
+             Basemap, BasemapLayer
+         ) {
+           if(window.esriMap) {
+               window.esriMap.destroy();
+               window.esriMap.__layerListComponent.destroy();
+               window.esriMap.__basemapGallery.destroy();
+           }
+           
+           var customBasemaps = {};  
+           
+           <apex:outputPanel layout="none" rendered="{! SerializedCustomBasemaps != null  }">
+               customBasemaps = JSON.parse(`{! SerializedCustomBasemaps }`);
+           </apex:outputPanel>
+           
+           Object.assign(esriBasemaps, customBasemaps);
+             
+           var popup = new Popup({
+              fillSymbol: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                  new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
+            }, domConstruct.create("div"));
+           
+           var identityTask, identifyParams;
+           
+           window.esriMap = new Map("map", {
+               basemap: "{! DefaultBasemap }",
+               center: [ {! centerLng }, {! centerLat } ],
+               zoom: {! defaultZoom },
+               infoWindow: popup
+           });
+           
+           var basemapGallery = new BasemapGallery({
+               showArcGISBasemaps: false,
+               basemaps: Object.values(customBasemaps).map(function(item) {
+                   item.layers = item.baseMapLayers.map(function(layer) {
+                       return new BasemapLayer(layer)
+                   });
+                   
+                   return new Basemap(item)
+               }),
+               map: window.esriMap
+           }, "basemapGallery");
+           
+           basemapGallery.startup();
+           
+           window.esriMap.__basemapGallery = basemapGallery;
+             
+           window.esriMap.on('resize', function (evt) {
+               console.log(window.esriMap.extent.getCenter());
+               mapWidthEnough = $('#map').width() > 800;
+               renderLayers();
+               renderLayersButton();
+               var centerPoint = window.esriMap.extent.getCenter();
+               
+               setTimeout(function () {
+                   window.esriMap.centerAt(centerPoint);
+               }, 1);
+               
+           });
+           
+           window.esriMap.on('load', function() {
+               
+               <apex:repeat rendered="{! castedMap != null }" value="{! castedMap }" var="gisLayer"> 
+                 identifyTask = new IdTask('{!castedMap[gisLayer]}');
+               </apex:repeat>    
+
+             identifyParams = new IdentifyParameters();
+             identifyParams.tolerance = 0;
+             identifyParams.returnGeometry = true;
+             identifyParams.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+             identifyParams.width = window.esriMap.width;
+             identifyParams.height = window.esriMap.height;
+             
+             
+             
+             function executeIdentifyTask(event, nearbyLocs, mapPointer) {
+                  identifyParams.geometry = event.mapPoint;
+                  identifyParams.mapExtent = window.esriMap.extent;
+        
+                  var deferred = identifyTask
+                    .execute(identifyParams)
+                    .addCallback(function (response) { 
+                     
+                      var features = arrayUtils.map(response, function (result) {
+                        var feature = result.feature;
+                        var layerName = result.layerName;
+                        
+                        feature.attributes.layerName = layerName; 
+                        
+                          feature.setInfoTemplate(
+                              new InfoTemplate(
+                                  " ",
+                                  "<b>" + escape(layerName) + "</b><br/><div>" + escape(result.value) + "</div>"
+                              )
+                          );
+                          
+                        return feature;
+                      });
+                      
+                      var itemContent = '';
+                      
+                     var title = "Nearby Locations";
+                     
+                     if(nearbyLocs.title) {
+                         title = nearbyLocs.title;
+                         itemContent = nearbyLocs.content;
+                     }
+                     else if(nearbyLocs.length === 0) {
+                         itemContent += '<div><i>No results found</i></div>';
+                         itemContent += '<div>';
+                         itemContent += 'X: ' + event.mapPoint.x;
+                         itemContent += '</div><div>';
+                         itemContent += 'Y: ' + event.mapPoint.y;
+                         itemContent += '</div>';
+                         itemContent += '<div>';
+                         itemContent += 'Long: ' + mapPointer.x;
+                         itemContent += '</div><div>';
+                         itemContent += 'Lat: ' + mapPointer.y;
+                         itemContent += '</div><button type="button" class="slds-button" onClick="reportLocation(' + 
+                             mapPointer.x + ',' + 
+                             mapPointer.y + ',' + 
+                             event.mapPoint.x + ',' + 
+                             event.mapPoint.y +
+                             '); return false">';
+                         itemContent += 'Report Location';
+                         itemContent += '</button>';
+                     } else {
+                         itemContent += '<div class="nearbyHeader">Nearby Locations</div><ul class="nearbyList">';
+
+                         nearbyLocs.forEach(function(item) {
+                             itemContent += '<li>';
+                             itemContent += '<div>';
+                             itemContent += item.address;
+                             itemContent += '<div>';
+                             if(!!storeLocation) {
+                                 itemContent += '<button class="slds-button" type="button" onClick=\' $("#case-address-street").val("'+item.address+'"); window["{!onSelectAddress}"]("'+item.address+'"); \'>Use Address</button>';
+                             }
+                             itemContent += '<span class="'+ (mapWidthEnough ? 'slds-show' : 'slds-hide') +' show-layer-button"> | ';
+                             itemContent += '<button type="button" class="slds-button" onClick=\'showLayerInfo("'+item.address+'",'+ JSON.stringify(item.layers) + ')\'>Show Layers</button>';
+                             itemContent += '</span>';
+                             itemContent += '</div>';
+                             itemContent += '</div>';
+                             itemContent += '</li>';
+                         });
+
+                         itemContent += '</ul>';
+                     }
+                      
+                      features.unshift(createFeature(title, itemContent )); 
+                      
+                      
+                      return features;
+                    });
+        
+                  // InfoWindow expects an array of features from each deferred
+                  // object that you pass. If the response from the task execution
+                  // above is not an array of features, then you need to add a callback
+                  // like the one above to post-process the response and return an
+                  // array of features.
+                  window.esriMap.infoWindow.setFeatures([deferred]);
+                  window.esriMap.infoWindow.show(event.mapPoint);
+             }
+             
+               /*
+                   Setting up default layers as needed
+               */               
+               var clickLayer = new GraphicsLayer();
+               var currentCaseLayer = new GraphicsLayer();
+               var duplicateCaseLayer = new GraphicsLayer();
+               var similarCaseLayer = new GraphicsLayer();
+               
+               window.esriMap.addLayer(currentCaseLayer);
+               window.esriMap.addLayer(clickLayer);
+               window.esriMap.addLayer(duplicateCaseLayer);
+               window.esriMap.addLayer(similarCaseLayer);
+               
+               currentCaseLayer.show();
+               
+               /*
+                Specifying the current case graphic if we have one and it has a location
+               */
+               <apex:outputPanel layout="none" rendered="{! currentCase != null && currentCase.Incap311__Location__Latitude__s != NULL }">
+                   var currentCaseGraphic = createGraphic(
+                       {! currentCase.Incap311__Location__Longitude__s }, {! currentCase.Incap311__Location__Latitude__s },
+                       SimpleMarkerSymbol.STYLE_CIRCLE, 
+                       new Color([255,0,0,0.5]), 
+                       12,
+                       { 
+                           CaseId: '{! JSENCODE(currentCase.Id) }',
+                           CaseNumber: '{! JSENCODE(currentCase.Incap311__Service_Request_Number__c) }', 
+                           Subject: '{! JSENCODE(currentCase.Subject) }' 
+                       }
+                   );
+               currentCaseLayer.add(currentCaseGraphic);
+               
+               </apex:outputPanel>
+               
+               
+               var currentClickSymbol = new SimpleMarkerSymbol()
+               .setStyle(SimpleMarkerSymbol.STYLE_X)
+               .setColor(new Color([0,0,255,0.5]));
+               
+               var reverseGeocodeingGraphic = new Graphic(null, currentClickSymbol, {});
+               
+               clickLayer.add(reverseGeocodeingGraphic);
+               
+               /*
+                Setting up duplicate and similar case graphics
+               */ 
+               <apex:repeat value="{! duplicateCases }" var="dupe">
+                   duplicateCaseLayer.add(createGraphic(
+                       {! dupe.Incap311__Location__Longitude__s },
+                       {! dupe.Incap311__Location__Latitude__s },
+                       SimpleMarkerSymbol.STYLE_DIAMOND, 
+                       new Color([0,125,125,0.5]),
+                       12,
+                       { 
+                           CaseId: '{! JSENCODE(dupe.Id) }',
+                           CaseNumber: '{! JSENCODE(dupe.INcap311__Service_Request_Number__c) }', 
+                           Subject: '{! JSENCODE(dupe.Subject) }', 
+                           isDupe: true 
+                       }
+                   ));
+               </apex:repeat>
+               
+               <apex:repeat value="{! similarCases }" var="sim">
+                   similarCaseLayer.add(createGraphic(
+                       {! sim.Incap311__Location__Longitude__s },
+                       {! sim.Incap311__Location__Latitude__s },
+                       SimpleMarkerSymbol.STYLE_SQUARE, 
+                       new Color([125,125,0,0.5]),
+                       12,
+                       { CaseNumber: '{! JSENCODE(sim.INcap311__Service_Request_Number__c) }', Subject: '{! JSENCODE(sim.Subject) }', isSimilar: true }
+                   ));
+               </apex:repeat>
+               
+               /*
+                   Setting up GIS layers and the layer list
+               */
+               var layerList = new LayerList(
+                   { 
+                       map: window.esriMap,
+                       layers: [
+                           { id: 'Similar Requests', layer: similarCaseLayer },
+                           { id: 'Duplicate Requests', layer: duplicateCaseLayer },
+                           { id: 'Current Request', layer: currentCaseLayer }
+                       ]
+                   },
+                   "layerList"
+               );
+               
+               window.esriMap.__layerListComponent = layerList;
+               
+               <apex:repeat rendered="{! castedMap != null }" value="{! castedMap }" var="gisLayer">
+                   var nextLayer = { id: '{!JSENCODE(gisLayer) }', layer: new ArcMapLayer('{!JSENCODE(castedMap[gisLayer])}') };
+                   layerList.layers.unshift(nextLayer); 
+                   window.esriMap.addLayer(nextLayer.layer);
+               
+               </apex:repeat>
+               
+               layerList.layers.forEach(function(layerInfo) {
+                   layerInfo.layer.on('load', function(evt) {
+                       evt.layer.setVisibleLayers([ -1 ]);
+                       evt.layer.setVisibility(true);
+                   });
+               });
+               
+               layerList.startup();
+               
+               similarCaseLayer.on('click', onClickGraphic);
+               duplicateCaseLayer.on('click', onClickGraphic);
+               currentCaseLayer.on('click', onClickGraphic);
+               
+               window.esriMap.on('click', onMapClick);
+              
+               
+             /*
+               Helper functions
+             */
+             
+             function createFeature(title, body) {
+                 return {
+                     getTitle: function() {
+                         return title;
+                     },
+                     getContent: function() {
+                         return body
+                     },
+                     getInfoTemplate: function() {
+                         return new InfoTemplate(
+                          " ",
+                          " "
+                      )
+                     },
+                      getLayer: function() {
+                          return new GraphicsLayer();
+                      }
+                  }
+             }
+             
+             function resetGraphics() {
+                 if(typeof(currentCaseGraphic) !== 'undefined') {
+                     currentCaseGraphic.symbol.setColor(new Color([255,0,0,0.5]));
+                 }
+                 
+                 for(var i = 0; i < duplicateCaseLayer.graphics.length; i++) {
+                     duplicateCaseLayer.graphics[i].symbol.setColor(new Color([0,125,125,0.5]));
+                 }
+                 
+                 for(var i = 0; i < similarCaseLayer.graphics.length; i++) {
+                     similarCaseLayer.graphics[i].symbol.setColor(new Color([125,125,0,0.5]));
+                 }
+             }
+             
+             function redrawLayers() {
+                 currentCaseLayer.redraw();
+                 duplicateCaseLayer.redraw();
+                 similarCaseLayer.redraw();
+                 clickLayer.redraw();
+             }
+             
+             function onMapClick(evt) {
+                 // do nothing if they click on a graphic
+                 if(evt.graphic) {
+                     return;
+                 }
+                 
+                 reverseGeocodeingGraphic.setGeometry(evt.mapPoint);
+                 
+                 resetGraphics();
+                 
+                 redrawLayers();
+                 
+                 const mapPointer = mercator.webMercatorToGeographic(evt.mapPoint);
+                 
+                 reverseGeocode(mapPointer.y, mapPointer.x, function(res) {
+                     executeIdentifyTask(evt, res, mapPointer);
+                 })
+             }
+             
+             function createGraphic(lat, lng, style, color, size, attrs) {
+                 var res = mercator.lngLatToXY(lat, lng);
+                 var pt = new Point(res[0], res[1], window.esriMap.spatialReference).offset(Math.floor(Math.random() * 10) + 1  ,Math.floor(Math.random() * 10) + 1  );
+                 var symbol = new SimpleMarkerSymbol().setStyle(style).setSize(size).setColor(color);
+                 return new Graphic(pt, symbol, attrs);
+             }
+             
+             function onClickGraphic(evt) {
+                 /* if we didin't click on the reverese geocoding graphic; then hide it */
+                 
+                 if(evt.graphic !== reverseGeocodeingGraphic) {
+                     reverseGeocodeingGraphic.setGeometry(null);
+                 }
+                 
+                 resetGraphics();
+                 
+                 evt.graphic.symbol.setColor(new Color([0, 255, 0, 0.5]));
+                 redrawLayers();
+                 var attributes = evt.graphic.attributes;
+                 
+                 var itemContent = '';
+                 
+                 if(attributes.CaseNumber) {
+                     itemContent  = '<div>' +
+                         '<div><b>' + 
+                             (attributes.isDupe ? 'Duplicate ' : '' ) + (attributes.isSimilar ? 'Similar ' : '')  +
+                             'Case Number</b> ' + 
+                         '<a href="#" onClick="openESRISubtab(\'' + attributes.CaseId + '\', \''+ attributes.CaseNumber  +'\'); return false;">' + attributes.CaseNumber + '</a>' + 
+                         '</div>' +
+                         '<div>' + '<b>Subject</b> ' + attributes.Subject + '</div>' +
+                         '</div>';
+                 } else {
+                    
+                     itemContent  = '<div>' +
+                         '<div><b>New Service Request</b></div>' +
+                         '<div>{!JSENCODE(currentCase.Incap311__Address__c) }</div>' +
+                         '</div>';
+                 }
+                 
+                 executeIdentifyTask(evt, { title: 'Selected Location', content: itemContent }, mercator.webMercatorToGeographic(evt.mapPoint));
+                 
+             }
+               
+           });
+  
+        }); 
+        
+        function reverseGeocode(lat, lng, cb) {
+            toggleFullloader();
+             Visualforce.remoting.Manager.invokeAction(
+                 '{!$RemoteAction.Console311_Section_ESRI.reverseGeocode}',
+                 lat, lng,
+                 function(res) {
+                     toggleFullloader();
+                     return cb(res);
+                 }
+             );    
+        }
+            
+        
+         function renderLayersButton() {
+             if(mapWidthEnough) {
+               $('.show-layer-button').addClass('slds-show').removeClass('slds-hide');
+             } else {
+               $('.show-layer-button').removeClass('slds-show').addClass('slds-hide');
+             }
+         }
+        
+         function closeLayers() {
+             showLayers = false;
+             renderLayers();
+         }
+        
+         function renderLayers() {
+         
+           if(mapWidthEnough  && showLayers ) {
+               $('.layer-info').addClass('slds-size--2-of-8').addClass('slds-show').removeClass('slds-hide');
+               $('.container').removeClass('slds-size--8-of-8').addClass('slds-size--6-of-8');
+           } else {
+               $('.layer-info').removeClass('slds-size--2-of-8').removeClass('slds-show').addClass('slds-hide');
+               $('.container').addClass('slds-size--8-of-8').removeClass('slds-size--6-of-8');
+           }
+         }
+         
+         function showLayerInfo(location, layers) {
+             showLayers = true;
+         
+             var itemContent = '<div style="display: flex; justify-content: space-between; font-size: 1.5em"><div></div><h2>'+ location + '</h2><h2 class="close-layers" onclick="closeLayers()">X</h2></div>';
+             itemContent += '<table class="slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped">';
+             itemContent += '<thead>';
+             itemContent += '<tr>';
+             itemContent += '<th>Layer Name</th>';
+             itemContent += '<th>Value</th>';
+             itemContent += '</tr>';
+             itemContent += '</thead>';
+             itemContent += '<tbody>';
+             layers.forEach(function(layer) {
+                 itemContent += '<tr>';
+                 itemContent += '<td><div class="slds-truncate">'+ layer.layerName +'</div></td>';
+                 itemContent += '<td><div class="slds-truncate">'+ layer.value+'</div></td>';
+                 itemContent += '</tr>';
+             });
+             itemContent += '</tbody>';
+             itemContent += '</table>';
+             
+             $('.layer-info').html(itemContent);
+             
+             renderLayers();
+               renderLayersButton();
+         }
+         
+    </script>
+    
+    <style>
+        #map-body {
+            position: relative;
+        }
+    
+          #map-body #layerListPane #expand-button:after {
+            content: '\2807';
+            font-size: 25px;
+            text-align: center;
+            margin-left: 5px;
+            color: #ffffff;
+            
+          }
+
+         .show-layer-button.slds-show {
+            display: inline !important;
+        }
+        
+        .flex-body-map {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .layer-info {
+            display: none;
+            max-height: 650px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1em;
+            padding-top: 0;
+        }
+        
+        
+        .layer-info h2 {
+            font-weight: bold;
+            
+            size: 1.2em;
+        }
+        
+        .layer-info .slds-table {
+            table-layout: fixed;
+            overflow-y: scroll;
+        }
+        
+        .basemapHeader {
+            margin-left: 10px;
+        }
+        #layerListPane {
+            position: relative;
+            overflow: visible;
+            z-index: 99;
+            background-color: white;
+            height: 100%;
+        }
+        .collapsed {
+            width: 0px !important;
+        }
+        
+        .collapsed .esriLayerList{
+            display: none !important;
+        }
+
+        #expand-button {
+            position: absolute;
+            top: 0;
+            left: -45px;
+            height: 35px;
+            width: 45px;
+            background-color: grey;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .esriToggleButton {
+            outline: none !important;
+            width: auto !important;
+        }
+        
+        .container, #flex-body-map {
+            height:100%;
+            width:100%;
+            margin:0;
+            padding:0;
+            margin:0;
+        }
+        
+        .container {
+            position: relative
+        }
+        
+        .nearbyList {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0px;
+        }
+        
+        .nearbyList li {
+            padding-left: 0;
+            margin-left: 0;
+            margin-bottom: 5px;
+        }
+        
+        .nearbyList li:last-child {
+            margin-bottom: 0px;
+        }
+        
+        #map {
+            padding:0;
+            height: 700px;
+        }
+        #layerListPane{
+            width: 250px;
+            position: absolute;
+            right: 0;
+        }
+        .esriLayer{
+          background-color: #fff;
+        }
+        .esriLayerList .esriList{
+            border-top:none;
+        }
+        .esriLayerList .esriTitle {
+          background-color: #fff;
+          border-bottom:none;
+        }
+        .esriLayerList .esriList ul{
+          background-color: #fff;
+        }
+        .nearbyHeader {
+            margin-top: 0px;
+        font-size: 1.25em;
+        font-weight: bold;
+        }
+        .loader {
+            margin: -10px;
+            margin: 30px auto;
+            font-size: 10px;
+            width: 1em;
+            height: 1em;
+            border-radius: 50%;
+            position: relative;
+            text-indent: -9999em;
+            -webkit-animation: load5 1.1s infinite ease;
+            animation: load5 1.1s infinite ease;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        
+        .esriBasemapGalleryNode {
+            float: none;
+        }
+        
+        .esriBasemapGallery >div {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        
+        .esriSubList {
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+        
+        .loader-container {
+            position: absolute;
+            z-index: 999;
+            background-color: rgba(175, 175, 175, 0.5);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .loader-hidden {
+            display: none;
+        }
+        
+        .close-layers {
+            cursor: pointer;
+        }
+        .loader-container .loader {
+        
+          position: absolute;
+          left: 50%;
+          top: 50%;
+        }
+        
+        @-webkit-keyframes load5 {
+            0%,
+            100% {
+            box-shadow: 0em -2.6em 0em 0em #000000, 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.5), -1.8em -1.8em 0 0em rgba(0,0,0, 0.7);
+            }
+            12.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.7), 1.8em -1.8em 0 0em #000000, 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.5);
+            }
+            25% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.5), 1.8em -1.8em 0 0em rgba(0,0,0, 0.7), 2.5em 0em 0 0em #000000, 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            37.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.5), 2.5em 0em 0 0em rgba(0,0,0, 0.7), 1.75em 1.75em 0 0em #000000, 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            50% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.5), 1.75em 1.75em 0 0em rgba(0,0,0, 0.7), 0em 2.5em 0 0em #000000, -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            62.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.5), 0em 2.5em 0 0em rgba(0,0,0, 0.7), -1.8em 1.8em 0 0em #000000, -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            75% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.5), -1.8em 1.8em 0 0em rgba(0,0,0, 0.7), -2.6em 0em 0 0em #000000, -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            87.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.5), -2.6em 0em 0 0em rgba(0,0,0, 0.7), -1.8em -1.8em 0 0em #000000;
+            }
+        }
+        @keyframes load5 {
+            0%,
+            100% {
+            box-shadow: 0em -2.6em 0em 0em #000000, 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.5), -1.8em -1.8em 0 0em rgba(0,0,0, 0.7);
+            }
+            12.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.7), 1.8em -1.8em 0 0em #000000, 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.5);
+            }
+            25% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.5), 1.8em -1.8em 0 0em rgba(0,0,0, 0.7), 2.5em 0em 0 0em #000000, 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            37.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.5), 2.5em 0em 0 0em rgba(0,0,0, 0.7), 1.75em 1.75em 0 0em #000000, 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            50% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.5), 1.75em 1.75em 0 0em rgba(0,0,0, 0.7), 0em 2.5em 0 0em #000000, -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            62.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.5), 0em 2.5em 0 0em rgba(0,0,0, 0.7), -1.8em 1.8em 0 0em #000000, -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            75% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.5), -1.8em 1.8em 0 0em rgba(0,0,0, 0.7), -2.6em 0em 0 0em #000000, -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+            }
+            87.5% {
+            box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.5), -2.6em 0em 0 0em rgba(0,0,0, 0.7), -1.8em -1.8em 0 0em #000000;
+            }
+        }
+        #loc-report-reasons {
+        	width: 100%;
+        	max-width: 100%;
+        	height: 100px;
+        	max-height: 130px;
+        }
+        
+        #location-report-modal h3 {
+        	font-size: 2em;
+        }
+    </style>
+</apex:component>

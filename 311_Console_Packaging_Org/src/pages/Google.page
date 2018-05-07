@@ -1,0 +1,19 @@
+<apex:page showHeader="false" sidebar="false" applyhtmltag="false" doctype="html-5.0">
+<html>
+  <head>
+    <title>Street View side-by-side</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+   </style>
+   
+   </head>
+   <body>
+       <c:Console311_Section_Google centerLat="42.361145000" centerLng="-71.057083000" defaultZoom="16"/>
+   </body>
+</html>
+</apex:page>

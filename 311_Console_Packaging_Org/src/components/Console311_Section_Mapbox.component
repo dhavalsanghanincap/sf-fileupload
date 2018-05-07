@@ -1,0 +1,34 @@
+<apex:component >
+  <apex:attribute name="mLat" type="Double" required="false" description="Map Lat." /> 
+  <apex:attribute name="mLng" type="Double" required="false" description="Map Lng" /> 
+  <apex:attribute name="mMapCoords" type="Double[]" required="false" description="Map coords array." />
+
+  <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+
+  <style>
+    body { margin:0; padding:0; }
+    .map { position:absolute; top:0; bottom:0; width:100%; }
+
+    .map-one-container {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      margin: 20px auto;
+      padding: 0;
+    }
+  </style>
+
+  <apex:outputPanel rendered="{!mMapCoords != null}">
+    <div class="map-one-container">
+      <div id='map-one' class='map'> </div>
+    </div>
+
+    <script>
+      L.mapbox.accessToken = 'pk.eyJ1Ijoia2FrdWxhIiwiYSI6ImNpemE4N2FmcTAxNzMyd282djczcGxtbjEifQ.00TPuiPa9T8YRg4q7Gk5Yw';
+      var mapLeaflet = L.mapbox.map('map-one', 'mapbox.streets', {scrollWheelZoom: false}).setView({!mMapCoords}, 14);
+      L.marker({!mMapCoords}).addTo(mapLeaflet);
+      mapLeaflet.invalidateSize();
+    </script>
+  </apex:outputPanel>
+</apex:component>

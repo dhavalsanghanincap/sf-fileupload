@@ -1,0 +1,25 @@
+<!-- Component to perform relation of Service Request/ Service activity -->
+<apex:component controller="Base311_ReallocateController" access="Global">
+    <!-- Attributes  -->
+    <apex:attribute name="sObjectAPIName" description="Api Name of the sObject" assignTo="{!objectname}"
+        type="String" required="true" access="Global"/>
+    <apex:attribute name="serviceTypeValue" description="Service Type for which we need reallocation" assignTo="{!serviceType}" 
+        type="String" required="true" access="Global"/>    
+    <apex:attribute name="ReallocatePageCtrlBase" description="Controller of the page" 
+        type="Base311_ReallocatePageCtrlBase" required="true" assignTo="{!ReallocatePageCtrl}" access="Global"/> 
+    
+    <apex:pageBlockSection >
+            <apex:selectList label="Owner" value="{!queueID}" multiselect="false" size="1" >
+                  <apex:selectOptions value="{!queues }" />
+                  <apex:actionSupport event="onblur" 
+                                action="{!captureselectedInformation}" 
+                                rerender=""/>
+            </apex:selectList>
+            <apex:inputTextarea label="Reason" value="{!comment}" >
+                <apex:actionSupport event="onblur" 
+                                action="{!captureselectedInformation}" 
+                                rerender=""/>
+            </apex:inputTextarea>
+     </apex:pageBlockSection>
+   
+ </apex:component>

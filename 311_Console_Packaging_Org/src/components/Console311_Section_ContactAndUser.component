@@ -1,0 +1,174 @@
+<apex:component controller="Console311_Section_ContactandUserField">
+    <apex:attribute name="contact" type="SObject" description="Contact object" assignTo="{!mContact}"/>
+    <apex:attribute name="mAFContactComponentFunc" type="String" required="true" description="Passed in action function name to force a rerender of the component with the knowledge keyword in the parent." />
+    <apex:attribute name="mContactLayoutConfigs" type="Console311_Wrap_Config[]" description="Configuration mapping for the contact sections." assignTo="{!mLayoutConfig}"/>
+    
+    <style>
+        .contact-error-star {
+        display: none;
+        padding-right: 3px;
+        color: red;
+        }
+        
+        #contact-street-loading {
+        display: none;
+        }
+        
+        #contact-street-loading.active {
+        display: block;
+        top: 41%;
+        left: auto;
+        height: 60%;
+        background-color: transparent;
+        max-width: 30px;
+        }
+        
+        #contact-street-loading.active .slds-spinner--small {
+        right: 0;
+        left: auto;
+        }  
+        
+        .slds-section-title--divider {
+        margin-bottom: 10px;
+        }
+        
+        .details-contact-container .slds-section-title--divider {
+        cursor: pointer;
+        display: flex !important;
+        justify-content: space-between;
+        height: 39px;
+        align-items: center;
+        margin-top: 5px;
+        }
+        
+        .details-contact-container .slds-form-element__control p {
+        min-height: 25px
+        }
+        
+        .contact-new-edit-container-header i {
+        font-size: 2em;
+        }
+        
+        .small-padding {
+        padding: 0px 7px;
+        }
+        
+        .new-edit-contact-container.collapsed {
+        display: none;
+        }
+    </style>
+    
+    <apex:outputPanel id="section-contact-summary-container" layout="block" styleClass="details-contact-container slds-container" style="padding-bottom: 0;" rendered="{!IF(InformationLayoutConfig != null, InformationLayoutConfig.Visible__c, true)}">
+        
+        <div class="slds-grid slds-wrap small-padding">
+            <!-- Lookup -->
+            <div class="slds-form-element slds-lookup" style="margin: 10px 0;">
+                <apex:outputPanel rendered="{!mContact = null}" layout="none">
+                    <div class="slds-form-element__control" style="padding: 0;">
+                        <div class="slds-input-has-icon slds-input-has-icon--right">
+                            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" class="svg slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" onClick="contactLookupPopup();"/>
+                            <input id="contact-contact-id-label" type="text" class="slds-lookup__search-input slds-input" value="{!Name}" onkeyup="if(event.keyCode == 13){contactLookupPopup(); event.preventDefault();}"/>
+                            <input id="contact-contact-id" type="text" class="hiddenInput" name="contact-ContactId" value="{!mContact[Id]}"/>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{!mContact != null}" layout="none">
+                    <div class="slds-form-element__control">
+                        <div class="slds-pill_container">
+                            <span class="slds-pill slds-size--1-of-1">
+                                <span class="slds-pill__label" title="{!Name}">{!Name}</span>
+                                <button class="slds-button slds-button--icon slds-pill__remove" title="Remove" type="button" onclick="handleContactLookupResponse(null, null, null);">
+                                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/close.svg')}" aria-hidden="true" class="slds-button__icon svg" />
+                                    <span class="slds-assistive-text">Remove</span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+            
+            <apex:outputPanel rendered="{!mContact != null}" layout="none"> 
+                <apex:repeat value="{!fieldNamesList}" var="fieldname">
+                    <div class="account-details-container slds-form-element slds-col slds-size--1-of-2">
+                        <label class="slds-form-element__label">{!sObjectFieldUtilMap[mContact[Id]][fieldname]['Label']}</label>
+                        <div class="slds-form-element__control">
+                            <p>{!IF(sObjectFieldUtilMap[mContact[Id]][fieldName]['Data_Type'] == 'DATE' && sObjectFieldUtilMap[mContact[Id]][fieldName]['Formatted_Date'] != 'null', sObjectFieldUtilMap[mContact.Id][fieldName]['Formatted_Date'], mContact[fieldName])}</p>
+                        </div>
+                    </div>
+                </apex:repeat>
+            </apex:outputPanel>
+        </div>
+        
+        
+        
+        
+        
+            <apex:outputPanel id="section-contact-main-container" layout="block" styleClass="details-contact-container slds-container" rendered="{!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Visible__c, true)}">
+        <apex:outputPanel rendered="{!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Header__c, true)}" layout="none">
+            <h3 class="slds-section-title--divider contact-new-edit-container-header" onClick="if({!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Incap311Console__Collapsible__c, true)}){toggleNewEditContactPanel();}">
+                {!IF(NewEditLayoutConfig != null, NewEditLayoutConfig.Incap311Console__Title__c, 'Assigned To')}
+                <i class="fa fa-caret-up {!IF(NewEditLayoutConfig != null && !NewEditLayoutConfig.Incap311Console__Collapsible__c, 'slds-hide', '')}"></i>
+            </h3>
+        </apex:outputPanel>
+      <div class="slds-grid slds-wrap small-padding">
+            <div class="slds-form-element__control">
+                <label class="slds-form-element__label" for="assignToName">Assigned To: </label>
+                <input readonly=""  disabled="true" styleClass="slds-input" value="{!Name}" id="assignToName" />
+            </div>
+            <div class="slds-form-element__control">
+                <label class="slds-form-element__label" for="assignToEmail">Email: </label>
+                <input readonly=""   disabled="true" styleClass="slds-input" value="{!Email}" id="assignToEmail" />
+            </div>
+          
+          <div class="slds-form-element__control">
+                <label class="slds-form-element__label" for="assignToEmail">Phone: </label>
+                <input readonly=""   disabled="true" styleClass="slds-input" value="{!Phone}" id="assignToEmail" />
+            </div>
+                </div>
+    </apex:outputPanel>
+        
+        
+        
+        
+    </apex:outputPanel>    
+    
+
+    
+    <script>
+    
+    // Callback function for lookup popups.
+    var handleContactLookupResponse = function(objType, resultId, result) {
+        console.log(objType + ' <= Type, ' + resultId + ' <= Result Id, ' + JSON.stringify(result) + ' <= Result');
+        window['{!mAFContactComponentFunc}'](JSON.stringify(result));
+    }
+    
+    var contactLookupPopup = function() {
+        var lookupWindow = null;
+        var contactSearchStr = encodeURI($('#contact-contact-id-label').val());
+        lookupWindow = window.open(
+            '/apex/Console311_Lookup?sobject=contactAndUser&callback=handleContactLookupResponse&queryType=sosl&query=' + contactSearchStr,
+            'Lookup',
+            'height=600,width=800'
+        );
+    }
+    
+    // Case Parent lookup popup call.
+    $('body').on('click', '#contact-lookup', function() {
+        contactLookupPopup();   
+    });
+    
+    
+    
+    var toggleNewEditContactPanel = function() {
+        $('.new-edit-contact-container').toggleClass('collapsed');
+        $('.contact-new-edit-container-header .fa').toggleClass('fa-caret-up').toggleClass('fa-caret-down');
+        
+        if (!$('.new-edit-contact-container').hasClass('collapsed')) {
+            $('.detail-view').animate({
+                scrollTop: $('.new-edit-contact-container').offset().top - $('.detail-view').offset().top + $('.detail-view').scrollTop()
+            });
+        }
+    }
+    </script>
+</apex:component>

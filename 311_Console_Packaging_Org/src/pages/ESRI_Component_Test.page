@@ -1,0 +1,7 @@
+<apex:page controller="ESRI_Component_Test_Extension">
+    <c:Console311_Section_ESRI centerLat="39.290400000"
+        centerLng="-76.612200000" 
+        currentCase="{! case }"
+        arcgisLayers="{! ArcgisLayers }"
+    />
+</apex:page>

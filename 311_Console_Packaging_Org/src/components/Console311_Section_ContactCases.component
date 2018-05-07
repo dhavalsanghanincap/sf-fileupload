@@ -1,0 +1,108 @@
+<apex:component controller="Console311_Section_ContactCases">
+  <apex:attribute type="String" name="contactId" assignTo="{! cId }" description="Contact ID to use as the basis for the search"/>
+  
+   <style>
+    .duplicate-requests-container {
+      max-height: 400px;
+      overflow-y: scroll;
+      display: block;
+      position: relative;
+    }
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+    
+    .card-sub-label { 
+      display: block;
+      padding: 1px 10px;
+    }
+
+    .dupe-card-icon.svg path {
+      fill: #ffffff;
+    }
+
+    .dupe-container {
+      margin: 10px 0px 15px 0px;
+    }
+
+    .dupe-container .slds-text-title--caps {
+      margin-bottom: 3px;
+    }
+
+    .dupe-icon-container {
+      padding-left: 7px;
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    .slds .slds-card+.slds-card {
+      margin-top: 0.5rem;  
+    }
+
+    .dupes-view-all-footer {
+
+    }
+
+    .card-sub-label-case-num {
+      font-size: .875rem;
+      text-decoration: none;
+      color: #16325c;
+    }
+    
+    .card-container {
+        position: relative;
+    }
+    
+    .badge-abs-container {
+        position: absolute;    
+        right: 5px;
+        top: 5px;
+    }
+  </style>
+
+    <div class="slds-col">
+        <!--<h4 class="slds-text-title--caps" id="treeheading">Recent Requests from the Contact</h4>-->
+      <h4 class="slds-text-title--caps left-panel-header" id="treeheading" onClick="toggleCollapsablePanel(this, 'knowledge-panel-container');">
+  		  <span class="slds-icon_container">
+          <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+        </span>
+  		  Recent Requests from the Contact
+        <i class="fa fa-caret-up cs-caret-postional"></i>
+      </h4>
+        <div class="slds-tree-container side-panel-default  duplicate-requests-container collapsable-container" role="application">
+            <apex:repeat value="{! contactCases }" var="cc">
+                <article class="slds-card slds-card--narrow">
+                  <div class="slds-card__body slds-grid">
+                    <div class="dupe-icon-container">
+                      <span class="slds-icon_container slds-icon-standard-contact">
+                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                      </span>
+                    </div>
+    
+                    <div class="slds-col slds-grid-horizontal card-container">
+                    
+                      <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                          <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" onclick="sforce.console.openPrimaryTab(null,'/{!cc.Id}', true, 'SR #: {!cc.Incap311__Service_Request_Number__c}');">
+                            <span class="card-sub-label card-sub-label-case-num">{!cc.Incap311__Service_Request_Number__c}</span>
+                          </a>
+                      </div>
+    
+                      <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                        <span class="card-sub-label slds-text-body--small">{!cc.Incap311__Service_Type_Version__r.Incap311__Service_Name__c}</span>
+                      </div>
+    
+                      <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                        <span class="slds-cell-wrap card-sub-label slds-text-body--small">{!cc.Incap311__Address__c}</span>
+                      </div>
+                      
+                      <div class="badge-abs-container">
+                          <span class="slds-badge">{!cc.Status}</span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+            </apex:repeat>
+        </div>
+    </div>
+  
+</apex:component>

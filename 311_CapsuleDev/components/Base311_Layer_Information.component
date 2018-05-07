@@ -1,0 +1,109 @@
+<apex:component access="global" controller="Base311_ExtensionCtrl_LayerInfo">
+  <apex:attribute access="global" description="JSON vesrion of the layer information" type="String" assignTo="{! jsonLayerInformation }" name="layers" />
+  <apex:attribute access="global" description="List of layers as Base311_ESRI_Layer" type="Base311_ESRI_Layer[]" assignTo="{! layerInformation }" name="layersObj" />
+  <apex:attribute access="global" description="Id of the service type version associated to these layers" type="String" assignTo="{! serviceTypeVersionId }" name="stvId" />
+  <style>
+      .layer-row {
+          display: flex;
+          flex-direction: row;
+      }
+      .icon-container {
+          width: 1.5rem;
+          height: 1.5rem;
+          cursor: pointer;
+          font-size: 1.5em;
+      }
+      
+      .icon-container .fa {
+          color: white;
+            background-color: #54698d;
+            padding: 3px 4px;
+            padding-bottom: 1px;
+            border-radius: 2px;
+            padding-right: 5px;
+      }
+      
+      .layer-attributes {
+          display: none;
+      }
+      
+      .layer-attributes.expanded {
+          display: table-row;
+      }
+      
+      .layer-name {
+          width: 33%
+      }
+      
+      .layer-value {
+          width: 59%
+      }
+      
+      .layer-controls {
+          width: 8%;
+          text-align: right;
+          text-align: center;
+      }  
+      
+      .fa.hidden {
+          display: none;
+      }
+      
+  </style>
+      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"></link>
+      <script>
+      function onRowToggle(item, layerName) {
+          var rows = item.parentElement.parentElement.parentElement.getElementsByClassName('layer-attributes ' + layerName);
+          
+          var newIcon = item.parentElement.getElementsByClassName('fa hidden')[0];
+          var oldIcon = item.parentElement.getElementsByClassName('fa visible')[0];
+         
+          newIcon.classList.remove('hidden');
+          newIcon.classList.add('visible');
+          
+          oldIcon.classList.remove('visible');
+          oldIcon.classList.add('hidden');
+         
+          for(var i = 0; i < rows.length ; i++) {
+              rows[i].classList.toggle('expanded');
+          }
+      }
+      </script>
+  <apex:pageBlock >   
+      <apex:outputLabel rendered="{! convertedLayers.size == 0 }">No layers information available</apex:outputLabel>
+      <div class="slds-scope location-tables">
+          <div rendered="{! convertedLayers.size > 0 }">
+              <table  class="slds-table slds-table--bordered slds-table--striped slds-tree slds-table_tree">
+                  <thead>
+                      <tr>
+                          <td></td>
+                          <td>Name</td>
+                          <td>Value</td>
+                      </tr>
+                  </thead>
+                  <apex:variable value="{!1}" var="rowNum"/>
+                  <apex:repeat value="{! convertedLayers }" var="layer">
+                      <tr>
+                          <td  colspan="1" class="layer-controls">
+                            <span onClick="onRowToggle(this, '{! rowNum }')" class="icon-container"> 
+                                <i class="fa fa-plus visible"></i>
+                                <i class="fa fa-minus hidden"></i>
+                            </span>
+                          </td> 
+                          <th colspan="1" class="layer-name">{! layer.layerName }</th>
+                          <td  colspan="1" class="layer-value">{! layer.value }</td>
+                      </tr>
+                      <apex:repeat value="{! layer.attributes }" var="attr">
+                          <tr class="layer-attributes {! rowNum }" aria-level="2">
+                              <td class="layer-controls"></td>
+                              <th class="slds-tree__item">{! attr }</th>
+                              <td class="layer-value">{! layer.attributes[attr] }</td>
+                          </tr>
+                      </apex:repeat>
+                       <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                  </apex:repeat> 
+              </table>
+          </div>
+      </div>
+  </apex:pageBlock> 
+</apex:component>

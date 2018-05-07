@@ -1,0 +1,169 @@
+<apex:component controller="Console311_Section_BulkDatePicker">
+  <apex:attribute name="mStId" type="String" description="Service Type ID" assignTo="{!stId}"/>
+  <apex:attribute name="mZone" type="String" description="Zone" assignTo="{!zone}"/>
+  <apex:attribute name="mScheduleList" type="Incap311__Schedule__c[]" description="List of scheuldes." />
+  <apex:attribute name="mSearchScheduleAFName" type="String" description="The name of the AF for finding the schedule." />
+  <apex:attribute name="errorMsg" type="String" description="Error message from the top level controller." assignTo="{!mScheduleErrorMsg}"/>
+  <apex:attribute name="stv" type="Incap311__Service_Type_Version__c" description="Service Request Type Version for the current type." assignTo="{!mStv}" />
+  <apex:attribute name="dotw" type="String" description="A csv of the day's of the week supported"/>
+
+  <style>
+    .bdp-button-container {
+      padding: 2px;
+    }
+
+    .override-schedule {
+      display: none;
+    }
+
+    .override-schedule.active {
+      display: block;
+    }
+    
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+
+    .no-sch-found-error {
+      display: none;
+      color: red;
+      font-weight: 600;
+    }
+  </style>
+  <div class="bulk-date-picker-container slds slds-grid slds-wrap" style="padding: 20px;">
+    <h4 class="slds-text-title--caps slds-size--1-of-1" id="treeheading" style="margin-bottom: 5px">
+      <span class="slds-icon_container" style="padding-right: 5px;">
+        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/event.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+      </span>
+      Available Schedule(s)
+    </h4>
+
+    <apex:outputPanel layout="block" rendered="{!mScheduleErrorMsg != null}" styleClass="slds-size--1-of-1">
+      <div class="bdp-button-container slds-size--1-of-1">
+        <div class="slds-notify slds-notify--alert slds-theme--warning slds-theme--alert-texture bdp-alert-result slds-size--1-of-1" role="alert" style="padding: 15px; font-weight: bold;">
+          <p>{!mScheduleErrorMsg}</p>
+        </div>
+      </div>
+    </apex:outputPanel>
+
+    <div class="bdp-dotw-container slds-size--1-of-1 slds-grid" data-dotw-active="{!dotw}">
+      <!--<div class="slds-card slds-size--1-of-2" style="border-radius: 5px 0 0 5px;">
+        <div class="slds-media__body" style="text-align: center; padding: 10px;">
+          Recycle Day: <p style="font-weight: bold;">{!dotw}</p>
+        </div>
+      </div>-->
+      <article class="slds-card slds-size--1-of-2" style="border-radius: 5px 0 0 5px;">
+      <div class="slds-card__header slds-grid">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+           <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-campaign">
+                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/custom/custom3.svg')}" aria-hidden="true" class="case-icon slds-icon slds-icon--medium svg" />
+                </span>
+            </div>
+            <div class="slds-media__body">
+                <p class="slds-text-title slds-line-height--reset" style="text-transform: capitalize;" title="Recycle Day">Recycle Day</p>
+                <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" style="text-transform: capitalize;" title="{!dotw}">{!dotw}</h1>
+            </div>
+        </header>
+      </div>
+      <footer class="slds-card__footer"></footer>
+    </article>
+
+      <button class="slds-button slds-button--brand slds-size--1-of-2" type="button" onclick="searchForSchedule();" style="border-radius: 0 5px 5px 0;">
+        Find Available Date
+      </button>
+    </div>
+
+    <div class="no-sch-found-error"><sup>*</sup>At least one item must be added to schedule the pickup.</div>
+      <br/>
+    <div class="bdp-override-filter slds-size--1-of-1">
+      <input type="checkbox" name="ai-overrideCheckboxFilter" id="bdp-filter-check" onclick="$('.override-schedule').toggleClass('active');" data-parsley-excluded="true"/>
+      <label for="bdp-filter-check">Incorrect Recycle Day?</label>
+
+      <div class="override-schedule">
+           <label for="bdp-day-listing">Select a day</label>
+           <select id="bdp-day-listing" class="date-listings" data-parsley-excluded="true" onChange="$('.bdp-dotw-container').data('dotw-active', $(this).val()); searchForSchedule();">
+            <option></option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+          </select>
+      </div>
+    </div>
+
+    <div class="bdp-picker-container slds-size--1-of-1">
+
+      <apex:outputPanel rendered="{!mScheduleList.size == 0}" layout="none">
+        <p></p>
+      </apex:outputPanel>
+
+      <apex:outputPanel rendered="{!mScheduleList != null}" layout="none">
+        <apex:repeat value="{!mScheduleList}" var="button">
+          <div class="bdp-button-container slds-size--1-of-1">
+            <div class="slds-notify slds-notify--alert slds-theme--success slds-theme--alert-texture bdp-alert-result slds-size--1-of-1" role="alert" data-schedule-id="{!button.Id}" style="padding: 15px; font-weight: bold;">
+              <h2><c:formatdatetime date_timevalue="{!button.Incap311__Schedule_Date__c}" format="EEE, MMM dd yyyy" timezone="GMT"/></h2>
+            </div>
+          </div>
+        </apex:repeat>
+      </apex:outputPanel>
+    </div>
+      <!--  TODO HAVE SPACE FOR NO DATES -->
+
+      <!-- TODO: If no dates available provide input for Day of Week. -->
+
+    <input id="bulk-schedule-id" type="text" name="schedule-id" value="" style="display: none;"/>
+  </div>
+
+  <script>
+    var activeBtn = $('.bulk-date-picker-container .bdp-button-container .bdp-alert-result');
+
+    if (activeBtn != null) {
+      $('#bulk-schedule-id').val(activeBtn.data('schedule-id'));
+    }
+
+    var searchForSchedule = function() {
+      $('.no-sch-found-error').hide();
+
+      if (window['form']) {
+        if (form.validate()) {
+          if (retrieveNumOfBulkItems() > 0) {
+          console.log('----> Attempting to obtain schedule date for ' + $('.bdp-dotw-container').data('dotw-active'));
+          window['{!mSearchScheduleAFName}']($('.bdp-dotw-container').data('dotw-active'), retrieveNumOfBulkItems());
+          } else {
+            $('.no-sch-found-error').show();
+          }
+        }
+      }
+    }
+
+    var toggleActiveSchedule = function(ele) {
+      $(ele).parent().parent().find('.slds-button--brand').removeClass('slds-button--brand').addClass('slds-button--neutral'); 
+      $(ele).addClass('slds-button--brand').removeClass('slds-button--neutral');
+      $('#bulk-schedule-id').val($(ele).data('schedule-id'));
+      console.log('------> Current schedule id saved: ' + $('#bulk-schedule-id').val());
+    }
+
+    function retrieveNumOfBulkItems() {
+      var bulkNumberInputs = $("input[data-datatype='Number']");
+      var numOfItems = 0;
+
+      for (var i = 0; i < bulkNumberInputs.length; i++) {
+        var inputVal = 0;
+
+        try {
+          inputVal = parseInt($(bulkNumberInputs[i]).val());
+        } catch (e) {
+          // Not an Int.
+        }
+
+        if (inputVal) {
+          numOfItems += inputVal;
+        }
+      }
+      return numOfItems;
+    }
+  </script>
+
+</apex:component>

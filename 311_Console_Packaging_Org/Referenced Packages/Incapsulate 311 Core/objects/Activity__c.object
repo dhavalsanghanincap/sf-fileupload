@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <description>Represents an activity performed during the management of a Service Request</description>
+    <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableEnhancedLookup>true</enableEnhancedLookup>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>true</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Activity_Code__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Unique code identifying the activity</description>
+        <externalId>false</externalId>
+        <label>Activity Code</label>
+        <length>20</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Activity_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Descriptive name for the activity</description>
+        <externalId>false</externalId>
+        <label>Activity Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SLA_Detail__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Concatenation of units and type of units for Service Level Agreement</description>
+        <externalId>false</externalId>
+        <formula>IF(
+    SLA__c  &lt;&gt; 1,
+    TEXT(SLA__c) + &quot; &quot; + TEXT(SLA_Type__c),
+    TEXT(SLA__c) + &quot; &quot; + LEFT(TEXT(SLA_Type__c), LEN(TEXT(SLA_Type__c)) - 1)
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>SLA Detail</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SLA_Type__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Type of units for Service Level Agreement</description>
+        <externalId>false</externalId>
+        <label>SLA Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Business Days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Calendar Days</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Hours</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>SLA__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Number of units for Service Level Agreement</description>
+        <externalId>false</externalId>
+        <label>SLA</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>Activity</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Activity_Name__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>ACT-{00000000}</displayFormat>
+        <label>Activity Id</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Activities</pluralLabel>
+    <searchLayouts>
+        <lookupDialogsAdditionalFields>Activity_Code__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>Activity_Name__c</lookupDialogsAdditionalFields>
+        <searchFilterFields>NAME</searchFilterFields>
+        <searchFilterFields>Activity_Name__c</searchFilterFields>
+        <searchFilterFields>SLA__c</searchFilterFields>
+        <searchFilterFields>SLA_Type__c</searchFilterFields>
+        <searchResultsAdditionalFields>Activity_Code__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Activity_Name__c</searchResultsAdditionalFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+    <startsWith>Vowel</startsWith>
+    <validationRules>
+        <fullName>No_Special_Chars_In_Activity_Code</fullName>
+        <active>true</active>
+        <description>Validates for only alphanumeric, hyphen, and underscore in Activity Code field</description>
+        <errorConditionFormula>NOT(REGEX(Activity_Code__c, &quot;[a-zA-Z0-9_-]+&quot;))</errorConditionFormula>
+        <errorDisplayField>Activity_Code__c</errorDisplayField>
+        <errorMessage>You must only use alphanumeric (a-z, 0-9), hyphen, or underscore in the Activity Code field.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Validate_SLA_Fields</fullName>
+        <active>true</active>
+        <description>Ensure SLA and SLA Type are either both defined or undefined</description>
+        <errorConditionFormula>OR(
+     AND(
+            NOT(ISBLANK(SLA__c)),
+            ISBLANK(TEXT(SLA_Type__c))
+      ),
+      AND(
+             ISBLANK(SLA__c),
+             NOT(ISBLANK(TEXT(SLA_Type__c)))
+      )
+)</errorConditionFormula>
+        <errorMessage>SLA and SLA Type must both be completed or empty</errorMessage>
+    </validationRules>
+</CustomObject>

@@ -1,0 +1,15 @@
+<apex:page >
+    <style>
+      #appComponent {
+        width: 350px;
+        height: 350px;
+      }
+    </style>
+    
+    <script>
+      window.alertDate = function(dateString) {
+          alert('The selected date was: ' + dateString);
+     }
+     </script>
+    <c:Console311_Section_ScheduleCalendar scode="BULKCOLL" zone="1C" onSelectDate="alertDate"/>
+</apex:page>

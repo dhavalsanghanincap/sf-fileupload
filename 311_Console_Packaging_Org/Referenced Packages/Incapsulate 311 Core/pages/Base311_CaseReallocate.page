@@ -1,0 +1,30 @@
+<apex:page standardController="Case" extensions="Incap311.Base311_CaseReallocate">
+  <apex:form >
+      <apex:pageBlock >
+          <apex:pageBlockButtons >
+              <apex:commandButton action="{! save }" value="Save" />
+              <apex:commandButton action="{! cancel }" value="Cancel" />
+          </apex:pageBlockButtons>
+          
+          <apex:pageMessages />
+          <c:Base311_Reallocate sObjectAPIName="Case" 
+                          serviceTypeValue="{!c.Service_Type_Version__r.Incap311__Service_Type__c}" 
+                          ReallocatePageCtrlBase="{!this}" />
+          </apex:pageBlock>
+          <!--<apex:pageBlockSection >
+              <apex:selectList label="Owner *" value="{! c.OwnerId }" multiselect="false" size="1" required="true">
+                  <apex:selectOptions value="{! queues }" />
+              </apex:selectList>
+              <apex:inputTextarea label="Reason *" value="{! comment }" required="true"/>
+          </apex:pageBlockSection>
+      </apex:pageBlock>
+      <apex:pageBlock rendered="{! queues.size == 0 }" >
+          <apex:pageBlockButtons >
+              <apex:commandButton disabled="true" value="Save" />
+              <apex:commandButton action="{! cancel }" value="Go Back" />
+          </apex:pageBlockButtons>
+          
+          <p>No queues configured for reallocate</p>
+      </apex:pageBlock>-->
+  </apex:form>
+</apex:page>

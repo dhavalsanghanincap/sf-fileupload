@@ -1,0 +1,5 @@
+<apex:component controller="ServiceRequestPDFController" access="global">
+    <apex:attribute type="String" name="myRecordIdString" assignTo="{!myRecordId}" 
+                    description="Passed to controller to render vf page."/>
+    <apex:outPutText value="{!ServiceRequestPDF}" escape="false" />
+</apex:component>

@@ -1,0 +1,75 @@
+<apex:page id="thepage" standardController="IncapRF__Rule_set__c" extensions="IncapRF.RuleEditController">
+    <apex:form id="theform">
+        <apex:outputPanel id="outputpanel" layout="block" >
+            <apex:pageBlock id="ruleSetBlock" title="{!rulesetRecord.name}">
+            <apex:pageMessages id="themessage"/>
+                <apex:pageBlockButtons id="rulesetBlockButton">
+                    <apex:commandButton value="Save" action="{!onSave}" reRender="themessage"/>
+                    <apex:commandButton value="Delete" action="{!delete}" reRender="themessage"/>
+                    <apex:commandButton value="Cancel" action="{!cancel}" reRender="themessage"/>
+                    <apex:commandButton value="Deactive" action="{!deactive}" rerender="outputpanel,themessage"/>
+                    <apex:commandButton value="Clone" action="{!doclone}" rerender="outputpanel,themessage"/>
+                </apex:pageBlockButtons> 
+                <apex:pageBlockSection >   
+                    <apex:inputfield value="{!rulesetRecord.name}" id="rulesetName" />
+                    <apex:inputfield value="{!rulesetRecord.IncapRF__Active__c}" id="rulesetActive" />
+                    <apex:inputfield value="{!rulesetRecord.IncapRF__Type__c}" id="rulesetType" rendered="{!NOT(isEdit)}" />
+                    <apex:outputfield value="{!rulesetRecord.IncapRF__Type__c}"  rendered="{!(isEdit)}"/>
+                    <!--<apex:inputfield value="{!rulesetRecord.IncapRF__Object_Name__c}" id="rulesetObject" rendered="{!NOT(isEdit)}"/> -->
+                    <apex:outputfield value="{!rulesetRecord.IncapRF__Object_Name__c}"  rendered="{!(isEdit)}"/>
+                    <apex:selectList style="width:12em;" value="{!rulesetRecord.IncapRF__Object_Name__c}" multiselect="false" size="1" rendered="{!NOT(isEdit)}">
+                    <apex:selectOption itemValue="" itemLabel="--None--" />
+                        <apex:selectOptions value="{!OrgObjects}" />
+                    </apex:selectList>
+                    <apex:outputfield value="{!rulesetRecord.CreatedByID}" id="rulesetCreatedBy"/>
+                    <apex:outputfield value="{!rulesetRecord.CreatedByID}" id="rulesetModifiedBy"/>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        <apex:pageBlock id="ruleBlock" title="Rule Entries" rendered="{!isEdit}">
+            <apex:pageBlockButtons id="ruleBlockButton">
+                <apex:commandButton value="Save" action="{!saveAllEntries}"/>
+                <apex:commandButton value="New Rule" action="{!gotoNewRule}"/>
+            </apex:pageBlockButtons>
+            <apex:outputPanel id="outputfeilds" layout="block" >
+            <apex:pageBlockTable value="{!workFlowRuleEntrieInnerList}" var="ruleEntries">
+                <apex:column >
+                    <apex:commandlink value="Edit" action="{!ruleEntryEdit}">
+                        <apex:param name="selectedruleEntryID" value="{!ruleEntries.ruleEntry.id}" assignTo="{!selectedruleEntryID}"/>
+                    </apex:commandlink>
+                    &nbsp;|&nbsp;  
+                    <apex:commandlink value="Delete" action="{!ruleEntryDelete}" rerender="outputfeilds"> 
+                    <apex:param name="deleteruleEntryID" value="{!ruleEntries.ruleEntry.id}" assignTo="{!deleteruleEntryID}"/>
+                     </apex:commandlink> 
+                      &nbsp;|&nbsp;  
+                     <apex:commandlink value="Clone" action="{!ruleclone}" rerender="outputfeilds" >
+                       <apex:param name="cloneEntryID" value="{!ruleEntries.ruleEntry.id}" assignTo="{!cloneEntryID}"/>
+                      </apex:commandlink>     
+                    <!--<apex:commandButton value="Delete" action="{!}"> 
+                        <apex:param name="selectedruleEntryID" value="{!ruleEntries.ruleEntry.id}" assignTo="{!selectedruleEntryID}"/>
+                    </apex:commandButton>
+                    <apex:commandButton value="Clone" action="{!}">  
+                        <apex:param name="selectedruleEntryID" value="{!ruleEntries.ruleEntry.id}" assignTo="{!selectedruleEntryID}"/>
+                    </apex:commandButton>-->
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.IncapRF__WorkflowRule__c.fields.IncapRF__Active__c.Label}">
+                    <apex:inputField value="{!ruleEntries.ruleEntry.IncapRF__Active__c}"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.IncapRF__WorkflowRule__c.fields.IncapRF__Order__c.Label}">
+                    <apex:inputField value="{!ruleEntries.ruleEntry.IncapRF__Order__c}"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.IncapRF__WorkflowRule__c.fields.Name.Label}">
+                    <apex:outputField value="{!ruleEntries.ruleEntry.Name}"/>
+                </apex:column>
+                <apex:column headerValue="Conditions">
+                    <apex:outputText value="{!ruleEntries.entryCriteria}"/> 
+                </apex:column>
+                <apex:column headerValue="Actions">
+                    <apex:outputText value="{!ruleEntries.actions}"/>
+  
+                </apex:column>
+            </apex:pageBlockTable>
+             </apex:outputPanel>
+        </apex:pageBlock>    
+    </apex:form>
+</apex:page>

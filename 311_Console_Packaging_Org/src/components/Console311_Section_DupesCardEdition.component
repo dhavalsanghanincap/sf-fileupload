@@ -1,0 +1,121 @@
+<apex:component >
+  <apex:attribute name="mDuplicatesList" type="Case[]" required="true" description="List of duplicate cases."/>
+
+  <style>
+    .duplicate-requests-container {
+      max-height: 400px;
+      overflow-y: scroll;
+      display: block;
+      position: relative;
+    }
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+    
+    .card-sub-label { 
+      display: block;
+      padding: 1px 10px;
+    }
+
+    .dupe-card-icon.svg path {
+      fill: #ffffff;
+    }
+
+    .dupe-container {
+      margin: 0px 0px 15px 0px;
+    }
+
+    .dupe-container .slds-text-title--caps {
+      margin-bottom: 3px;
+    }
+
+    .dupe-icon-container {
+      padding-left: 7px;
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    .slds .slds-card+.slds-card {
+      margin-top: 0.5rem;  
+    }
+
+    .dupes-view-all-footer {
+
+    }
+
+    .card-sub-label-case-num {
+      font-size: .875rem;
+      text-decoration: none;
+      color: #16325c;
+    }
+    
+    .card-container {
+        position: relative;
+    }
+    
+    .badge-abs-container {
+        position: absolute;    
+        right: 5px;
+        top: 5px;
+    }
+  </style>
+
+  <apex:outputpanel id="duplicateRequests" layout="block" styleclass="dupe-container slds-container">
+    <apex:outputpanel rendered="true" layout="block" style="display:{!IF(mDuplicatesList.size > 0, 'block', 'none')};">
+      <!--<h3 class="slds-text-title--caps">Duplicate Requests</h3>-->
+       <h4 class="slds-text-title--caps left-panel-header" id="treeheading" onClick="toggleCollapsablePanel(this, 'knowledge-panel-container');">
+  		  <span class="slds-icon_container">
+          <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+        </span>
+  		  Duplicate Service Requests
+        <i class="fa fa-caret-up cs-caret-postional"></i>
+      </h4>
+      <div class="duplicate-requests-container collapsable-container">
+
+        <apex:variable value="{!0}" var="counter" />
+        <apex:repeat value="{!mDuplicatesList}" var="request">
+          <apex:outputPanel layout="none" rendered="{!counter < 5}">
+            <article class="slds-card slds-card--narrow">
+              <div class="slds-card__body slds-grid">
+                <div class="dupe-icon-container">
+                  <span class="slds-icon_container slds-icon-standard-contact">
+                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="dupe-card-icon slds-icon slds-icon--small svg" />
+                  </span>
+                </div>
+
+                <div class="slds-col slds-grid-horizontal card-container">
+                    
+                  <div class="badge-abs-container">
+                      <span class="slds-badge">{!request.Status}</span>
+                  </div>
+                
+                  <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                      <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" onclick="sforce.console.openPrimaryTab(null,'/{!request.Id}', true, 'SR #: {!request.Incap311__Service_Request_Number__c}');">
+                        <span class="card-sub-label card-sub-label-case-num">{!request.Incap311__Service_Request_Number__c}</span>
+                      </a>
+                  </div>
+
+                  <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                    <span class="card-sub-label slds-text-body--small">{!request.Incap311__Service_Type_Version__r.Incap311__Service_Name__c}</span>
+                  </div>
+
+                  <div class="slds-cell-wrap slds-col slds-size--1-of-1">
+                    <span class="slds-cell-wrap card-sub-label slds-text-body--small">{!request.Incap311__Address__c}</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </apex:outputPanel>
+
+          <apex:variable value="{!counter + 1}" var="counter" />
+        </apex:repeat>
+
+        <apex:outputPanel layout="none" rendered="{!IF(mDuplicatesList.size > 5, true, false)}">
+          <div class="dupes-view-all-footer slds-size--1-of-1 slds-text-align--right">
+            <a href="#" onclick="alert('Feature coming soon.'); return false;">View All</a>
+          </div>
+        </apex:outputPanel>
+      </div>
+    </apex:outputpanel>
+  </apex:outputpanel>
+</apex:component>

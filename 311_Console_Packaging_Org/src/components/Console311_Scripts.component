@@ -1,0 +1,96 @@
+<apex:component >
+  <!-- Component Input Attributes  -->
+  <apex:attribute name="dataTableEnabled" description="Flag to indicate whether datatable is enabled" type="Boolean" required="true"/>
+  <apex:attribute name="dataTableSettings" description="Data table settings" type="String" required="true"/>
+
+  <apex:outputPanel layout="none" rendered="{!dataTableEnabled}">
+    <apex:includeScript value="/support/console/32.0/integration.js"/>
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    <apex:includeScript value="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"/>
+    <apex:includeScript value="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"/>
+    <apex:includeScript value="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"/>
+    <script>
+      var tableSettings = {
+        !dataTableSettings
+      };
+      var pageSize = tableSettings.PageSize.Value__c;
+      var lengthChange = tableSettings.LengthChange.Value__c;
+      var displaySearch = tableSettings.DisplaySearch.Value__c;
+
+      function onCompleteHandler() {
+        j$('.nav-tabs > li:first-child').addClass('active');
+        j$('#myTabContent > div:first-child').addClass('active');
+        j$.each(objectList, function (index, value) {
+          j$('#results-table-' + value).DataTable({"pageLength": parseInt(pageSize), "searching": eval(displaySearch), "lengthChange": eval(lengthChange)});
+        });
+      }
+    </script>
+  </apex:outputPanel>
+
+  <apex:outputPanel layout="none" rendered="{!(!dataTableEnabled)}">
+    <apex:includeScript value="/support/console/32.0/integration.js"/>
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    <apex:includeScript value="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"/>
+    <script>
+      function onCompleteHandler() {
+        j$('.nav-tabs > li:first-child').addClass('active');
+        j$('#myTabContent > div:first-child').addClass('active');
+      }
+    </script>
+  </apex:outputPanel>
+
+  <apex:includeScript value="/lightning/lightning.out.js"/>
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"/>
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.4.0/moment-timezone-with-data.min.js"/>
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.3/js/bootstrap-select.min.js"/>
+  <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"/>
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.js"/>
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js" />
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.5/lodash.min.js" />
+  <apex:includeScript value="{!URLFOR($Resource.ConsoleAssets, 'ConsoleAssets/vendor/js/jquery.aljs-all.min.js')}" />
+
+  <!-- Utility Functions: Start -->
+  <script>
+    $.aljsInit({
+        assetsLocation: '{!URLFOR($Resource.LightningDesign)}',
+        scoped: true,
+        scopingClass: 'slds-scope'
+    });
+
+    function decodeHTMLEntities(text) {
+      var entities = [
+        ['amp', '&'],
+        ['apos', '\''],
+        ['#x27', '\''],
+        ['#x2F', '/'],
+        ['#39', '\''],
+        ['#47', '/'],
+        ['lt', '<'],
+        ['gt', '>'],
+        ['nbsp', ' '],
+        ['quot', '"']
+      ];
+
+      for (var i = 0, max = entities.length; i < max; ++i)
+         text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
+
+      return text;
+    }
+
+    var toggleCollapsablePanel = function toggleCollapsablePanel(me, topLevelContainerClassName, scrollToElement) {
+      //'.new-edit-contact-container'
+      $(me).parent().children('.collapsable-container').toggleClass('collapsed');
+      // Header
+      $(me).children('.fa').toggleClass('fa-caret-up').toggleClass('fa-caret-down');
+
+      if (scrollToElement) {
+        if (!$(me).parent().children('.collapsable-container').hasClass('collapsed')) {
+          $('.' + topLevelContainerClassName).animate({
+            scrollTop: $(me).parent().children('.collapsable-container').offset().top - $('.' + topLevelContainerClassName).offset().top + $('.' + topLevelContainerClassName).scrollTop()
+          });
+        }
+      }
+    }
+  </script>
+  <!-- Utility Functions: End -->
+</apex:component>

@@ -1,0 +1,18 @@
+<apex:component controller="Console311_Controller_Transfer_Activity">
+    <apex:attribute name="vServiceTypeID" type="String" assignTo="{!serviceTypeId}" description="mOrgTransferCase.Incap311__Service_Type_Version__r.Incap311__Service_Type__c" />
+    <apex:attribute name="transferType" type="String" description="variable to save the selected option to" />
+
+
+    <div class="slds-form-element console-padding">
+        <apex:outputPanel title="Information" id="Info" styleclass="slds-form-element__control" layout="block">
+
+            <div class="slds-form-element__control">
+                <label class="slds-form-element__label" for="TransferSelect">Select an Service Type</label>
+                <apex:selectList styleClass="slds-input outcome-list" value="{!transferType}"  multiselect="false" size="1" id="TransferSelect"  label="Transfer" > 
+                    <apex:selectOption itemValue="" itemLabel="--Select--"></apex:selectOption>
+                    <apex:selectOptions value="{!SRTypes}"> </apex:selectOptions>
+                </apex:selectList>
+            </div>
+        </apex:outputPanel>
+    </div>
+</apex:component>

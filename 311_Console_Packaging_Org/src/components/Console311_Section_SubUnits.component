@@ -1,0 +1,91 @@
+<apex:component controller="Console311_Controller_SubUnits">
+    
+    <apex:attribute type="Incap311.Base311_Location" name="location" description="Address ID to use to find Sub Locations" assignTo="{! selectedLocation  }" />
+    <apex:attribute type="String" name="onSelectSubUnit" description="Callback function when a sub location is selected. This should be a javascript function on the window" />
+    
+    <style>
+        .sub-location-item {
+            padding: 3px;
+        }
+        .sub-location-item.hidden-sub-item{
+            display: none;
+        }
+        
+        .sub-location-item.selected {
+            background-color: #d4e4ff;
+        }
+        
+        ul.sub-unit-container {
+            max-height: 140px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+    
+    <apex:outputPanel layout="none" rendered="{! location.subAddressId != null }">
+        <div class="slds-form-element__control">
+            <div class="slds-pill_container">
+                <span class="slds-pill slds-size--1-of-1">
+                    <span class="slds-pill__label" title="{!location.address}">{!location.address}</span>
+                    <button class="slds-button slds-button--icon slds-pill__remove" title="Remove" type="button" onclick="onSubLocItemClick()">
+                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/close.svg')}" aria-hidden="true" class="slds-button__icon svg" />
+                        <span class="slds-assistive-text">Remove</span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </apex:outputPanel>
+    
+    <apex:outputPanel layout="none" rendered="{! location.subAddressId == null && SubUnits.size > 0}">
+        <input type="text" class="slds-input sub-location-search" />
+        <ul class="ui-menu ui-widget ui-widget-content ui-front sub-unit-container">
+            <apex:repeat value="{! SubUnits }" var="su">
+                <li class="ui-menu-item sub-location-item" onClick="onSubLocItemClick('{! EncodedSubunits[su.loc.subAddressId] }')">
+                    {!su.loc.address}
+                </li>
+            </apex:repeat>
+        </ul>
+    </apex:outputPanel>
+    
+    <apex:outputPanel layout="none" rendered="{! location.subAddressId == null && SubUnits.size == 0}">
+        <div>
+            <label class="slds-label"><i>No sub units were found</i></label>
+        </div>
+    </apex:outputPanel>
+    
+    <script> 
+        function onSubLocItemClick(item) {
+            $('.loading-spinner').show();
+            
+            if(window['{! onSelectSubUnit }']) {
+                window['{! onSelectSubUnit }'](item);
+            }
+        }
+    
+        jQuery('.sub-location-search')
+            .keyup(function(ev) {
+                var value = ev.target.value;
+                
+                jQuery('.sub-location-item')
+                    .each(function(item) {
+                         
+                        $(this).addClass('hidden-sub-item');
+                        
+                        if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                            $(this).removeClass('hidden-sub-item');
+                        } 
+                    });
+            });
+    
+        jQuery('.sub-location-item')
+            .mouseenter(function(ev) {
+                $(ev.target).addClass('ui-state-active');
+            })
+            .mouseleave(function(ev) {
+                $(ev.target).removeClass('ui-state-active');
+            });
+        
+    </script>
+</apex:component>

@@ -1,0 +1,62 @@
+<apex:page controller="Base311_Service_Wrapper"
+      showHeader="false"
+      sidebar="false"
+      standardStylesheets="false"
+      applyHtmlTag="false"
+      applyBodyTag="false">
+
+      <head>
+        
+          
+            <apex:stylesheet value="{! URLFOR($Resource.ConsoleV2Bundle, 'main.86439c006e619b179602.css') }" />
+          
+        
+      </head>
+      <body>
+
+          <apex:remoteObjects jsNamespace="IncapConsoleNS">
+            
+          </apex:remoteObjects>
+        
+
+        
+          <div id="app"></div>
+        
+
+        <script>
+          window['__STATIC_RESOURCE_ZIP'] = '{! URLFOR($Resource.ConsoleV2Bundle) }';
+          window['__ACCESS_TOKEN'] = '{!$Api.Session_ID}';
+          window['USER_INFO'] = {
+            display_name: '{! $User.FirstName } {! $User.LastName }',
+            first_name: '{! $User.FirstName }',
+            last_name: '{! $User.LastName }',
+            nick_name: '{! $User.CommunityNickname }',
+            addr_country: '{! $User.Country }',
+            email: '{! $User.Email }',
+            mobile_phone: '{! $User.MobilePhone }',
+            user_id: '{! $User.Id }'
+          };
+          
+              function baseSharedServices(config, cb) {
+                var service = config.service;
+                var method = config.method;
+                var data = config.data;
+
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.Base311_Service_Wrapper.handleRemote}',
+                  service, method, data,
+                  cb
+                );
+              }
+            
+        </script>
+
+        
+          
+            <script src="{! URLFOR($Resource.ConsoleV2Bundle, 'vendor.js') }"></script>
+          
+            <script src="{! URLFOR($Resource.ConsoleV2Bundle, 'main.js') }"></script>
+          
+        
+      </body>
+    </apex:page>

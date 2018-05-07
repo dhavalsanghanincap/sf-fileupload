@@ -1,0 +1,4 @@
+<apex:page standardController="Case">
+  <apex:slds />
+    <c:Base311_Layer_Information layers="{! Case.Layer_Information__c }" stvId="{! Case.Service_Type_Version__c}" />
+</apex:page>

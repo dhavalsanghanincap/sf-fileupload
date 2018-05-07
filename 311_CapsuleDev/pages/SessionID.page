@@ -1,0 +1,28 @@
+<apex:page controller="Base311_Service_Wrapper">
+  {! $Api.Session_ID }
+  
+  <script>
+    function callServices(config) {
+          return new Promise((res, rej) => {
+                  const service = config.service;
+                  const method = config.method;
+                  const data = config.data;
+            
+                  Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.Base311_Service_Wrapper.handleRemote}',
+                    service, method, data,
+                    function(result, event){
+                        if(!event.status) {
+                            return rej(event);
+                        }
+                        
+                        return res(result);
+                    },
+                    {escape: true}
+                );
+            });
+        };
+  
+  </script>
+  
+</apex:page>

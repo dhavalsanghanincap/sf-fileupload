@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>36.0</apiVersion>
+    <label>Console311_Section_BulkDatePicker</label>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>415</minorNumber>
+        <namespace>Incap311</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>24</minorNumber>
+        <namespace>IncapRF</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>8</minorNumber>
+        <namespace>Incapfs</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>2</minorNumber>
+        <namespace>Incapsulate_Log</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>7</minorNumber>
+        <namespace>sf_com_apps</namespace>
+    </packageVersions>
+</ApexComponent>

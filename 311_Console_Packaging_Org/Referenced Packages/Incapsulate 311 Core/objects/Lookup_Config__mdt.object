@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This custom setting is used to store custom query modifiers for the lookup controller when processing a Lookup Popup. They are stored in Object value pairs with the new params.</description>
+    <fields>
+        <fullName>Like_Conditional_Operator__c</fullName>
+        <defaultValue>&quot;OR&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This will be the static operator for the LIKE clause.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>This can only be OR or AND.</inlineHelpText>
+        <label>Like Conditional Operator</label>
+        <length>5</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Like_Conditions__c</fullName>
+        <defaultValue>&quot;Name&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This field will contain fields that need to be compared for the like conditional against the query string.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>This is a comma separated list of strings. Please ensure no spaces are present. ID is unavailable for the use in conditionals at this moment in time.</inlineHelpText>
+        <label>Like Conditions</label>
+        <required>true</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Order_Conditions__c</fullName>
+        <defaultValue>&quot;Id DESC&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This field will contain the order by conditions for the query.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Order Conditions</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Query_Field_Labels__c</fullName>
+        <defaultValue>&quot;&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This field is meant to represent a comma separated list of labels to match the query fields. These must be in the same order as the fields. Partial # of fields will be matched based on order of fields.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>If you wish to use custom labels enter them here. If this field is blank then field names will be used.</inlineHelpText>
+        <label>Query Field Labels</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Query_Fields__c</fullName>
+        <defaultValue>&quot;Id&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This field is to store all additional fields for the object to query.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <inlineHelpText>This can be any field on the object in question. Please ensure there are no spaces in this definition.</inlineHelpText>
+        <label>Query Fields</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Where_Conditions__c</fullName>
+        <defaultValue>&quot;&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>This field is for all Where conditions required.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>Where Conditions</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>sObject_Name__c</fullName>
+        <caseSensitive>false</caseSensitive>
+        <defaultValue>&quot;&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <description>The sObject&apos;s name for the field coming into the lookup.</description>
+        <externalId>false</externalId>
+        <fieldManageability>DeveloperControlled</fieldManageability>
+        <label>sObject Name</label>
+        <length>255</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <label>Lookup Query Definitions</label>
+    <pluralLabel>Lookup Configs</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

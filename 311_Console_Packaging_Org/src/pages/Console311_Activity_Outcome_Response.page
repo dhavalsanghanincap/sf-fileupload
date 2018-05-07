@@ -1,0 +1,24 @@
+<apex:page standardController="Incap311__Activity_Outcome_Response__c" extensions="Console311_Activity_Outcome_Response_Ext">
+    <apex:form >
+        <apex:pageBlock title="SR Activity: Edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!save}" value="Save" rerender="errmsg, onSaveScripts" />
+                <apex:commandButton action="{!Cancel}" value="Cancel" immediate="True"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Activity Outcome Response Information" id="SR" columns="1">
+                <apex:inputField value="{!Incap311__Activity_Outcome_Response__c.Incap311__Activity_Outcome__c}" />
+                <apex:inputField value="{!Incap311__Activity_Outcome_Response__c.Incap311__Canned_Response__c}" />
+                <apex:inputField value="{!Incap311__Activity_Outcome_Response__c.Incap311__Additional_Comments_Required__c}" />
+                <apex:inputField value="{!Incap311__Activity_Outcome_Response__c.Incap311__Internal_Comments_Required__c}" />
+                
+                <apex:inputField value="{!Incap311__Activity_Outcome_Response__c.Incap311__Override_Order__c}" />
+
+                <apex:selectList value="{!Incap311__Activity_Outcome_Response__c.Incap311__Case_Closure_Reason__c}"  multiselect="false" size="1" id="cannedresponseSelect" label="Case Closure Reason"  
+                               rendered="{!outcomeAction == 'Close'}"  > 
+                    <apex:selectOption itemValue="" itemLabel="--Select--"></apex:selectOption>
+                    <apex:selectOptions value="{!Reasons}" />
+                </apex:selectList>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

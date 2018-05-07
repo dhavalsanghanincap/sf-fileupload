@@ -1,0 +1,130 @@
+<apex:component >
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>311 Console Search</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css"/>
+  <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.3/css/bootstrap-select.min.css"/>
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"/>
+  <apex:stylesheet value="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+  <!-- Lightning Styles -->
+  <!--<apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}"/>-->
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <style>
+    html {
+      font: 100%/1.5 "Salesforce Sans", Arial, sans-serif !important;
+      background: white !important;
+      color: #16325c !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    body {
+      font-size: 0.875rem !important;
+      font-family: "Salesforce Sans", Arial, sans-serif !important;
+      background: transparent !important;
+    }
+
+    .btn {
+      margin-left: 20px !important;
+    }
+
+    #myTab {
+      border-color: #2513EB;
+    }
+
+    #myTab li a {
+      border-color: #2513EB;
+      background-color: #337ab7;
+      color: white;
+      font-weight: bold;
+    }
+
+    #myTab li.active a {
+      border-bottom-color: transparent;
+      background-color: #E6E7E9;
+      color: black;
+      font-weight: bold;
+    }
+
+    .my-tab .tab-pane {
+      border: solid 1px #2513EB;
+      border-top: 0;
+    }
+
+    .loading-status {
+      line-height: 32px;
+    }
+
+    .loading-status:before {
+      content: " ";
+      width: 30px;
+      height: 60px;
+      float: left;
+      display: block;
+      position: relative;
+      background: url("{!URLFOR($Resource.LightningDesign, 'assets/images/spinners/slds_spinner_brand.gif')}") top center no-repeat;
+      background-size: 100%;
+    }
+
+    .collapsable-container.collapsed {
+      display: none !important;
+    }
+
+    .left-panel-header {
+      border-bottom: 1px solid rgb(244, 246, 249);
+    }
+
+    .cs-caret-postional {
+      float: right;
+      margin-top: 5px;
+    }
+
+    @font-face {
+      font-family: "Salesforce Sans";
+      src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Light.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'LightningDesign/assets/fonts/webfonts/SalesforceSans-Light.woff')}") format("woff");
+      font-weight: 300; }
+
+    @font-face {
+      font-family: "Salesforce Sans";
+      src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-LightItalic.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'LightningDesign/assets/fonts/webfonts/SalesforceSans-LightItalic.woff')}") format("woff");
+      font-style: italic;
+      font-weight: 300; }
+
+    @font-face {
+      font-family: "Salesforce Sans";
+      src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Regular.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'LightningDesign/assets/fonts/webfonts/SalesforceSans-Regular.woff')}") format("woff");
+      font-weight: 400; }
+
+    @font-face {
+      font-family: "Salesforce Sans";
+      src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Italic.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'LightningDesign/assets/fonts/webfonts/SalesforceSans-Italic.woff')}") format("woff");
+      font-style: italic;
+      font-weight: 400; }
+
+    @font-face {
+      font-family: "Salesforce Sans";
+      src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-Bold.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'LightningDesign/assets/fonts/webfonts/SalesforceSans-Bold.woff')}") format("woff");
+      font-weight: 700; }
+
+    @font-face {
+      font-family: "Salesforce Sans";
+      src: url("{!URLFOR($Resource.LightningDesign, 'assets/fonts/webfonts/SalesforceSans-BoldItalic.woff2')}") format("woff2"), url("{!URLFOR($Resource.LightningDesign, 'LightningDesign/assets/fonts/webfonts/SalesforceSans-BoldItalic.woff')}") format("woff");
+      font-style: italic;
+      font-weight: 700; }
+  </style>
+  <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/svg4everybody/2.0.0/svg4everybody.min.js"/>
+
+  <!-- Custom Styles -->
+  <apex:stylesheet value="{!URLFOR($Resource.ConsoleAssets, 'ConsoleAssets/css/console.css')}"/>
+</apex:component>

@@ -1,0 +1,41 @@
+<apex:component controller="Console311_Section_ShortcutsCtrl">
+  <!--<button class="slds-col slds-button slds-button--brand" type="button" style="margin-left: 5px;" onClick="moveToConsoleByType('SRTV-00000093');">Inquiry</button>
+  <a class="slds-col slds-button slds-button--destructive" href="https://devint2-bos311--devint2-api.cs32.force.com/TalkBack?surveyId=c6dbcf6e-9e0f-4ac3-7936-3fc42d0d3670" target="_blank">Hot Topic</a>-->
+
+  <apex:outputPanel rendered="{!mShortcuts != null}" layout="none">
+
+    <apex:variable value="{!0}" var="counter" />
+    <apex:repeat value="{!mShortcuts}" var="shortcut">
+
+      <apex:outputPanel layout="none">
+        <button class="slds-col slds-button slds-button--{!LOWER(shortcut.Incap311Console__Color__c)}" type="button" style="margin-left: {!IF(counter > 0, '0', '5')}px;" onClick="moveToConsoleByUrl('{!shortcut.Incap311Console__Link__c}', '{!LOWER(shortcut.Incap311Console__Link_Type__c)}', '{!shortcut.MasterLabel}');">{!shortcut.MasterLabel}</button>
+      </apex:outputPanel>
+
+      <apex:variable var="counter" value="{!counter + 1}" />
+    </apex:repeat>
+  </apex:outputPanel>
+
+  <script>
+    var moveToConsoleByUrl = function(redirectUrl, urlType, tabName) {
+      if (sforce.console.isInConsole() && urlType === 'internal') { 
+        /*sforce.console.getEnclosingTabId(function(enclosingResult){ 
+          sforce.console.getEnclosingPrimaryTabId(function(primaryResult){ 
+            sforce.console.openSubtab(primaryResult.id, redirectUrl, true, 'New Case', null); 
+          }); 
+        });*/
+        sforce.console.openPrimaryTab(null, redirectUrl, true, tabName, null,''); 
+      } else { 
+        window.open(redirectUrl, '_blank'); 
+      }
+    }
+
+    var moveToConsoleByType = function(typeCode) {
+      var redirectUrl = '/apex/Incap311Console__Console311_Case?activity=new&srid=' + typeCode;
+      moveToConsoleByUrl(redirectUrl);
+    }
+
+    var moveToSurvey = function() {
+      window.locaton.href = 'https://devint2-bos311--devint2-api.cs32.force.com/TalkBack?surveyId=c6dbcf6e-9e0f-4ac3-7936-3fc42d0d3670'
+    }
+  </script>
+</apex:component>

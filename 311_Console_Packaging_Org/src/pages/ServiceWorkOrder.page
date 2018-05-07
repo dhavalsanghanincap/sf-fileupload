@@ -1,0 +1,353 @@
+<apex:page controller="SRReportController" applyBodyTag="false" renderAs="pdf">
+  <head>
+    <style>
+      div.page, div.page-no-break {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-flow: row wrap;
+        font-family: "Helvetica", "Ariel", "Sans-serif";
+      }
+        
+      div.page {
+        page-break-after: always;
+      }
+    
+      .text-center {
+        text-align: center
+      }
+
+      /* Header CSS */
+      #header {
+        float: left;
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      #header .header-title {
+        width: 100%;
+        margin-bottom: 5px;
+        text-align: center;
+      }
+
+      #header .header-title h3 {
+        width: 100%;
+        font-size: 13px;
+        font-weight: bold;   
+      }
+
+      #header p {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      #header .left-col, #header .right-col, #header .row-title {
+        width: 50%;
+        float: left;
+      }
+        
+      #header .row .row-value {
+        float: left;
+        max-width: 47%;
+        margin-left: 10px;
+        font-size: 12px;
+      }
+    
+      #header .row , #header .location-comments {
+        width: 100%;
+        float: left;
+        margin-bottom: 2px;
+        -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+        -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+        box-sizing: border-box;         /* Opera/IE 8+ */
+      }
+    
+      #header .row-title {
+        text-align: right;
+        font-weight: bold;
+        font-size: 12px;
+      }
+    
+      #header .row-location-title {
+        float: left;
+        width: 25%;
+        text-align: right;
+        font-weight: bold;
+        font-size: 12px;
+      }
+        
+      #header .location-comments .row-value {
+        max-width: 70%;        
+      }
+
+      /* Body CSS */
+      .body {
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        position: relative;
+        flex-direction: column;
+      }
+        
+      .body .table-title {
+        width: 100%;
+        float: left;
+        margin-bottom: 2px;
+        margin-left: 2px;
+        font-size: 12px;
+      }
+        
+      .body .flex-note-table {
+        border-top: 2px solid #000; 
+      }
+
+      .body .flex-note-table, .body .participants-table, .body .activities-table {
+        width: 100%;
+        clear: left;
+        display: flex;
+        flex-flow: row wrap;
+        flex-direction: column;
+        page-break-inside: avoid;
+        /*border-left: 1px solid #eee;
+        border-right: 1px solid #eee;*/
+      }
+    
+      .body .flex-note-table .table-header {
+        float: left;
+        width: 100%;
+        background: #b2b2b2;
+        box-sizing: border-box;         /* Opera/IE 8+ */
+        -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+        -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+      }
+
+      .body .flex-note-table .table-header .table-header-container {
+        width: 50%;
+        float: left;
+        box-sizing: border-box;         /* Opera/IE 8+ */
+        -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+        -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+      }
+        
+      .body .flex-note-table .table-header .table-header-container h3 {
+        font-size: 12px; 
+        padding: 0 0 0 5px;
+        margin: 0;
+      }
+        
+      .body .flex-note-table .question-container {
+        width: 100%; 
+        float: left;    
+        border-top: 1px solid #eeeeee;
+        border-left: 1px solid #eeeeee;
+        border-right: 1px solid #eeeeee;
+      }
+       
+      .body .flex-note-table .question-container .question, .body .flex-note-table .question-container .answer {
+        float: left; 
+        font-size: 11px;
+        overflow: hidden;
+        box-sizing: border-box;         /* Opera/IE 8+ */
+        -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+        -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+      }
+        
+      .body .flex-note-table .question-container .question {
+        width: 49%; 
+        border-right: 1px solid #eeeeee;
+      }
+        
+      .body .flex-note-table .question-container .answer {
+        width: 50%; 
+      }
+        
+      .body .flex-note-table .question-container:last-child {
+        
+      }  
+        
+      .body .flex-note-table .question-container .question p, .body .flex-note-table .question-container .answer p {
+        margin: 0;
+        padding: 5px;
+      }
+        
+      /* ---Participants Table--- */
+      .participants-table, .activities-table {
+        border-top: 2px solid #000; 
+        border-bottom: none;
+      }
+        
+      .participants-table .row, .activities-table .row {
+        width: 100%;
+        /*float: left;*/
+        clear: left;
+      }
+        
+      .participants-table .row .column, .activities-table .row .column {
+        float: left;
+        width: 19.83%;
+        width: calc(100%/5);
+        width: -webkit-calc(100%/5);
+        width: -moz-calc(100%/5);
+        font-size: 12px;
+        margin: 0 auto;
+        padding: 0;
+        border-right: 1px solid #eeeeee;
+        -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+        -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+        box-sizing: border-box;         /* Opera/IE 8+ */
+      }
+        
+      .participants-table .row-data, .activities-table .row-data {
+        
+      }
+        
+      .participants-table .row-data:last-child, .activities-table .row-data:last-child {
+        
+      }
+        
+      .participants-table .row-data .column:first-child, .activities-table .row-data .column:first-child {  
+        border-left: 1px solid #eeeeee;
+      }
+        
+      .participants-table .row-data .column {
+        min-height: 50px;  
+        border-bottom: 1px solid #eeeeee;
+        overflow: hidden;
+        word-break: break-word;
+      }
+        
+      .activities-table .row-data .column {
+        min-height: 75px;  
+        border-bottom: 1px solid #eeeeee;
+      }
+        
+      .participants-table .row-header .column, .activities-table .row-header .column {
+        text-align: center; 
+        background: #b2b2b2;
+        padding: 0;
+        margin: 0;
+        font-weight: bold;
+        /*border: 1px solid black;*/
+      }
+        
+      .participants-table .row-header .column p, .activities-table .row-header .column p {
+        margin: 0;
+        padding: 0;
+      }
+        
+      .participants-table .row-data .column p, .activities-table .row-data .column p { 
+        padding: 0 0 0 5px; 
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-wrap: break-word;
+      }
+       
+      /* ---Activities Table--- */
+      .activities-table .row {
+        width: 100%; 
+      }
+       
+       /* ---Footer--- */
+      .footer {
+        clear: left;
+        width: 100%;
+      }
+        
+      .footer h6 {
+        font-size: 10px;
+        font-weight: 400;
+      }
+    </style>
+  </head>
+    
+        <!-- Variable declaration for storing total number of SRs and current counter-->
+        <apex:variable var="caseCursor" value="{!0}" /> 
+        <apex:variable var="totalCases" value="{!lstCase.size}" /> 
+    
+        <apex:repeat value="{!lstCase}" var="case" id="case_repeater">
+            <apex:variable var="caseCursor" value="{!caseCursor+1}"/>
+            <div id="header">
+                <div class="header-title">
+                    <p style="font-weight: bold;">Service Request Summary Report</p>
+                    <p style="font-weight: bold;">{!case.Incap311__Service_Request_Number__c}</p>
+                    <p>Printed Date: {!currentDatetime}</p>
+                    <p>Printed Date: {!caseCursor}</p>
+                </div>
+    
+            <div class="left-col">
+                <div class="row"><p class="row-title">Type: </p><p class="row-value">{!case.Incap311__Service_Type_Version__r.Incap311__Service_Name__c}</p></div>
+                <!--<div class="row"><p class="row-title">Area: </p><p class="row-value">{!case.Ward__c}</p></div>
+                <div class="row"><p class="row-title">Group: </p><p class="row-value">{}</p></div> 
+                <div class="row"><p class="row-title">Jurisdiction: </p><p class="row-value">{!case.SRType_Jurisdiction__r.Jurisdiction__r.Servicing_Agency_Expanded__c}</p></div>-->
+                <div class="row"><p class="row-title">Input By: </p><p class="row-value">{!case.CreatedBy.Name}</p></div>
+                <div class="row"><p class="row-title">Method Received: </p><p class="row-value">{!case.Origin}</p></div>
+                <!--<div class="row"><p class="row-title">Snow Zone: </p><p class="row-value">{!case.SnowZone__c}</p></div>
+                <div class="row"><p class="row-title">Snow Area: </p><p class="row-value">{!case.SnowRoute__c}</p></div> -->
+            </div>
+        
+            <div class="right-col">
+                <div class="row"><p class="row-title">SR #: </p><p class="row-value">{!case.Incap311__Service_Request_Number__c}</p></div>
+                <div class="row"><p class="row-title">Prority: </p><p class="row-value">{!case.Priority}</p></div>
+                <div class="row"><p class="row-title">Status: </p><p class="row-value">{!case.Status}</p></div>
+                <div class="row"><p class="row-title">Status Date: </p><p class="row-value">{!caseDatetimes[case.Id]['Status_Date']}</p></div>
+                <div class="row"><p class="row-title">Created Date: </p><p class="row-value">{!caseDatetimes[case.Id]['Created_Date']}</p></div>
+                <div class="row"><p class="row-title">Overdue on: </p><p class="row-value">{!caseDatetimes[case.Id]['Overdue_On']}</p></div>
+            </div>
+        
+            <div class="location-comments">
+                <div class="row"><p class="row-location-title">Location: </p><p class="row-value">{!case.Incap311__Address__c}</p></div>
+                <!--<div class="row"><p class="row-location-title">Location Details: </p><p class="row-value">{}</p></div>-->
+                <div class="row"><p class="row-location-title">SR Comments: </p><p class="row-value">{!case.Description}</p></div>
+            </div>
+        </div>
+        
+        <div class="body">
+            <apex:outputPanel styleClass="flex-note-table" layout="block" >
+                <h3 class="table-title">Flex Notes</h3>
+                <div class="table-header">
+                    <div class="table-header-container">
+                        <h3>Flex Note Question</h3>
+                    </div>
+                    <div class="table-header-container">
+                        <h3>Flex Note Answer</h3>    
+                    </div>
+                </div> 
+                
+               <apex:repeat value="{!caseQA[case.Id]}" var="note">
+                    <div class="question-container">
+                        <div class="question">
+                          <p>{!note.Incap311__Question__c}</p>
+                        </div>
+                        <div class="answer" >
+                          <p>{!note.Incap311__Answer__c}</p>
+                        </div>
+                    </div>
+                </apex:repeat> 
+            </apex:outputPanel>
+            
+            <div class="participants-table panel-success">
+                <h3 class="table-title">Participants</h3>
+                <div class="row row-header">
+                  <div class="column"><p>Participant Type</p></div>
+                  <div class="column"><p>Participant Name</p></div>
+                  <div class="column"><p>Location</p></div>
+                  <div class="column"><p>Email</p></div>
+                  <div class="column"><p>Phones/Extensions</p></div>
+                </div>
+                <div class="row row-data">
+                  <div class="column"><p>Contact</p></div>
+                  <div class="column"><p>{!case.Contact.Name}</p></div>
+                  <div class="column"><p>{!caseDatetimes[case.Id]['Mailing_Address']}</p></div> 
+                  <div class="column"><p>{!case.Contact.Email}</p></div>
+                  <div class="column"><p>{!case.Contact.Phone}</p></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Do not set a page break if it is the last case in the list -->
+        <div class="footer" style= "page-break-after:{!If(caseCursor==totalCases ,'','always') }">
+            <h6>Report Date: {!currentDatetime}</h6>
+        </div>
+   </apex:repeat>
+</apex:page>

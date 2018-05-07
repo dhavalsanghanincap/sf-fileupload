@@ -1,0 +1,412 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" controller="Console311_DL_ManagementCtrl">
+ <html lang="en" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Service - Distribution Lists</title>
+    <c:Console311_Header />
+    <apex:slds />
+    <!-- Bootstrap -->
+    <link href="{!URLFOR($Resource.bootstrap,'bootstrap/css/bootstrap.min.css')}" rel="stylesheet" />
+    <link href="{!URLFOR($Resource.bootstrap,'bootstrap/css/bootstrap-theme.css')}" rel="stylesheet" />
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"/>
+            <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"/>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+      #account-box{
+          display:none
+      }
+      #account-list{
+          display:block
+      }
+      @media (max-width:400px){
+          h1{font-size:20px}
+          #account-box{display:block}
+          #account-list{
+              display:none
+          }
+      }
+      .bg-color{background-color:red;transition: opacity 500 ease-in-out;}
+    </style>
+    <script>
+        
+        var myapp = angular.module('sdlManagementApp', []);
+        myapp.controller('SDLManagementController',function($scope,$filter){
+           $scope.items = {!DistributionLists};
+           $scope.account = {};
+           $scope.account.Name ='';
+           $scope.account.Phone ='';
+           $scope.account.Website ='';
+           $scope.account.Fax ='';
+           $scope.account.Id ='';
+           $scope.index='';
+           
+           // Create Account
+           $scope.create= function(){
+             if($scope.Name !== undefined &&  $scope.Phone !== undefined){
+                var Fax = $scope.Fax !== undefined ? $scope.Fax : 'null';
+                var Website = $scope.Website !== undefined ? $scope.Website : 'null';
+                Visualforce.remoting.Manager.invokeAction(
+                    'Incap311Console.Console311_DL_ManagementCtrl.createAccount', 
+                     $scope.Name,
+                     $scope.Phone,
+                     Fax,
+                     Website,
+                     function(result, event) {
+                        if (event.status) {
+                           var newAccount = {};
+                           
+                            // Add to list
+                            newAccount.name = $scope.Name;
+                            newAccount.Phone = $scope.Phone;
+                            newAccount.Fax = $scope.Fax;
+                            newAccount.Website = $scope.Website;
+                            newAccount.id = result;
+                            $scope.items.push(newAccount); 
+                            
+                            // Reset Insert form Value
+                            $scope.Name = $scope.Phone = $scope.Fax = $scope.Website ='';
+                            
+                            $scope.$apply();
+                            $('tr:last td').toggleClass( "bg-color");
+                            setTimeout(function(){
+                                $('tr:last td').toggleClass( "bg-color");
+                            },3000)
+                            // Back to first tab
+                           $('#insertModal').modal('hide');
+                            
+                        } else if (event.type === 'exception') {
+                            alert(event.message);
+                        } else {
+                            alert(event.message);
+                        }
+                    }     
+                 ); 
+              }else{
+                  // Show Error
+                  var msg ='';
+                  if( $scope.Name === undefined){
+                      msg +='Name is Required! \n';
+                  }
+                  if( $scope.Phone === undefined){
+                      msg +='Phone is Required! \n';
+                  }
+                  alert(msg);
+              }
+           }
+           
+           // Delete Account
+           $scope.delete = function(index,id,obj){
+               ///$('.loadingDiv').hide();
+                  $(obj).closest('tr').find('td').fadeOut(700);
+                  setTimeout(function(){
+                   $scope.items.splice($scope.items.indexOf(index),1);
+                   $scope.$apply();
+                   },900);
+               Visualforce.remoting.Manager.invokeAction(
+                     'Incap311Console.Console311_DL_ManagementCtrl.deleteAccount', 
+                     id,
+                     function(result, event) {
+                        if (event.status) {
+                          
+                          
+                        } else if (event.type === 'exception') {
+                            alert(event.message);
+                        } else {
+                            alert(event.message);
+                        }
+                    }     
+                 ); 
+                    
+           }
+           
+           // Fill Value to Edit Form
+           $scope.edit = function(index){
+               $scope.index = index;
+               var detail = $scope.items[$scope.items.indexOf($scope.index)];
+               ///alert(JSON.stringify(detail));
+               $scope.account.Name =detail.name;
+               $scope.account.Phone = detail.Phone;
+               $scope.account.Fax =detail.Fax;
+               $scope.account.Website = detail.Website;
+               $scope.account.Id = detail.id;
+               $('#updateModal').modal('show');
+           }
+           // Update Account
+            $scope.update = function(){
+                if($scope.account.Name !== undefined &&  $scope.account.Phone !== undefined){
+                    var Fax = $scope.account.Fax !== undefined ? $scope.account.Fax : 'null';
+                    var Website = $scope.account.Website !== undefined ? $scope.account.Website : 'null';
+                    Visualforce.remoting.Manager.invokeAction(
+                         'Incap311Console.Console311_DL_ManagementCtrl.updateAccount',
+                         $scope.account.Id, 
+                         $scope.account.Name,
+                         $scope.account.Phone,
+                         Fax,
+                         Website,
+                         function(result, event) {
+                            if (event.status) {
+                                $scope.items[$scope.items.indexOf($scope.index)].name = $scope.account.Name;
+                                $scope.items[$scope.items.indexOf($scope.index)].Phone= $scope.account.Phone;
+                                $scope.items[$scope.items.indexOf($scope.index)].Fax = $scope.account.Fax;
+                                $scope.items[$scope.items.indexOf($scope.index)].Website = $scope.account.Website;
+                                $scope.$apply();
+                                $('#updateModal').modal('hide');
+                            } else if (event.type === 'exception') {
+                                alert(event.message);
+                            } else {
+                                alert(event.message);
+                            }
+                        }     
+                     );
+                 }else{
+                      // Show Error
+                      var msg ='';
+                      if($scope.account.Name === undefined){
+                          msg +='Name is Required! \n';
+                      }
+                      if($scope.account.Phone === undefined){
+                          msg +='Phone is Required! \n';
+                      }
+                      alert(msg);
+                  }
+             }
+        })
+    </script>
+  </head>
+  <body ng-app="sdlManagementApp">
+  	<div class="slds-scope slds slds-padding-disabled" ng-controller="SDLManagementController">
+	  	<div class="slds-page-header dl-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-grow">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-task">
+                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/custom/custom9.svg')}" aria-hidden="true" class="task-icon slds-icon slds-icon--medium svg" />
+                            </span>
+                        </div>
+
+                        <div class="slds-media__body">
+                            <p class="slds-text-title slds-line-height--reset">Service Request</p>
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="Distribution Lists">Distribution Lists</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+                    <button class="slds-button slds-button--neutral" type="button" onclick="$('#insertModal').modal('show')">New</button>
+                </div>
+            </div>
+        </div>
+         <div class="dl-table">
+         	<article class="slds-card">
+			  		<div class="slds-grid slds-grid_vertical">
+			          <div class="slds-p-vertical_x-small slds-p-horizontal_large slds-shrink-none slds-theme_shade">
+			            <div class="slds-form-element">
+			              <label class="slds-form-element__label slds-assistive-text" for="combobox-unique-id">Search</label>
+			              <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--left">
+			                <div class="slds-combobox_container">
+			                  <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" aria-expanded="false" aria-haspopup="listbox" role="combobox">
+			                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right">
+			                      <input type="text" ng-model="search" class="slds-input slds-combobox__input" id="combobox-unique-id" aria-autocomplete="list" aria-controls="listbox-unique-id" autocomplete="off" role="textbox" placeholder="Search"></input>
+			                      <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right" title="Description of icon when needed">
+			                         <i class="glyphicon glyphicon-search"></i>
+			                      </span>
+			                    </div>
+			                  </div>
+			                </div>
+			              </div>
+			            </div>
+			         	</div>
+			         </div>
+			  <div class="slds-card__body">
+			    <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+			      <thead>
+			        <tr class="slds-text-title_caps">
+			          <th scope="col">
+			            <div class="slds-truncate" title="Name">Distribution</div>
+			          </th>
+			          <th scope="col">
+			            <div class="slds-truncate" title="Company">Code</div>
+			          </th>
+			          <th scope="col">
+			            <div class="slds-truncate" title="Title">System Default</div>
+			          </th>
+			          <th scope="col">
+			            <div class="slds-truncate" title="Email">Actions</div>
+			          </th>
+			        </tr>
+			      </thead>
+			      <tbody>
+			        <tr class="slds-hint-parent" ng-repeat="dist in items | filter:search">
+			         <th scope="row">
+			            <div class="slds-truncate" title="{{dist.name}}"><a href="javascript:void(0);">{{dist.name}}</a></div>
+			          </th>
+			          <td>
+			            <div class="slds-truncate" title="{{dist.code}}">{{dist.code}}</div>
+			          </td>
+			          <td>
+			            <div class="slds-truncate" title="{{dist.isDefault}}">{{dist.isDefault}}</div>
+			          </td>
+			          <td>
+			            <div class="slds-truncate" title="adam@company.com">
+			            	 <button type="button" class="btn btn-sm btn-primary" title="Update" ng-click="edit(dist)">
+                                                <i class="glyphicon glyphicon-pencil"></i>
+                             </button>
+                             <button type="button" class="btn btn-sm btn-danger" title="Delete" ng-click="delete(dist,dist.id,$event.target)">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                             </button>
+			            </div>
+			          </td>
+                   </tr>
+			      </tbody>
+			    </table>
+			  </div>
+			  <footer class="slds-card__footer"><a href="javascript:void(0);">View All <span class="slds-assistive-text">entity type</span></a></footer>
+			</article>
+         </div>
+  	</div>
+
+  <div class="container" ng-controller="SDLManagementController">
+      <!-- Loading Window -->
+       <div class="loadingDiv" style="display:none">
+          <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 100000;">
+             <div style="position:fixed;top:250px;height:100%;width:100%;">
+               <center>                
+                 <img src="" width="120px"/>    
+               </center>                      
+            </div>                   
+         </div>
+     </div>
+      <!-- Insert Modal -->
+      <div class="modal fade" id="insertModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">New Account</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="col-md-12">
+                      <form class="form-horizontal">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-user"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Name" ng-model="Name" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-earphone"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Phone" ng-model="Phone" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fax</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-print"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Fax" ng-model="Fax" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Website</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-link"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Website" ng-model="Website" />
+                                </div>
+                            </div>
+                        </form>
+                  </div>
+                  <div class="clearfix"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="button" class="btn btn-success" ng-click="create()" value="Save" />
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
+      <!-- Edit Modal -->
+      <div class="modal fade" id="updateModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">Update</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="col-md-12">
+                      <form class="form-horizontal">
+                            <input type="hidden" ng-model="account.Id" />
+                            <div class="form-group">
+                                <label>Name</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-user"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Name" ng-model="account.Name" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-earphone"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Phone" ng-model="account.Phone" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fax</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-print"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Fax" ng-model="account.Fax" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Website</label>
+                                <div class="input-group">
+                                  <span class="input-group-addon">
+                                      <i class="glyphicon glyphicon-link"></i>
+                                  </span>
+                                  <input type="text" class="form-control" placeholder="Website" ng-model="account.Website" />
+                                </div>
+                            </div>
+                        </form>
+                  </div>
+                  <div class="clearfix"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="button" class="btn btn-success" ng-click="update()" value="Save" />
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+      </div><!-- Container End -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{!URLFOR($Resource.bootstrap,'bootstrap/js/bootstrap.min.js')}"></script>
+  </body>
+</html>
+</apex:page>

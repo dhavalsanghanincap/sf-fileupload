@@ -1,0 +1,27 @@
+<apex:component layout="none" controller="Console311_Section_DescriptionCtrl">
+  <apex:attribute name="mDescription" type="String" default="" description="This is the defaulted value for the description." />
+
+    <apex:outputPanel layout="block" styleClass="description-component-container slds-container" rendered="{! If(mDescriptionSectionConfig != null, mDescriptionSectionConfig.Visible__c, true)}">
+
+    <apex:outputPanel rendered="{!IF(mDescriptionSectionConfig != null, mDescriptionSectionConfig.Header__c, false)}" layout="block" styleClass="slds-size--1-of-1">
+      <h4 class="slds-text-title--caps" id="treeheading">
+        <span class="slds-icon_container">
+          <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/info.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+        </span>
+        {!IF(mDescriptionSectionConfig != null, mDescriptionSectionConfig.Title__c, 'Service Description')}
+      </h4>
+    </apex:outputPanel>
+
+  <div class="slds" style="padding: 0;">
+    <div class="slds-container">
+      <!-- Description -->
+      <div class="slds-form-element slds-col slds-size--1-of-1">
+        <label class="slds-form-element__label" for="case-status">Description</label>
+        <div class="slds-form-element__control">
+          <textarea id="case-description" name="c-Description" class="slds-textarea" placeholder="Enter a description..." value="{!mDescription}">{!mDescription}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  </apex:outputPanel>
+</apex:component>

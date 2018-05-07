@@ -1,0 +1,22 @@
+<apex:page standardController="Incap311__Service_Type_Version__c" extensions="Incap311.Base311_Controller_DuplicateSTVConfig">
+    <apex:form >
+        <apex:pageBlock title="Duplicate Service Type Mapping">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{! cancel }" value="Cancel" />
+                <apex:commandButton action="{! save }" value="Save" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <c:MultiselectPicklist leftLabel="Available Types"
+                       leftOption="{! availableTypes }"
+                       rightLabel="Selected Types"
+                       rightOption="{! selectedTypes }"
+                       showMoveAll="true"
+                       size="8"
+                       width="300px"
+                    />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection> 
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

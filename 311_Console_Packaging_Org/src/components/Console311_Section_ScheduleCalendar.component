@@ -1,0 +1,138 @@
+<apex:component controller="Incap311.Base311_Service_Wrapper"
+      >
+      
+        
+          <script>
+          window["appComponentVars"] = {};
+          </script>
+        
+        
+          
+            <script>
+            window["appComponentVars"]["endDate"] = '{! JSENCODE(endDate) }';
+            </script>
+          
+          <apex:attribute name="endDate"
+            type="String"
+            description="The end date of the calendar"
+            
+            
+            
+          />
+        
+          
+            <script>
+            window["appComponentVars"]["startDate"] = '{! JSENCODE(startDate) }';
+            </script>
+          
+          <apex:attribute name="startDate"
+            type="String"
+            description="The start date of the calendar"
+            
+            
+            
+          />
+        
+          
+            <script>
+            window["appComponentVars"]["scode"] = '{! JSENCODE(scode) }';
+            </script>
+          
+          <apex:attribute name="scode"
+            type="String"
+            description="The scode"
+            
+            required="true"
+            
+          />
+        
+          
+            <script>
+            window["appComponentVars"]["dayofweek"] = '{! JSENCODE(dayofweek) }';
+            </script>
+          
+          <apex:attribute name="dayofweek"
+            type="String"
+            description="The days of week to enable"
+            
+            
+            
+          />
+        
+          
+            <script>
+            window["appComponentVars"]["zone"] = '{! JSENCODE(zone) }';
+            </script>
+          
+          <apex:attribute name="zone"
+            type="String"
+            description="The zone"
+            
+            
+            
+          />
+        
+          
+            <script>
+            window["appComponentVars"]["onSelectDate"] = '{! JSENCODE(onSelectDate) }';
+            </script>
+          
+          <apex:attribute name="onSelectDate"
+            type="String"
+            description="The name of the function on the window to serve as a callback when a schedule date is selected "
+            
+            
+            
+          />
+        
+      
+
+      
+        <div id="appComponent"></div>
+      
+      <script>
+        window['__STATIC_RESOURCE_ZIP'] = '{! URLFOR($Resource.SchedulerBundle) }';
+        window['__ACCESS_TOKEN'] = '{!JSENCODE($Api.Session_ID)}';
+        window['USER_INFO'] = {
+          display_name: '{! JSENCODE($User.FirstName) } {! JSENCODE($User.LastName) }',
+          first_name: '{! JSENCODE($User.FirstName) }',
+          last_name: '{! JSENCODE($User.LastName) }',
+          nick_name: '{! JSENCODE($User.CommunityNickname) }',
+          addr_country: '{! JSENCODE($User.Country) }',
+          email: '{! JSENCODE($User.Email) }',
+          mobile_phone: '{! JSENCODE($User.MobilePhone) }',
+          user_id: '{! JSENCODE($User.Id) }'
+        };
+        
+              function baseSharedServices(config, cb) {
+                var service = config.service;
+                var method = config.method;
+                var data = config.data;
+
+                Visualforce.remoting.Manager.invokeAction(
+                  '{!$RemoteAction.Base311_Service_Wrapper.handleRemote}',
+                  service, method, data,
+                  cb
+                );
+              }
+            
+
+        
+          
+            var imported = document.createElement('script');
+            imported.src = '{! URLFOR($Resource.SchedulerBundle, 'main.js') }';
+            document.head.appendChild(imported);
+          
+        
+      </script>
+      
+        
+          <apex:stylesheet value="{! URLFOR($Resource.SchedulerBundle, 'main.b895c4677ae3fa275849.css') }" />
+        
+      
+      
+        
+          <script src="https://c.na1.visual.force.com/support/console/35.0/integration.js" type="text/javascript"></script>
+        
+      
+    </apex:component>

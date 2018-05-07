@@ -1,0 +1,80 @@
+<apex:component layout="none">
+  <apex:attribute name="mStatusOptions" type="SelectOption[]" required="true" description="List of status." />
+  <apex:attribute name="mOriginOptions" type="SelectOption[]" required="true" description="List of origins." />
+  <apex:attribute name="mDefaultStatusByType" type="String" default="Open" description="This is the defaulted value for the service type." />
+  <apex:attribute name="mOrigin" type="String" default="Phone" description="This is the defaulted value for the origin." />
+  <apex:attribute name="mPageMode" type="String" default="New" description="This is a string to describe the current mode of the console. i.e. New, Edit, Transfer." />
+
+  <!-- DETAILS INFORMATION -->
+  <div class="details-information-container slds-container">
+    <!--<h3 class="slds-section-title--divider">Request Information</h3>-->
+    <h4 class="slds-text-title--caps" id="treeheading">
+		<span class="slds-icon_container">
+                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/info.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+        </span>
+		Request Information
+    </h4>
+    <div>
+      <div class="details-info-editable slds-grid-horizontal slds-wrap">
+        <!-- Status -->
+        <div class="slds-form-element picklist picklist-status slds-col slds-size--1-of-1">
+          <div aria-expanded="true" class="slds-picklist">
+            <!--<label class="slds-form-element__label slds-picklist__label--full" for="case-status">Status</label>
+            <button id="case-status" class="slds-button slds-button--neutral slds-picklist__label" aria-haspopup="true" type="button" onBlur="toggleDropdownAdv(null, null);">
+              <span class="slds-truncate">{!mDefaultStatusByType}</span>
+              <img aria-hidden="true" class="slds-icon svg" src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/down.svg')}" />
+            </button>
+            <div class="slds-dropdown slds-dropdown--left slds-dropdown--small slds-dropdown--menu slds-hide">
+              <ul class="slds-dropdown__list picklist-status-list" role="menu">
+                <apex:repeat value="{!mStatusOptions}" var="option">
+                  <li href="#" class="slds-dropdown__item slds-has-icon--left">
+                    <a href="#" class="slds-truncate" data-value="{!option.Value}" role="menuitemradio">{!option.Label}</a>
+                  </li>
+                </apex:repeat>
+              </ul>
+            </div>-->
+            <input class="hiddenInput picklist-input picklist-input-status" name="c-Status" type="text" value="{!mDefaultStatusByType}"/>
+          </div>
+        </div>
+        <!-- Service Request Origin -->
+        <div class="slds-form-element picklist picklist-origin slds-col slds-size--1-of-1 slds-medium-size--1-of-1">
+          <div aria-expanded="true" class="slds-picklist">
+            <label class="slds-form-element__label slds-picklist__label--full" for="case-origin">Service Request Origin</label>
+
+            <apex:outputPanel layout="none" rendered="{!mPageMode == 'edit'}">
+              <span class="slds-truncate slds-button slds-button--neutral slds-picklist__label">{!mOrigin}</span>
+            </apex:outputPanel>
+
+            <apex:outputPanel layout="none" rendered="{!mPageMode != 'edit'}">
+              <button id="case-origin" class="slds-button slds-button--neutral slds-picklist__label slds-size--1-of-1" aria-haspopup="true" type="button" onBlur="toggleDropdownAdv(null, null);">
+                <span class="slds-truncate">{!mOrigin}</span>
+                <img aria-hidden="true" class="slds-icon svg" src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/down.svg')}" />
+              </button>
+              <div class="slds-dropdown slds-dropdown--left slds-dropdown--small slds-dropdown--menu slds-hide">
+                <ul class="slds-dropdown__list" role="menu">
+                  <apex:repeat value="{!mOriginOptions}" var="option">
+                    <li href="#" class="slds-dropdown__item slds-has-icon--left">
+                      <a href="#" class="slds-truncate" data-value="{!option.Value}" role="menuitemradio">{!option.Label}</a>
+                    </li>
+                  </apex:repeat>
+                </ul>
+              </div>
+            </apex:outputPanel>
+            <input id="sr-origin" class="hiddenInput picklist-input" name="c-Origin" type="text" value="{!mOrigin}"/>
+          </div>
+        </div>
+        <!-- Parent -->
+        <!--<div class="slds-form-element slds-col slds-size--1-of-2">
+          <label class="slds-form-element__label" for="case-status">Parent</label>
+          <div class="slds-form-element__control slds-grid">
+            <input id="case-parent" name="c-ParentId" class="slds-input slds-col slds-size--5-of-6" type="text" placeholder="Parent" readonly="true" value=""/>
+            <button id="case-parent-lookup" style="margin-left: 5px; margin-right: 20px;" class="slds-button slds-button--icon-border lookup-button slds-col slds-size--1-of-6" type="button">
+              <img aria-hidden="true" class="slds-button__icon svg" src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" />
+              <span class="slds-assistive-text">Search Parent</span>
+            </button>
+          </div>
+        </div>-->
+      </div>
+    </div>
+  </div>
+</apex:component>

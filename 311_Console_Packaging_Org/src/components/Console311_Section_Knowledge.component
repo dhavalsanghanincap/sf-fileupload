@@ -1,0 +1,68 @@
+<!--  
+  * Dependancies: 311 Header, 311 Scrits
+-->
+
+<apex:component >
+  <apex:attribute name="mKnowledgeKeyword" type="String" description="Knowledge keyword" />
+  <apex:attribute name="mAfRefreshComponentFunc" type="String" required="true" description="Passed in action function name to force a rerender of the component with the knowledge keyword in the parent." />
+
+  <style>
+    .knowledge-list {
+      margin-bottom: 5px;
+    }
+
+    .knowledge-list h6 {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+  </style>
+
+
+  <apex:outputpanel id="knowledge-panel-container" layout="block">
+    <!--<h4 class="slds-text-title--caps">Knowledge</h4>-->
+    <h4 class="slds-text-title--caps left-panel-header" id="treeheading" onClick="toggleCollapsablePanel(this, 'knowledge-panel-container');">
+		  <span class="slds-icon_container">
+        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/knowledge_base.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+      </span>
+		  Knowledge
+      <i class="fa fa-caret-up cs-caret-postional"></i>
+    </h4>
+    <div class="knowledge-list side-panel-default collapsable-container">
+      <div class="slds-form-element">
+        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--left">
+          <apex:image url="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" styleclass="svg slds-input__icon slds-icon-text-default svg" onclick="window['{!mAfRefreshComponentFunc}']($('#knowledge-search-input').val())" />
+          <input id="knowledge-search-input" class="slds-input" type="text" placeholder="Keyword..." value="{!mKnowledgeKeyword}" onkeypress="if(event.keyCode == 13){ window['{!mAfRefreshComponentFunc}']($('#knowledge-search-input').val()) };" />
+        </div>
+      </div>
+      <small><strong style="background: initial !important;">Note:</strong> Articles found may not match your full search term. Results will be shown with partial keywords available.</small>
+      <h6 class="text-muted">Articles</h6>
+      <div class="knowledge-article-list-container-scroll">
+        <knowledge:articlelist articlevar="article" hasmorevar="false" pagesize="10" keyword="{!mKnowledgeKeyword}" rendered="{!mKnowledgeKeyword != null && mKnowledgeKeyword != ''}">
+          <p class="knowledge-item"><a target="_blank" onclick="openSubtab_{!article.Id}();return false;" href="#">{!article.title}</a></p>
+          <div class="slds-grid slds-wrap knowledge-item-info" style="margin-bottom: 15px; padding-bottom: 10px;">
+            <small class="knowledge-info-summary slds-col">{!article.summary}</small>
+            <div class="slds-col slds-size--1-of-1" style="margin-top: 5px; margin-bottom: 5px;">
+              <small class="knowledge-info-basic-label" style="float:left;">{!article.ArticleNumber}</small>
+              <small class="knowledge-info-basic-label" style="float: left; margin-left: 5px; margin-right: 5px;">&bull;</small>
+              <small class="knowledge-info-basic-label" style="float: left;">{!article.articleTypeLabel}</small>
+            </div>
+            <small class="slds-col knowledge-info-basic-label">
+              Last Published &nbsp;
+              <apex:outputtext value="{0,date,MM'/'dd'/'yyyy}">
+                <apex:param value="{!article.lastPublishedDate}" />
+              </apex:outputtext>
+            </small>
+          </div>
+          <script>
+          var openSubtab_{!article.Id} = function openSubtab_{!article.Id}() {
+            sforce.console.openPrimaryTab(null,"{!URLFOR($Action.KnowledgeArticle.View, article.id)}",true,"{!article.Title}");
+          }
+          </script>
+        </knowledge:articlelist>
+      </div>
+      <apex:outputpanel rendered="knowledgeKeyword == null || knowledgeKeyword == ''">
+        <p class="knowledge-item ">No articles found for this service type.</p>
+      </apex:outputpanel>
+    </div>
+  </apex:outputpanel>
+</apex:component>

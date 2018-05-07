@@ -1,0 +1,374 @@
+<apex:page standardController="Case" extensions="ESRI_Demo_Extension" showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false">
+    <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+            <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"></meta>
+            <title>Layer List Dijit</title>
+            <link rel="stylesheet" href="https://js.arcgis.com/3.20/dijit/themes/claro/claro.css"></link>
+            <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css"></link>
+        
+            <style>
+            #map-body #layerListPane #expand-button:after {
+              content: '\2807';
+              font-size: 25px;
+              text-align: center;
+              margin-left: 5px;
+              color: #ffffff;
+            }
+
+            #layerListPane {
+                position: relative;
+                overflow: visible;
+                z-index: 9999;
+                background-color: white;
+                height: 100%;
+            }
+            .collapsed {
+                right: -316px !important;
+            }
+
+            #expand-button {
+                position: absolute;
+                top: 0;
+                left: -45px;
+                height: 35px;
+                width: 45px;
+                background-color: grey;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+            }
+            
+            html, body, .container, #map {
+                height:100%;
+                width:100%;
+                margin:0;
+                padding:0;
+                margin:0;
+                font-family: "Open Sans";
+            }
+            #map {
+                padding:0;
+                width: 100%;
+            }
+            #layerListPane{
+                width:300px;
+                position: absolute;
+                right: 0;
+            }
+            .esriLayer{
+              background-color: #fff;
+            }
+            .esriLayerList .esriList{
+                border-top:none;
+            }
+            .esriLayerList .esriTitle {
+              background-color: #fff;
+              border-bottom:none;
+            }
+            .esriLayerList .esriList ul{
+              background-color: #fff;
+            }
+            h2 {
+                margin-top: 0px;
+            }
+            .loader {
+            margin: -10px;
+  margin: 30px auto;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-animation: load5 1.1s infinite ease;
+  animation: load5 1.1s infinite ease;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+@-webkit-keyframes load5 {
+  0%,
+  100% {
+    box-shadow: 0em -2.6em 0em 0em #000000, 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.5), -1.8em -1.8em 0 0em rgba(0,0,0, 0.7);
+  }
+  12.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.7), 1.8em -1.8em 0 0em #000000, 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.5);
+  }
+  25% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.5), 1.8em -1.8em 0 0em rgba(0,0,0, 0.7), 2.5em 0em 0 0em #000000, 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  37.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.5), 2.5em 0em 0 0em rgba(0,0,0, 0.7), 1.75em 1.75em 0 0em #000000, 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  50% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.5), 1.75em 1.75em 0 0em rgba(0,0,0, 0.7), 0em 2.5em 0 0em #000000, -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  62.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.5), 0em 2.5em 0 0em rgba(0,0,0, 0.7), -1.8em 1.8em 0 0em #000000, -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  75% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.5), -1.8em 1.8em 0 0em rgba(0,0,0, 0.7), -2.6em 0em 0 0em #000000, -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  87.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.5), -2.6em 0em 0 0em rgba(0,0,0, 0.7), -1.8em -1.8em 0 0em #000000;
+  }
+}
+@keyframes load5 {
+  0%,
+  100% {
+    box-shadow: 0em -2.6em 0em 0em #000000, 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.5), -1.8em -1.8em 0 0em rgba(0,0,0, 0.7);
+  }
+  12.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.7), 1.8em -1.8em 0 0em #000000, 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.5);
+  }
+  25% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.5), 1.8em -1.8em 0 0em rgba(0,0,0, 0.7), 2.5em 0em 0 0em #000000, 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  37.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.5), 2.5em 0em 0 0em rgba(0,0,0, 0.7), 1.75em 1.75em 0 0em #000000, 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  50% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.5), 1.75em 1.75em 0 0em rgba(0,0,0, 0.7), 0em 2.5em 0 0em #000000, -1.8em 1.8em 0 0em rgba(0,0,0, 0.2), -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  62.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.5), 0em 2.5em 0 0em rgba(0,0,0, 0.7), -1.8em 1.8em 0 0em #000000, -2.6em 0em 0 0em rgba(0,0,0, 0.2), -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  75% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.5), -1.8em 1.8em 0 0em rgba(0,0,0, 0.7), -2.6em 0em 0 0em #000000, -1.8em -1.8em 0 0em rgba(0,0,0, 0.2);
+  }
+  87.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(0,0,0, 0.2), 1.8em -1.8em 0 0em rgba(0,0,0, 0.2), 2.5em 0em 0 0em rgba(0,0,0, 0.2), 1.75em 1.75em 0 0em rgba(0,0,0, 0.2), 0em 2.5em 0 0em rgba(0,0,0, 0.2), -1.8em 1.8em 0 0em rgba(0,0,0, 0.5), -2.6em 0em 0 0em rgba(0,0,0, 0.7), -1.8em -1.8em 0 0em #000000;
+  }
+}
+                
+            </style>
+            <script>var dojoConfig = { parseOnLoad: true };</script>
+            <script src="https://js.arcgis.com/3.20/"></script>
+            
+        </head>
+        
+        <body id="map-body" class="claro">
+            <div class="container" data-dojo-type="dijit/layout/BorderContainer">
+                <div id="layerListPane" data-dojo-type="dijit/layout/ContentPane" class="collapsed ">
+                    <div id="expand-button" onclick="toggleLayerList()"></div>
+                    <div id="layerList"></div>
+                </div>
+               
+                <div id="map" data-dojo-type="dijit/layout/ContentPane"></div>
+            </div>
+        </body>
+        <script> 
+                function toggleLayerList() {
+                    document.getElementById('layerListPane').classList.toggle('collapsed');
+                }
+        
+                var startingLat = {! IF(Case.Incap311__Location__Longitude__s != NULL, Case.Incap311__Location__Longitude__s, -71.0589) };
+                var startingLng = {! IF(Case.Incap311__Location__Latitude__s != NULL, Case.Incap311__Location__Latitude__s, 42.3601) };
+                var similarRequests = JSON.parse('{! SimilarServiceRequests }');
+                var duplicateRequests = JSON.parse('{! DuplicateServiceRequests }');
+                
+                
+                require([ 
+                    "esri/map", "esri/arcgis/utils", "esri/dijit/LayerList", "esri/geometry/Point", "esri/geometry/webMercatorUtils",
+                    "esri/symbols/PictureMarkerSymbol", "esri/InfoTemplate", "esri/graphic", "esri/layers/GraphicsLayer", "esri/dijit/Scalebar",
+                    "esri/symbols/SimpleMarkerSymbol", "esri/Color", "esri/layers/ArcGISDynamicMapServiceLayer",
+                    "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!" 
+                ], 
+                    function(Map, arcgisUtils, LayerList, Point, mercator, PictureMarkerSymbol, InfoTemplate, Graphic, GraphicsLayer, Scalebar, SimpleMarkerSymbol, Color, ArcGISDynamicMapServiceLayer) {
+                         //Create a map based on an ArcGIS Online web map id 
+                         var map = new Map("map", {
+                            basemap: "streets",
+                            center: [startingLat, startingLng], // lon, lat
+                            zoom: 13
+                         }); 
+                         
+                           var scalebar = new Scalebar({
+                              map: map,
+                              // "dual" displays both miles and kilometers
+                              // "english" is the default, which displays miles
+                              // use "metric" for kilometers
+                              scalebarUnit: "dual"
+                            });
+                         var serviceLayer = new ArcGISDynamicMapServiceLayer('https://maps.cityofboston.gov/ArcGIS/rest/services/SAM/BOUNDARIES/MapServer', { visible: false });
+                         
+                         serviceLayer.on('load', function(evt) {
+                             evt.layer.setVisibleLayers([ 0 ]);
+                             evt.layer.setVisibility(true);
+                         });
+                         
+                         var clickLayer = new GraphicsLayer()
+                         var graphicsLayer = new GraphicsLayer();
+                         var similarLayer = new GraphicsLayer();
+                         var dupesLayer = new GraphicsLayer();
+                         
+                         map.addLayer(serviceLayer);
+                         map.addLayer(clickLayer);
+                         map.addLayer(graphicsLayer);
+                         map.addLayer(similarLayer);
+                         map.addLayer(dupesLayer);
+                         
+                         var currentClickSymbol = new SimpleMarkerSymbol().setStyle(SimpleMarkerSymbol.STYLE_X).setColor(new Color([0,0,255,0.5]));
+                         var currentClickGraphic = new Graphic(null,currentClickSymbol ,{});
+                         clickLayer.add(currentClickGraphic );
+                         
+                         
+                         function createGraphic(lat, lng, style, color, attrs) {
+                             var res = mercator.lngLatToXY(lat, lng);
+                             var pt = new Point(res[0], res[1], map.spatialReference).offset(Math.floor(Math.random() * 1000) + 1  ,Math.floor(Math.random() * 1000) + 1  );
+                             var symbol = new SimpleMarkerSymbol().setStyle(style).setSize(10).setColor(color);
+                             return new Graphic(pt, symbol, attrs);
+                         }
+                         
+                         map.on("load", function() {
+                             
+                             graphicsLayer.on('click', onClickGraphic);
+                             similarLayer.on('click', onClickGraphic);
+                             dupesLayer.on('click', onClickGraphic);
+                             
+                             map.on("click", onMapClick);
+                             
+                             var similarGraphics = [];
+                             
+                             for(var i = 0; i < similarRequests.length; i++) {
+                                 var req = similarRequests[i];
+                                 var graphic = createGraphic(
+                                     req.Incap311__Location__Longitude__s, 
+                                     req.Incap311__Location__Latitude__s, 
+                                     SimpleMarkerSymbol.STYLE_SQUARE, 
+                                     new Color([125,125,0,0.5]),
+                                     { CaseNumber: req.CaseNumber, Subject: req.Subject, isSimilar: true }
+                                 );
+                                 similarGraphics.push(graphic);
+                                 similarLayer.add(graphic);
+                             }
+                             
+                             var dupeGraphics = [];
+                             
+                             for(var i = 0; i < duplicateRequests.length; i++) {
+                                 var req = duplicateRequests[i];
+                                 var graphic = createGraphic(
+                                     req.Incap311__Location__Longitude__s, 
+                                     req.Incap311__Location__Latitude__s, 
+                                     SimpleMarkerSymbol.STYLE_DIAMOND, new Color([0,125,125,0.5]),
+                                     { CaseNumber: req.CaseNumber, Subject: req.Subject, isDupe: true }
+                                 );
+                                 dupeGraphics.push(graphic);
+                                 dupesLayer.add(graphic);
+                             }
+                             
+                             var graphic = createGraphic(
+                                 startingLat, startingLng, 
+                                 SimpleMarkerSymbol.STYLE_CIRCLE, new Color([255,0,0,0.5]), { CaseNumber: '{! Case.CaseNumber }', Subject: '{! Case.Subject}' }
+                                 );
+                             
+                             function resetGraphics() {
+                                 graphic.symbol.setColor(new Color([255,0,0,0.5]));
+                                 
+                                 for(var i = 0; i < dupeGraphics.length; i++) {
+                                     dupeGraphics[i].symbol.setColor(new Color([0,125,125,0.5]));
+                                 }
+                                 
+                                 for(var i = 0; i < similarGraphics.length; i++) {
+                                     similarGraphics[i].symbol.setColor(new Color([125,125,0,0.5]));
+                                 }
+                             }
+                             
+                             function onMapClick(evt) { 
+                                if(evt.graphic) {
+                                    return;
+                                }
+                                 
+                                currentClickGraphic.setGeometry(evt.mapPoint);
+                                resetGraphics();
+                                graphicsLayer.redraw();
+                                similarLayer.redraw();
+                                dupesLayer.redraw();
+                                const mp = mercator.webMercatorToGeographic(evt.mapPoint);
+                                
+                                map.infoWindow.setContent(`
+                                    <div class="loader"></div>
+                                `);
+                                        
+                                map.infoWindow.show();
+                                
+                                fetch(`https://maps.googleapis.com/maps/api/geocode/json?location_type=ROOFTOP&latlng=${mp.y},${mp.x}&key=AIzaSyD8Z3iIN0h0tQpE4o-mJQPinxJ2qaNfWS8`)
+                                    .then((res) => {
+                                        if(res.status=== 200) {
+                                            return res.json();
+                                        }
+                                        
+                                        return Promise.reject();
+                                    })
+                                    .then((res) => {
+                                        map.infoWindow.hide();
+                                        let itemContent = '';
+                                        
+                                        if(res.results.length === 0) {
+                                            itemContent += '<div>No results found</div>';
+                                        } else {
+                                            itemContent += '<h2>Nearby Locations</h2><ul>';
+                                        
+                                            res.results.forEach(function(item) {
+                                                itemContent += '<li>';
+                                                itemContent += `<div>${item.formatted_address}<div>`;
+                                                itemContent += '</li>';
+                                            });
+                                            
+                                            itemContent += '</ul>';
+                                        }
+                                        map.infoWindow.setContent(itemContent);
+                                        
+                                        map.infoWindow.show();
+                                    });
+                             }
+                             
+                             
+                             function onClickGraphic(evt) {
+                                 if(evt.graphic !== currentClickGraphic) {
+                                    currentClickGraphic.setGeometry(null);
+                                 }
+                                 
+                                resetGraphics();
+                                evt.graphic.symbol.setColor(new Color([0,255,0,0.5]));
+                                var attrs = evt.graphic.attributes;
+                                map.infoWindow.setContent(`
+                                    <div>
+                                        <h2>${ attrs.isDupe ? 'Duplicate ' : '' }${ attrs.isSimilar ? 'Similar ' : '' }Case Number: ${attrs.CaseNumber}</h2>
+                                        <h4>Subject: ${attrs.Subject}</h4>
+                                        <div>
+                                        
+                                        </div>
+                                    </div>
+                                `);
+                                map.infoWindow.show();
+                                graphicsLayer.redraw();
+                                similarLayer.redraw();
+                                dupesLayer.redraw();
+                             }
+                             
+                             graphicsLayer.add(graphic);
+                             graphicsLayer.show();
+                             dupesLayer.show();
+                             similarLayer.show();
+                         }); 
+                         
+                         var div = document.createElement('div');
+                         div.innerHTML = "Test";
+                         div.style.width = '88%';
+                        var myWidget = new LayerList({ map: map, layers: [ 
+                            { id: 'Current Request', layer: graphicsLayer },
+                            { id: 'Similar Requests', layer: similarLayer }, 
+                            { id: 'Duplicate Requests', layer: dupesLayer }, 
+                            { id: 'Boundaries', layer: serviceLayer }
+                            
+                        ]},"layerList");
+                        myWidget.startup();
+                        
+                        
+                    });
+             
+            </script>
+    </html>
+</apex:page>

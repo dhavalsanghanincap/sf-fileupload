@@ -1,0 +1,36 @@
+<apex:page standardController="Incap311__Service_Type__c" extensions="Incap311.Base311_ServiceTypeTransferConfig">
+    <apex:form >
+        <apex:pageBlock title="Transferable Service Types">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{! cancel }" value="Cancel" />
+                <apex:commandButton action="{! save }" value="Save" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Service Request Transfers" />
+                    <c:MultiselectPicklist leftLabel="Available Types"
+                       leftOption="{! possibleTypes }"
+                       rightLabel="Selected Types"
+                       rightOption="{! selectedTypes }"
+                       showMoveAll="true"
+                       size="8"
+                       width="300px"
+                    />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Service Activities Transfers" />
+                    <c:MultiselectPicklist leftLabel="Available Types"
+                       leftOption="{! possibleTypesForActivities }"
+                       rightLabel="Selected Types"
+                       rightOption="{! selectedTypesForActivites }"
+                       showMoveAll="true"
+                       size="8"
+                       width="300px"
+                    />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

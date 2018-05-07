@@ -1,0 +1,94 @@
+<!--  
+  * Dependancies: 311 Header, 311 Scrits
+-->
+
+<apex:component layout="none">
+  <apex:attribute name="mServiceRequestItems" type="Incap311__Service_Type_Version__c[]" required="true" description="List of service types." />
+  <apex:attribute name="mTypeActive" type="String" description="If there is a type present on initial load then send it along to tag as active." />
+    
+    <style>
+    .slds .case-record-types .master-view .slds-tree-container {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .slds .case-record-types .master-view .slds-tree-container {
+      display: inline-block;
+    }
+
+    #sticky.stick {
+      max-width: 260px;
+      margin-top: 0 !important;
+      position: fixed;
+      top: 0;
+      z-index: 5000;
+      border-radius: 0 0 0.5em 0.5em;
+    }
+  </style>
+  <div id="sticky-anchor" class="slds-size--1-of-1"></div>
+  <div class="slds-col">
+    <!--<h4 class="slds-text-title--caps" id="treeheading">Service Type Information</h4>-->
+    <h4 class="slds-text-title--caps left-panel-header" id="treeheading" onClick="toggleCollapsablePanel(this, 'left-panel-container');">
+		  <span class="slds-icon_container">
+        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/work_order_type.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+      </span>
+		  Service Type Information
+      <i class="fa fa-caret-up cs-caret-postional"></i>
+    </h4>
+    <div class="slds-tree-container side-panel-default collapsable-container" role="application">
+      <apex:variable value="{!0}" var="counter"/>
+      <apex:repeat value="{!mServiceRequestItems}" var="type">
+        <!-- 
+          TODO: Change =>
+            data-contactstatus="{type.Incap311__Contact_Status__c}"
+            data-addressRequired="{ IF(type.Incap311__Service_Location_Required__c != null, type.Incap311__Service_Location_Required__c, type.Incap311__Service_Type__r.Incap311__Service_Location_Required__c) }">
+        -->
+        <div
+        class="service-type-description {! IF(LOWER(mTypeActive) == LOWER(type.Name), 'active', '') }"
+        data-type-description-name="{! type.Incap311__Service_Name__c }"
+        data-type-keywords="{! type.Incap311__Keywords__c }"
+        data-sla="{! type.Incap311__SLA__c }"
+        data-id="{! type.Id }"
+        data-contactstatus="{! IF(type.Incap311__Contact_Status__c != null, type.Incap311__Contact_Status__c, type.Incap311__Service_Type__r.Incap311__Contact_Status__c )}"
+        data-service-code="{! type.Name }"
+        data-addressRequired="{! IF(type.Incap311__Service_Location_Required__c, type.Incap311__Service_Location_Required__c, type.Incap311__Service_Type__r.Incap311__Service_Location_Required__c) }">
+          <div class="col-xs-12" style="margin-bottom: 10px;">
+            <p class="m0 text-muted">Service Type</p>
+            <h4 class="m0">{!type.Incap311__Service_Name__c}</h4>
+          </div>
+          
+          <div class="col-xs-12" style="margin-bottom: 10px;">
+            <p class="m0 text-muted">Service Level Agreement</p>
+            <h4 class="m0">{!type.Incap311__SLA_Detail__c}</h4>
+          </div>
+
+          <div class="col-xs-12" style="margin-bottom: 10px;">
+            <apex:outputtext value="{! type.Incap311__Service_Type__r.Incap311__Service_Description__c }" escape="false"/>
+          </div>
+        </div>
+        <apex:variable value="{!counter + 1}" var="counter"/>
+      </apex:repeat>
+    </div>
+  </div>
+
+  <script>
+    function sticky_relocate() {
+      var window_top = $(window).scrollTop();
+      var div_top = $('#sticky-anchor').offset().top;
+      if (window_top > div_top) {
+        $('#sticky').addClass('stick');
+        $('#sticky').css('max-width', $('#sticky-anchor').width());
+        $('#sticky-anchor').height($('#sticky').outerHeight());
+      } else {
+        $('#sticky').removeClass('stick');
+        $('#sticky').css('max-width', 'none');
+        $('#sticky-anchor').height(0);
+      }
+    }
+
+    $(function() {
+        $(window).scroll(sticky_relocate);
+        sticky_relocate();
+    });
+  </script>
+</apex:component>

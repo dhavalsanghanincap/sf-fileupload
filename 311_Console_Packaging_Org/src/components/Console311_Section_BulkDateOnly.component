@@ -1,0 +1,100 @@
+<apex:component controller="Console311_Section_BulkDatePicker">
+  <apex:attribute name="mStId" type="String" description="Service Type ID" assignTo="{!stId}"/>
+  <apex:attribute name="mZone" type="String" description="Zone" assignTo="{!zone}"/>
+  <apex:attribute name="mScheduleList" type="Incap311__Schedule__c[]" description="List of scheuldes." />
+  <apex:attribute name="mSearchScheduleAFName" type="String" description="The name of the AF for finding the schedule." />
+
+  <style>
+    .bdp-button-container {
+      padding: 2px;
+    }
+
+    .override-schedule {
+      display: none;
+    }
+
+    .override-schedule.active {
+      display: block;
+    }
+    
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+  </style>
+  <div class="bulk-date-picker-container slds slds-grid slds-wrap" style="padding: 20px;">
+    <h3 class="slds-section-title--divider slds-size--1-of-1">Available Schedule(s)</h3>
+
+    <div class="bdp-dotw-container slds-size--1-of-1 slds-grid">
+      <button class="slds-button slds-button--brand slds-size--1-of-1" type="button" onclick="searchForSchedule();" style="border-radius: 0 5px 5px 0;">
+        Find Available Date
+      </button>
+    </div>
+
+    <div class="bdp-picker-container slds-size--1-of-1">
+
+      <apex:outputPanel rendered="{!mScheduleList.size == 0}" layout="none">
+        <p></p>
+      </apex:outputPanel>
+
+      <apex:outputPanel rendered="{!mScheduleList != null}" layout="none">
+        <apex:repeat value="{!mScheduleList}" var="button">
+          <div class="bdp-button-container slds-size--1-of-1">
+            <div class="slds-notify slds-notify--alert slds-theme--success slds-theme--alert-texture bdp-alert-result slds-size--1-of-1" role="alert" data-schedule-id="{!button.Id}" style="padding: 15px; font-weight: bold;">
+              <h2><c:formatdatetime date_timevalue="{!button.Incap311__Schedule_Date__c}" format="EEE, MMM dd yyyy" timezone="GMT"/></h2>
+            </div>
+          </div>
+        </apex:repeat>
+      </apex:outputPanel>
+    </div>
+      <!--  TODO HAVE SPACE FOR NO DATES -->
+
+      <!-- TODO: If no dates available provide input for Day of Week. -->
+
+    <input id="bulk-schedule-id" type="text" name="schedule-id" value="" style="display: none;"/>
+  </div>
+
+  <script>
+    var activeBtn = $('.bulk-date-picker-container .bdp-button-container .bdp-alert-result');
+
+    if (activeBtn != null) {
+      $('#bulk-schedule-id').val(activeBtn.data('schedule-id'));
+    }
+
+    var searchForSchedule = function() {
+      if (window['form']) {
+        if (form.validate()) {
+          console.log('----> Attempting to obtain schedule date for ' + $('.bdp-dotw-container').data('dotw-active'));
+          window['{!mSearchScheduleAFName}']('', retrieveNumOfBulkItems());
+        }
+      }
+    }
+
+    var toggleActiveSchedule = function(ele) {
+      $(ele).parent().parent().find('.slds-button--brand').removeClass('slds-button--brand').addClass('slds-button--neutral'); 
+      $(ele).addClass('slds-button--brand').removeClass('slds-button--neutral');
+      $('#bulk-schedule-id').val($(ele).data('schedule-id'));
+      console.log('------> Current schedule id saved: ' + $('#bulk-schedule-id').val());
+    }
+
+    function retrieveNumOfBulkItems() {
+      var bulkNumberInputs = $("input[data-datatype='Number']");
+      var numOfItems = 0;
+
+      for (var i = 0; i < bulkNumberInputs.length; i++) {
+        var inputVal = 0;
+
+        try {
+          inputVal = parseInt($(bulkNumberInputs[i]).val());
+        } catch (e) {
+          // Not an Int.
+        }
+
+        if (inputVal) {
+          numOfItems += inputVal;
+        }
+      }
+      return numOfItems;
+    }
+  </script>
+
+</apex:component>

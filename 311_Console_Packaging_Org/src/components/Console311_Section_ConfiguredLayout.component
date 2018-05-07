@@ -1,0 +1,90 @@
+<apex:component controller="Console_Section_ConfiguredLayoutCtrl">
+  <apex:attribute name="objName" description="Name of the object" type="String" assignTo="{!mObjName}"/>
+    <apex:attribute name="object" description="object" type="sObject" assignTo="{!mObj}"/>
+  <div class="slds-grid slds-wrap small-padding">
+    <apex:repeat value="{!NewEditFieldNamesList}" var="fieldname">
+      <!-- Picklists: Single -->
+      <!--<apex:outputPanel layout="none" rendered="false">
+        <div class="slds-form-element slds-col slds-size--1-of-2">
+            <div class="slds-form-element slds-lookup state-search-lookup" data-select="single">
+                <label class="slds-form-element__label" for="lookup-366">State</label>
+                <div class="slds-form-element__control">
+                    <!-- Selected Pill 
+                    <div class="slds-pill_container state-pill-container slds-hide">
+                        <span class="slds-pill slds-size--1-of-1">
+                            <span class="slds-icon_container slds-icon-standard-account slds-pill__icon_container">
+                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/location.svg')}" aria-hidden="true" class="slds-input__icon svg" />
+                                <span class="slds-assistive-text">State</span>
+                            </span>
+                            <span class="slds-pill__label state-pill-label" title="State"></span>
+                            <button class="slds-button slds-button--icon slds-pill__remove" title="Remove" onclick="toggleState(null, 'clear')" type="button">
+                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/close.svg')}" aria-hidden="true" class="slds-input__icon svg" />
+                                <span class="slds-assistive-text">Remove</span>
+                            </button>
+                        </span>
+                    </div>
+                    <!-- Search Input 
+                    <div class="slds-input-has-icon slds-input-has-icon--right state-search-container">
+                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" aria-hidden="true" class="slds-input__icon svg" />
+                        <input id="search-lookup-input" class="slds-lookup__search-input slds-input" type="search"  placeholder="Search States" aria-owns="search-lookup-input" role="combobox" aria-activedescendent="" aria-expanded="true" aria-autocomplete="list" value="" onFocus="$(this).parents('.slds-form-element.slds-lookup').toggleClass('slds-is-open');" onKeyUp="filterStates($(this));" onBlur="toggleState(null, null); filterStates('');"/>
+                    </div>
+                </div>
+                <div class="slds-lookup__menu">
+                    <ul class="slds-lookup__list state-lookup-list" role="listbox">
+                        <li role="presentation" class="default-search-term-item">
+                            <span class="slds-lookup__item-action slds-lookup__item-action--label" id="lookup-option-368" role="option">                  
+                                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default svg"/>
+                                <span class="slds-truncate" title="{ props.text || &#x27;New Account&#x27; }">"<span class="search-criteria-label"></span>" in states</span>
+                            </span>
+                        </li>
+                        <apex:variable value="{!1}" var="rowNum"/>
+                        <!-- Actual Entries
+                        <apex:repeat value="{!StatesMap}" var="stateCode">
+                            <li id="state-dropdown" role="presentation" class="state-list-item" tabindex="{!rowNum}" onMouseDown="toggleState($(this), 'selected');" >
+                                <span class="slds-lookup__item-action slds-media slds-media--center" role="option">
+                                    <div class="slds-media__body">
+                                        <div class="slds-lookup__result-text" data-value="{!stateCode}"><mark>{!StatesMap[stateCode]}</mark></div>
+                                      <span class="slds-lookup__result-meta slds-text-body--small">{!stateCode} • USA</span>
+                                    </div>
+                                </span>
+                            </li>
+                            <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                        </apex:repeat>
+                    </ul>
+
+                    <input id="contact-MailingState" class="hiddenInput picklist-input" name="contact-MailingState" type="text" value="{!mContact.MailingState}" aria-hidden="true"/>
+                </div>
+            </div>
+        </div>
+      </apex:outputPanel>-->
+
+      <!-- Street auto complete --> 
+      <apex:outputPanel layout="none" rendered="{!IF(CONTAINS(LOWER(fieldname), 'street'), true, false)}">
+        <div class="slds-form-element slds-col slds-size--1-of-1">
+          <label class="slds-form-element__label">{!mSobjFieldUtilMapByName[fieldname]['Label']}</label>
+          <div class="slds-form-element__control">
+            <input id="{!LOWER(mObjName)}-{!fieldName}" type="text" class="slds-input" name="{!LOWER(mObjName)}-{!fieldName}" value="{!mObj[fieldName]}"/>
+            <!-- Loading indicator for the input -->
+            <div id="{!LOWER(mObjName)}-street-loading" class="slds-spinner_container">
+              <div class="slds-spinner--brand slds-spinner slds-spinner--small" role="alert">
+                  <span class="slds-assistive-text">Loading</span>
+                  <div class="slds-spinner__dot-a"></div>
+                  <div class="slds-spinner__dot-b"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </apex:outputPanel>
+
+      <!-- Regular input. -->
+      <apex:outputPanel layout="none" rendered="{!IF(!CONTAINS(LOWER(fieldname), 'street'), true, false)}">
+        <div class="{!LOWER(mObjName)}-details-container slds-form-element slds-col slds-size--1-of-2">
+          <label class="slds-form-element__label" for="{!LOWER(mObjName)}-{!fieldname}">{!mSobjFieldUtilMapByName[fieldname]['Label']}</label>
+          <div class="slds-form-element__control">
+            <input id="{!objName}-{!fieldname}" type="text" class="slds-input" name="{!LOWER(mObjName)}-{!fieldname}" value="{!mObj[fieldName]}" />
+          </div>
+        </div>
+      </apex:outputPanel>
+    </apex:repeat>
+  </div>
+</apex:component>

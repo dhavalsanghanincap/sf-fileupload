@@ -1,0 +1,357 @@
+<apex:page standardController="IncapRF__WorkflowRuleAction__c" extensions="IncapRF.WorkflowRuleActionsController" tabstyle="IncapRF__WorkflowRule__c" action="{!pullAllApexClass}"> 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>       
+    <script>
+        var hasValue = false;
+        function checkCalculateFormulaValue(formulaVal){
+            if(formulaVal.length == 0 && hasValue){
+                hasValue = false;
+                showhideValueField();
+            }else if(formulaVal.length > 0 && !hasValue){
+                hasValue = true;
+                showhideValueField();
+            }
+
+        }
+    </script> 
+
+
+    <apex:form id="frm">
+        <apex:actionStatus id="eventStatus"  >
+            <apex:facet name="start">  
+                <apex:outputPanel >
+                    <div style="width:100%;height:100%;position:absolute;top:0;left:0;">
+                        <div style="position:absolute;top:50%;left:50%">
+                            <apex:image value="/img/loading32.gif"></apex:image>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </apex:facet>   
+        </apex:actionStatus>
+        <apex:sectionHeader subtitle="{!IF(edit,newRuleAction.Name,'New Rule Action')}" title="Rule Action Edit"/>
+        <apex:pagemessages id="pgMsg"/>
+        <apex:pageBlock title="Rule Action Edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!saveRuleAction}" immediate=""/>
+                <apex:commandButton value="Save and New" action="{!saveAndNewRuleAction}" />
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Information" columns="2" id="pgSect">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Action"></apex:outputLabel>
+                    <apex:panelGroup >
+                        <apex:actionSupport >
+                            <apex:inputField id="actionType" value="{!newRuleAction.IncapRF__ActionType__c}" required="true" rendered="{!!(edit)}">
+                                <apex:actionsupport event="onchange" rerender="optPan,sendemail_panel,pgSect,chatterNotification,alterNotification,invokeapex" status="eventStatus" ></apex:actionsupport>
+                            </apex:inputField>
+                        </apex:actionSupport> 
+                    </apex:panelGroup> 
+
+                    </apex:pageblocksectionItem>
+                <apex:outputField rendered="{!edit}" value="{! newRuleAction.ActionType__c}" />    
+
+                <apex:outputField value="{!newRuleAction.IncapRF__Workflow_Rule__c}"/>
+
+                <apex:pageBlockSectionItem rendered="{!OR(!edit && (newRuleAction.IncapRF__ActionType__c == 'Insert Related Object'|| newRuleAction.IncapRF__ActionType__c == 'Send Email' || newRuleAction.IncapRF__ActionType__c == 'Update Field'|| newRuleAction.IncapRF__ActionType__c == null),newRuleAction.IncapRF__ActionType__c != 'Insert Related Object' && newRuleAction.IncapRF__ActionType__c != 'Send Email' )}">
+                    <apex:outputLabel value="Action Object"></apex:outputLabel>
+                    <apex:actionRegion >
+                        <apex:selectList value="{!objType}" required="true" size="1" onchange="fieldNamesList(this.options[this.selectedIndex].value);">
+                            <apex:selectOptions value="{!objOptions}"/>
+                        </apex:selectList> 
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+
+                <apex:outputField rendered="{!(edit && (newRuleAction.IncapRF__ActionType__c == 'Insert Related Object' || newRuleAction.IncapRF__ActionType__c == 'Send Email' ))}" value="{!newRuleAction.IncapRF__Action_Object__c}" />
+
+
+                <apex:inputField value="{!newRuleAction.Name}" rendered="{!edit}"/>
+
+                <apex:pageBlockSectionItem rendered="{!newRuleAction.IncapRF__ActionType__c == 'Insert Related Object' || newRuleAction.IncapRF__ActionType__c == 'Update Field' || newRuleAction.IncapRF__ActionType__c == null}" helpText="Cross Object Field Notation : Relationshipname.FieldName. Eg:- Account.Type">
+                    <apex:outputLabel value="Field Name"></apex:outputLabel>
+                    <apex:outputPanel id="fieldPanel"> 
+                        <apex:actionRegion >
+                            <apex:selectList id="fieldSelectionList" onchange="assignment_allowed()" value="{!fieldType}" size="1">
+                                <apex:selectOptions value="{!fieldOption}"/>
+                            </apex:selectList>
+                            <apex:outputPanel id="CFPanel" title="Cross Object Field Notation : Relationshipname.FieldName. Eg:- Account.Type">                                        
+
+                                <apex:inputField id="crossformulafield" value="{!newRuleAction.IncapRF__CrossObjectField__c}" rendered="{!isCrossFormula}"/>                    
+
+
+                            </apex:outputPanel> 
+
+                            <apex:actionFunction name="assignment_allowed" action="{!displayAssignmentPanel}" reRender="assignment_panel,fieldTypeApiPanel,fieldApiPanel,fieldId,valOptPan,CFPanel"/>
+                        </apex:actionRegion>
+                    </apex:outputPanel>    
+                </apex:pageBlockSectionItem>  
+
+                <apex:pageBlockSectionItem rendered="{!newRuleAction.IncapRF__ActionType__c == 'Insert Related Object' || newRuleAction.IncapRF__ActionType__c == 'Update Field' || newRuleAction.IncapRF__ActionType__c == null}">
+                    <apex:outputLabel value="Field Api Name"></apex:outputLabel>
+                    <apex:outputPanel id="fieldApiPanel"> 
+                        <apex:outputField value="{!newRuleAction.IncapRF__Field_API_Name__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>                   
+                <apex:pageBlockSectionItem id="fieldSec" helpText="Merge Field notation: {!helpTextMF}" rendered="{!newRuleAction.IncapRF__ActionType__c == 'Insert Related Object' || newRuleAction.IncapRF__ActionType__c == 'Update Field' || newRuleAction.IncapRF__ActionType__c == null}">
+                    <apex:outputPanel id="valOptPan">
+                        <apex:outputLabel value="Value" rendered="{!UPPER(newRuleAction.IncapRF__Field_API_Name__c) != 'OWNERID'  && renderValueField}" />
+                    </apex:outputPanel>
+
+                    <apex:outputPanel id="fieldId">
+                        <apex:pageBlockSection >
+                            <apex:outputPanel id="inputValPnl" rendered="{!renderValueField}">
+                                <apex:inputField required="false" label="" value="{!sobjInstance[newRuleAction.IncapRF__Field_API_Name__c]}" rendered="{!UPPER(newRuleAction.IncapRF__Field_API_Name__c) != 'OWNERID'  && renderValueField && !isCrossFormula   && renderValueFieldForFormula}" ></apex:inputField>
+                            </apex:outputPanel>
+
+
+                            <apex:pageBlockSectionitem helpText="Calculated date formula notation:Today(),Now(),Today()+7d or Calculated formula notation: {!helpTextMF}" rendered="{!UPPER(newRuleAction.Field_Type__c) != 'STRING' && UPPER(newRuleAction.Field_Type__c) != 'REFERENCE' && renderValueField && !isCrossFormula  }">    
+                                <apex:outputLabel >Calculated Formula</apex:outputLabel>
+                                <apex:panelgroup >
+                                    <apex:inputtext id="mergeFormula" value="{!calculateFormulaForReference}" title="Calculated Date formula notation:Today(),Now(),Today()+7d or Calculated formula notation: {!helpTextMF}"  onKeyUp="checkCalculateFormulaValue(this.value);"></apex:inputtext>
+
+                                </apex:panelgroup>
+
+                            </apex:pageBlockSectionitem>
+
+                            <apex:pageBlockSectionitem helpText="Calculated formula notation: {!helpTextMF}" rendered="{!UPPER(newRuleAction.IncapRF__Field_Type__c) == 'REFERENCE' && renderValueField && !isCrossFormula  && UPPER(newRuleAction.IncapRF__Field_API_Name__c) != 'OWNERID'}">    
+                                <apex:outputLabel >Calculated Formula</apex:outputLabel>
+                                <apex:inputtext id="mergeFormula1" value="{!calculateFormulaForReference}" title="Calculated formula notation: {!helpTextMF}"  onKeyUp="checkCalculateFormulaValue(this.value);"></apex:inputtext>
+
+                            </apex:pageBlockSectionitem>
+                            <apex:actionRegion >
+                                <apex:actionFunction name="showhideValueField" action="{!showHideValueField}" reRender="inputValPnl,valOptPan"/>
+                            </apex:actionRegion>
+
+                        </apex:pageBlockSection>
+                        <apex:inputField value="{!newRuleAction.IncapRF__Value__c}" required="false" rendered="{!isCrossFormula }" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!newRuleAction.IncapRF__ActionType__c == 'Insert Related Object' || newRuleAction.IncapRF__ActionType__c == 'Update Field' || newRuleAction.IncapRF__ActionType__c == null}">
+                    <apex:outputLabel value="Field Type"></apex:outputLabel>
+                    <apex:outputPanel id="fieldTypeApiPanel"> 
+                        <apex:outputField value="{!newRuleAction.IncapRF__Field_Type__c}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+
+
+                <apex:inputField value="{!newRuleAction.IncapRF__Action_Label__c}" rendered="{! newRuleAction.ActionType__c == 'Chatter Notification' }" /> 
+
+            </apex:pageBlockSection>        
+            <apex:outputPanel id="assignment_panel">
+
+                <apex:pageBlockSection id="assignment" rendered="{!(newRuleAction.IncapRF__Field_API_Name__c!= null && UPPER(newRuleAction.IncapRF__Field_API_Name__c) == 'OWNERID')}" title="Select the user /queue to assign the {!objType} to">
+                    <apex:inputField value="{!sobjInstance[newRuleAction.IncapRF__Field_API_Name__c]}" required="false" ></apex:inputField>
+                    <apex:pageBlockSectionitem helpText="Calculated formula notation: {!helpTextMF}">    
+                        <apex:outputLabel >Calculated Formula</apex:outputLabel>
+                        <apex:inputtext id="mergeFormula2" value="{!calculateFormulaForReference}"  ></apex:inputtext>
+                    </apex:pageBlockSectionitem>
+
+                    <apex:selectList id="EmailTemplate" value="{!newRuleAction.IncapRF__Email_Template__c}" size="1" title="EmailTemplate">
+                        <apex:selectOptions value="{!Templates}"></apex:selectOptions>
+                    </apex:selectList>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+
+
+
+            <!-- SEND EMAIL INFO -->
+            <apex:outputPanel id="sendemail_panel">
+                <apex:pageBlockSection id="sendemail" rendered="{!(newRuleAction.IncapRF__ActionType__c!= null && UPPER(newRuleAction.IncapRF__ActionType__c) == 'SEND EMAIL')}" title="Select the user /queue to send email">
+                    <apex:pageBlockSectionitem > 
+                        <apex:outputLabel >Send To</apex:outputLabel>  
+                        <apex:panelgroup >
+                            <apex:selectList value="{!sendEmailToString}" id="chooseSendemailto" size="1" onchange="showemailtooptions(this.value)">
+                                <apex:selectOption itemValue="" itemLabel="--Select--"/>
+                                <apex:selectOption itemValue="User" itemLabel="User"/>
+                                <apex:selectOption itemValue="Queue" itemLabel="Queue"/>
+                                <apex:selectOption itemValue="Public Groups" itemLabel="Public Groups"/>
+                            </apex:selectList> 
+                            <apex:selectList id="emailoptions" value="{!newRuleAction.IncapRF__User_Owner_Id__c}" size="1" title="emailoptions">
+                                <!-- <apex:selectOptions value="{!emailoptions}"></apex:selectOptions>-->
+                                <apex:selectOptions value="{!emailoptions[0]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 0}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[1]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 1}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[2]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 2}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[3]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 3}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[4]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 4}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[5]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 5}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[6]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 6}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[6]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 7}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[8]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 8}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[9]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 9}"></apex:selectOptions>
+                            </apex:selectList>
+                        </apex:panelgroup>   
+                    </apex:pageBlockSectionitem>
+                    <apex:inputField value="{!newRuleAction.IncapRF__Additional_Emails__c}" />
+
+                    <!--  adding email folder picklist -->
+                    <apex:pageBlockSectionitem > 
+                        <apex:outputLabel >Email Folder</apex:outputLabel>  
+                        <apex:selectList value="{!newRuleAction.IncapRF__Email_Template_Folder__c}" id="EmailTemplateFolder"  size="1" title="Email Folder" onchange="getEmailTemplatesFromFolder(this.value)">
+                            <apex:selectOptions value="{!Folders}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageBlockSectionitem>
+
+
+                    <!--  adding email template picklist -->
+                    <apex:selectList id="EmailTemplate" value="{!newRuleAction.IncapRF__Email_Template__c}" size="1" title="EmailTemplate">
+                        <apex:selectOptions value="{!emailTemplateOptions[0]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 0}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[1]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 1}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[2]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 2}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[3]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 3}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[4]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 4}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[5]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 5}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[6]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 6}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[7]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 7}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[8]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 8}"></apex:selectOptions>
+                        <apex:selectOptions value="{!emailTemplateOptions[9]}" rendered="{!NOT(ISNULL(emailTemplateOptions)) && emailTemplateOptions.size > 9}"></apex:selectOptions>
+                    </apex:selectList>
+
+                </apex:pageBlockSection>
+                <apex:actionFunction action="{!buildEmailOptionsValues}" name="showemailtooptions" reRender="emailoptions,chatterNotification" status="eventStatus">
+                    <apex:param name="sendemailto" value=""/>
+                </apex:actionFunction>
+
+                <apex:actionFunction action="{!getTemplates}" name="getEmailTemplatesFromFolder" reRender="sendemail_panel"  status="eventStatus">
+                    <apex:param name="folderId" value=""/>
+                </apex:actionFunction>
+
+
+
+            </apex:outputPanel>
+
+            <!-- Alert /Error Notification Message -->
+            <apex:outputPanel id="alterNotification">
+                <apex:pageBlockSection id="alterNotification1" rendered="{!(newRuleAction.IncapRF__ActionType__c!= null &&  (UPPER(newRuleAction.IncapRF__ActionType__c) == 'NOTIFICATION' || UPPER(newRuleAction.IncapRF__ActionType__c) == 'ERROR'))}" title="Set the notification message">
+                    <apex:pageBlockSectionitem >
+                        <apex:outputLabel >Message</apex:outputLabel>   
+                        <apex:inputField value="{!newRuleAction.IncapRF__Long_Value__c}" />
+                    </apex:pageBlockSectionitem>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            {!apexClassParameterListOption.Label}
+            <!-- List Apex Class -->
+            <apex:outputPanel id="invokeapex"> 
+                <apex:pageBlockSection columns="1" id="invkapex"  rendered="{!(newRuleAction.IncapRF__ActionType__c!= null &&  (UPPER(newRuleAction.IncapRF__ActionType__c) == 'INVOKE APEX'))}" title="List of ApexClass" >
+                    <apex:pageblocksectionItem >
+                        <apex:outputLabel >Apex Class</apex:outputLabel>
+                        <apex:selectList id="apexClassselection" value="{!selectedClass}" size="1" onchange="pullAllApexParameter()">
+                            <apex:actionsupport event="onblur" rerender="invokeapex" status="eventStatus" action="{!pullAllApexParameter}"></apex:actionsupport>
+                            <apex:selectOptions value="{!apexClassListOption}"></apex:selectOptions> 
+                        </apex:selectList>   
+                        </apex:pageBlockSectionItem>
+
+                    <!--apex:actionFunction name="pullapexmethod" action="{!pullAllApexMethod}" reRender="invokeapex"/-->
+                    <apex:pageBlock title="Inputs">
+
+                        <apex:pageBlockTable id="apexclassparameter" value="{!apexClassParameterListOption.inputs}" var="a" >
+                            <!--apex:column headerValue="Sr No." value="{!a.count}"/-->
+                            <apex:column headerValue="Name" value="{!a.Label}"/>
+                            <apex:column headerValue="Type" value="{!a.type}"/>
+
+                            <apex:column id="valuetypeCol"> 
+                                <apex:facet name="header">Type</apex:facet>
+                                <apex:selectList id="valueType" value="{!a.ValueType}" size="1">
+                                    <apex:selectOption itemValue="" itemLabel=""/>
+                                    <apex:selectOption itemValue="reference" itemLabel="Reference"/>
+                                    <apex:selectOption itemValue="value" itemLabel="Value"/>
+                                    <apex:actionsupport event="onchange" status="eventStatus" rerender="invokeapex"  ></apex:actionsupport>
+                                </apex:selectList> 
+                            </apex:column>
+
+                            <apex:column id="ValueField" > 
+                                <apex:facet name="header">Value</apex:facet>
+                                <c:SObjectFieldSelector sobjectField="{!sobjectFields[a.name]}" rendered="{!a.ValueType != 'value'}"/>
+                                <apex:inputText value="{!a.value}" rendered="{!a.ValueType == 'value'}"/>
+                            </apex:column>
+
+
+
+                        </apex:pageBlockTable>
+                    </apex:pageBlock>
+                    <apex:actionFunction name="pullapexparameter" action="{!pullAllApexParameter}" reRender="invokeapex"/>
+
+                </apex:pageBlockSection>     
+            </apex:outputPanel>
+
+
+
+            <apex:outputPanel id="chatterNotification">
+                <apex:pageBlockSection id="sendemail1" rendered="{!(newRuleAction.IncapRF__ActionType__c!= null && UPPER(newRuleAction.IncapRF__ActionType__c) == 'CHATTER NOTIFICATION')}" title="Select the user /group to send">
+                    <apex:pageBlockSectionitem >
+                        <apex:outputLabel >Message</apex:outputLabel>   
+                        <apex:inputField value="{!newRuleAction.IncapRF__Long_Value__c}" />
+                    </apex:pageBlockSectionitem> 
+                    <apex:pageBlockSectionitem > 
+                        <apex:outputLabel >Send To</apex:outputLabel>  
+                        <apex:panelgroup >
+                            <apex:selectList value="{!sendEmailToString}" id="chooseSendemailto" size="1" onchange="showemailtooptions(this.value)">
+                                <apex:selectOption itemValue="" itemLabel="--Select--"/>
+                                <apex:selectOption itemValue="User" itemLabel="User"/>                           
+                                <apex:selectOption itemValue="Chatter Groups" itemLabel="Chatter Groups"/>
+                            </apex:selectList> 
+                            <apex:selectList id="emailoptions1" value="{!newRuleAction.IncapRF__User_Owner_Id__c}" size="1" title="emailoptions">
+                                <!-- <apex:selectOptions value="{!emailoptions}"></apex:selectOptions>-->
+                                <apex:selectOptions value="{!emailoptions[0]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 0}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[1]}" rendered="{!NOT(ISNULL(emailoptions)) &&  emailoptions.size > 1}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[2]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 2}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[3]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 3}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[4]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 4}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[5]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 5}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[6]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 6}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[6]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 7}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[8]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 8}"></apex:selectOptions>
+                                <apex:selectOptions value="{!emailoptions[9]}" rendered="{!NOT(ISNULL(emailoptions)) && emailoptions.size > 9}"></apex:selectOptions>
+                            </apex:selectList>
+                        </apex:panelgroup>   
+                    </apex:pageBlockSectionitem>
+
+                </apex:pageBlockSection>      
+            </apex:outputPanel>
+
+
+
+
+            <apex:outputPanel id="optPan">
+
+                <apex:commandButton title="Add Related Field Info" rendered="{!newRuleAction.IncapRF__ActionType__c == 'Insert Related Object'}" value="Add Related Field"  action="{!createRelateRec}" oncomplete="assignment_allowed();" reRender="optPan,pgSect"/>
+
+                <apex:pageBlockSection title="Insert Related Record Information" collapsible="false" columns="1" rendered="{!newRuleAction.ActionType__c == 'Insert Related Object' }">
+
+
+                    <apex:pageBlockTable value="{!lstInsRelRec}" var="rec" >
+                        <apex:column headerValue="Action">
+                            <a href="javascript:if (window.confirm('Are you sure?')) deleteRecord('{!rec.Name}');" style="font-weight:bold">Del</a>
+                        </apex:column>
+                        <apex:column value="{!rec.Name}" headerValue="Field Name"/>
+                        <apex:column value="{!rec.IncapRF__Value__c}" headerValue="Value"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+            </apex:outputPanel>  
+            <apex:actionFunction action="{!deleteRec}" name="deleteRecord" immediate="true" reRender="optPan,pgSect" >
+                <apex:param name="rowid" value="" assignTo="{!selectedRecordId}"/>
+            </apex:actionFunction>
+
+        </apex:pageBlock>
+        <apex:actionRegion >
+            <apex:actionFunction name="fieldNamesList" action="{!getFieldNames}" reRender="fieldPanel,assignment_panel,fieldTypeApiPanel,fieldApiPanel,fieldId,assignment,valOptPan,pgMsg,frm" oncomplete="showCrossObjectFieldInColor();">
+                <apex:param assignTo="{!parentName}" value="" name="parentName"/>
+            </apex:actionFunction>
+        </apex:actionRegion>
+
+
+
+
+    </apex:form>
+
+
+    <script>
+        $j=jQuery.noConflict();
+        $j(document).ready(function() {
+            showCrossObjectFieldInColor();
+
+        });
+
+        function showCrossObjectFieldInColor(){
+            $j('select[id*="fieldSelectionList"] option[value="CrossObject"]').css("color", "red");
+
+        }        
+    </script>  
+</apex:page>

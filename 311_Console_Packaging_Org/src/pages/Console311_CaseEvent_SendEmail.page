@@ -1,0 +1,12 @@
+<apex:page standardController="Incap311__Case_Event__c" extensions="Console311_Case_Event_Send_Email_Ext"  action="{!SendEmail}" >
+    <apex:slds />
+    <apex:form styleClass="slds-scope">
+        
+        <div class="slds-form-element">
+            <div class="slds-form-element__control slds-has-divider--bottom">
+                <span class="slds-form-element__static"> {!outputedText}</span>
+            </div>
+        </div>
+        
+    </apex:form>
+</apex:page>

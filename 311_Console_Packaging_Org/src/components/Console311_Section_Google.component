@@ -1,0 +1,129 @@
+<apex:component controller="Console311_Section_ESRI" access="global" >
+    <apex:attribute access="global" type="Double" name="centerLat" description="Latitude of the primary point" required="true" />
+    <apex:attribute access="global" type="Double" name="centerLng" description="Longitude of the primary point" required="true" />
+    <apex:attribute access="global" type="Integer" name="defaultZoom" description="Zoom level to start the map at" default="13" />
+    
+    <style>
+      .google-map-container {
+        display: flex;
+        flex-direction: row;
+        height: 700px;
+      }
+      
+      .google-map-container >div {
+          width: 50%;
+      }
+    </style>
+    
+        <div class="loader-container loader-hidden">
+            <div class="loader"></div>
+        </div>
+    <div class="google-map-container">
+        <div id="google-map"></div>
+        <div id="google-pano"></div>
+    </div>
+    <script>
+
+      function initialize() {
+        window.googleMap = new google.maps.Map(document.getElementById('google-map'), {
+          zoom: {! defaultZoom}
+        });
+        window.googleMap.setCenter(center);
+        var center = {lat: {! centerLat}, lng: {! centerLng}};
+        
+        
+        var lastMapCenter = center ;
+
+        google.maps.event.addListener(window.googleMap, 'before_resize', function(){  
+            var curCenter = window.googleMap.getCenter();
+            lastMapCenter = { lat: curCenter.lat(), lng: curCenter.lng() };
+        });
+        
+        google.maps.event.addListener(window.googleMap, 'resize', function(){ 
+         // restore the last saved map center 
+             setTimeout(function() {
+                window.googleMap.setCenter(lastMapCenter); 
+                debugger;
+             }, 1);
+        }); 
+        
+        window.panorama = new google.maps.StreetViewPanorama(
+            document.getElementById('google-pano'), {
+              position: center,
+              pov: {
+                heading: 34,
+                pitch: 10
+              }
+            });
+            
+        window.googleMap.setStreetView(window.panorama);
+        
+        setTimeout(function() {
+            google.maps.event.trigger(window.googleMap, 'resize');
+            google.maps.event.trigger(window.panorama, 'resize');
+        }, 10);
+        
+        
+          google.maps.event.addListener(window.googleMap, 'rightclick', function(event) {
+          
+             if(window.posMarker) {
+                 window.posMarker.setMap(null);
+             }
+          
+              if(window.posInfo) {
+                  window.posInfo.setMap(null);
+              }
+          
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
+                 
+        
+            reverseGeocode(lat, lng, function(nearbyLocs) {
+                var itemContent = '';
+                
+                
+                
+                if(nearbyLocs.length > 0) {
+                  itemContent += '<div class="nearbyHeader">Nearby Locations</div><ul class="nearbyList">';
+
+                 nearbyLocs.forEach(function(item) {
+                     itemContent += '<li>';
+                     itemContent += '<div>';
+                     itemContent += item.address;
+                     itemContent += '<div>';
+                     itemContent += '<button class="slds-button" type="button" onClick=\' $("#case-address-street").val("'+item.address+'"); window["updateCurrentLocation"]("'+item.address+'"); \'>Use Address</button>';
+                     itemContent += '</span>';
+                     itemContent += '</div>';
+                     itemContent += '</div>';
+                     itemContent += '</li>';
+                 });
+
+                 itemContent += '</ul>';
+                  } else {
+                      itemContent = '<div class="nearbyHeader">No Nearby Locations</div><ul class="nearbyList">';
+                  }
+                window.posInfo = new google.maps.InfoWindow({
+                  content: itemContent 
+                });
+                 
+                 window.posMarker = new google.maps.Marker({
+                    position: {lat: lat , lng: lng },
+                    map: window.googleMap
+                  });
+                  
+                window.posInfo.open(window.googleMap, window.posMarker);
+            });
+            
+          });  
+        }
+      
+      
+
+        if(window.google && google.maps) {
+            initialize();
+        }
+        
+    </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWhPoBVVFhk7cCoEFXJNiZ3h_JTDI05ZY&callback=initialize">
+        </script>
+</apex:component>

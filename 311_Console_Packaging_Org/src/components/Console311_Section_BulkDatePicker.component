@@ -1,0 +1,90 @@
+<apex:component controller="Console311_Section_BulkDatePicker">
+  <apex:attribute name="mStId" type="String" description="Service Type ID" assignTo="{!stId}"/>
+  <apex:attribute name="mZone" type="String" description="Zone" assignTo="{!zone}"/>
+  <apex:attribute name="mSchAfterDays" type="Integer" description="Zone" assignTo="{!stSchAfterDays}"/>
+  <apex:attribute name="lat" type="Decimal" description="Lat of the location" assignTo="{!mLat}" />
+  <apex:attribute name="lng" type="Decimal" description="Lng of the location" assignTo="{!mLng}" />
+  <apex:attribute name="stv" type="Incap311__Service_Type_Version__c" description="Service Request Type Version for the current type." assignTo="{!mStv}" />
+  <apex:attribute name="dotw" type="String" description="A csv of the day's of the week supported" assignTo="{!mDotw}"/>
+  <apex:attribute name="showCal" type="Boolean" description="Show Schedule Calendar for the Service Type" assignTo="{!showCalendar}" default="false" />
+
+  <style>
+    .bdp-button-container {
+      padding: 2px;
+    }
+
+    .override-schedule {
+      display: none;
+    }
+
+    .override-schedule.active {
+      display: block;
+    }
+    
+    .slds-section-title--divider {
+      margin-bottom: 10px;
+    }
+  </style>
+  <div class="bulk-date-picker-container slds slds-grid slds-wrap" style="padding: 20px;">
+    <h4 class="slds-text-title--caps slds-size--1-of-1" id="treeheading" style="margin-bottom: 5px">
+      <span class="slds-icon_container" style="padding-right: 5px;">
+        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/event.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+      </span>
+      <span style="line-height: 25px;">Available Schedule(s)</span>
+    </h4>
+
+    <apex:outputPanel layout="block" rendered="{!mScheduleErrorMsg != null}" styleClass="slds-size--1-of-1">
+      <div class="bdp-button-container slds-size--1-of-1">
+        <div class="slds-notify slds-notify--alert slds-theme--warning slds-theme--alert-texture bdp-alert-result slds-size--1-of-1" role="alert" style="padding: 15px; font-weight: bold;">
+          <p>{!mScheduleErrorMsg}</p>
+        </div>
+      </div>
+    </apex:outputPanel>
+
+    <label class="slds-form-element__label">Choose one of the next {!BulkDateButtons.size} upcoming schedule dates below:</label>
+  
+    <apex:variable var="counter" value="{!1}" />
+
+    <apex:outputPanel rendered="{!BulkDateButtons.size == 0}" layout="none">
+      <p>There are currently no available schedules at this time.</p>
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!BulkDateButtons != null}" layout="block">
+      <apex:repeat value="{!BulkDateButtons}" var="button">
+        <div class="bdp-button-container slds-size--1-of-{!IF(counter == 1, '1', '2')}">
+          <button class="slds-button slds-button--{!IF(counter == 1, 'brand', 'neutral')} slds-size--1-of-1" type="button" data-schedule-id="{!button.Id}" onclick="toggleActiveSchedule(this)"><c:formatdatetime date_timevalue="{!button.Incap311__Schedule_Date__c}" format="EEE, MMM dd yyyy" timezone="GMT"/></button>
+        </div>
+        <apex:variable var="counter" value="{!counter + 1}" />
+      </apex:repeat>
+    </apex:outputPanel>
+      
+    <apex:outputPanel rendered="{!showCalendar && BulkDateButtons != null}" id="scheduleCalendarComponentContainer" layout="block">
+        <div id="schedule-calendar" style="width:350px;height:350px;">
+            <c:Console311_Section_ScheduleCalendar scode="{!mStv.Incap311__Service_Type_Code__c}" zone="{!zone}"/>
+            <!--<c:Console311_Section_ScheduleCalendar />-->
+        </div>
+    </apex:outputPanel>
+
+    <!--  TODO HAVE SPACE FOR NO DATES -->
+
+    <!-- TODO: If no dates available provide input for Day of Week. -->
+
+    <input id="bulk-schedule-id" type="text" name="schedule-id" value="" style="display: none;"/>
+  </div>
+
+  <script>
+    var activeBtn = $('.bulk-date-picker-container .bdp-button-container .slds-button.slds-button--brand');
+
+    if (activeBtn != null) {
+      $('#bulk-schedule-id').val(activeBtn.data('schedule-id'));
+    }
+
+    var toggleActiveSchedule = function(ele) {
+      $(ele).parent().parent().find('.slds-button--brand').removeClass('slds-button--brand').addClass('slds-button--neutral'); 
+      $(ele).addClass('slds-button--brand').removeClass('slds-button--neutral');
+      $('#bulk-schedule-id').val($(ele).data('schedule-id'));
+      console.log('------> Current schedule id saved: ' + $('#bulk-schedule-id').val());
+    }
+  </script>
+
+</apex:component>

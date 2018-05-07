@@ -1,0 +1,155 @@
+<apex:component layout="none">
+    <apex:attribute name="mAddress" type="String" default="" description="Address if present" />
+    <apex:attribute name="mZipcode" type="String" default="" description="Zipcode if present" />
+    <apex:attribute name="mlocationDetails" type="String" default="" description="" />
+    <apex:attribute name="mLayers" type="Incap311.Base311_ESRI_Layer[]" description="Layer information for the request" />
+    <apex:attribute name="mNeighbourhood" type="String" default="" description="Neightbourhood if present" />
+    <apex:attribute name="mpageLayout" type="object" default="" description="Neightbourhood if present" />
+    <apex:attribute name="mServiceTypeId" type="String" description="ID of the current service type; used for filtering layers." />
+    <apex:attribute name="mLocation" type="Incap311.Base311_Location" description="Location object of the selected location" />
+    <apex:attribute name="mSubLocation" type="Incap311.Base311_Location" description="Location object of the selected sub location" />
+    <apex:attribute name="showSubUnit" type="Boolean" description="Should sub units be shown" />
+    <style>
+        #case-address-street-loading {
+            display: none;
+        }
+
+        #case-address-street-loading.active {
+            display: block;
+            top: 20%;
+            left: auto;
+            height: 60%;
+            background-color: transparent;
+            max-width: 30px;
+            right: 35px;
+        }
+
+        #case-address-street-loading.active .slds-spinner--small {
+            right: 0;
+            left: auto;
+        }  
+
+        .slds-section-title--divider.geo-layers-header {
+            cursor: pointer;
+            display: flex !important;
+            justify-content: space-between;
+            height: 39px;
+            align-items: center;
+            margin-bottom: 0 !important;
+            margin-top: 5px;
+        }
+
+        .geo-layers-header i {
+            font-size: 2em;
+        }
+
+        .layer-table.collapsed {
+            display: none;
+        }
+    </style>
+
+    <script>
+        function toggleLayers() {
+            $('.layer-table').toggleClass('collapsed');
+            $('.geo-layers-header .fa').toggleClass('fa-caret-down').toggleClass('fa-caret-up');
+        }
+
+        if (window['convertSVGtoInlineSVG']) {
+          convertSVGtoInlineSVG();
+        }
+    </script>
+
+    <div class="details-location-container slds-container">
+        <!--<h3 class="slds-section-title--divider">Location</h3>-->
+        <h4 class="slds-text-title--caps" id="treeheading">
+            <span class="slds-icon_container">
+                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/checkin.svg')}" aria-hidden="true" class="slds-icon slds-icon_xx-small svg" />
+            </span>
+            Location
+        </h4>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-form-element slds-col slds-size--1-of-1" style="margin-bottom: 10px;">
+                <label class="slds-form-element__label" for="case-address-street">
+                    <span class="case-address-street-label" style="color: red; display: none;">*</span>
+                    Address</label>
+
+                <apex:outputPanel rendered="{!mAddress = null}" layout="none">
+                    <div class="slds-form-element__control">
+                      <div class="slds-input-has-icon slds-input-has-icon--right">
+                        <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" class="svg slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"/>
+                        <input id="case-address-street" type="text" class="slds-input" placeholder="Enter a street..." name="c-address-street" data-parsley-required="true" value="{!mAddress}"/>
+                        <!-- Loading indicator for the input -->
+                        <div id="case-address-street-loading" class="slds-spinner_container">
+                            <div class="slds-spinner--brand slds-spinner slds-spinner--small" role="alert">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!mAddress != null}" layout="none">
+                  <div class="slds-form-element__control">
+                    <div class="slds-pill_container">
+                      <span class="slds-pill slds-size--1-of-1">
+                        <span class="slds-pill__label" title="{!mAddress}">{!mAddress}</span>
+                        <button class="slds-button slds-button--icon slds-pill__remove" title="Remove" type="button" onclick="if (window['storeLocation']) { window['storeLocation']('');}">
+                          <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/close.svg')}" aria-hidden="true" class="slds-button__icon svg" />
+                          <span class="slds-assistive-text">Remove</span>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </apex:outputPanel>
+                
+                <apex:outputPanel rendered="{! mLocation != null && showSubUnit }">
+                    <div class="slds-col slds-size--1-of-1" style="margin-top: 10px;">
+                        <label class="slds-form-element__label" for="case-address-neighbourhood">Sub Unit</label>
+                    <c:Console311_Section_SubUnits location="{! if(mSubLocation == null, mLocation, mSubLocation)  }" onSelectSubUnit="storeSubLocation"/>
+                    </div>
+                </apex:outputPanel>
+                
+            </div>
+            <!--<div class="slds-col slds-size--1-of-2" style="margin-bottom: 10px;">
+                <label class="slds-form-element__label" for="case-address-neighbourhood">Neighborhood</label>
+                <p id="case-address-neighbourhood">{!mNeighbourhood}</p>
+                <input id="case-address-neighbourhood-input" type="text" class="slds-input hiddenInput" name="c-address-neighbourhood" value="{!mNeighbourhood}"/>
+            </div>
+            <div class="slds-col slds-size--1-of-2" style="margin-bottom: 10px;">
+                <label class="slds-form-element__label" for="case-address-zipcode" >Zipcode</label>
+                <p id="case-address-zipcode">{!mZipcode}</p>
+                <input id="case-address-zipcode-input" type="text" class="slds-input hiddenInput" name="c-address-zipcode" value="{!mZipcode}"/>
+            </div>-->
+
+            
+
+        </div>
+        
+        <apex:outputPanel rendered="{!mpageLayout['FieldMap']['Location']['Location Details'].Visible__c}">
+            <div class="slds-grid slds-wrap">
+                    <div class="slds-form-element slds-col slds-size--1-of-1" >
+                        <label class="slds-form-element__label">Location Details</label>
+                                <textarea id="c-Location-Details" name="c-Incap311__Location_Details__C" class="slds-input slds-textarea" placeholder="Enter Location Details..." value="{!mlocationDetails}">{!mlocationDetails}</textarea>
+                        
+                    </div>
+            </div>
+
+        </apex:outputPanel>
+        
+        
+        
+        <apex:outputPanel rendered="{! mLayers != null && mLayers.size > 0}" layout="none">
+            <h3 class="slds-section-title--divider geo-layers-header" onClick="toggleLayers();">
+                Geo Layers  
+                <i class="fa fa-caret-down"></i>
+            </h3>
+            <div class="slds-form-element slds-col slds-size--1-of-1 layer-table collapsed">
+                <Incap311:Base311_Layer_Information layersObj="{! mLayers }" stvId="{! mServiceTypeId }" />
+            </div>
+        </apex:outputPanel>
+
+
+    </div>
+</apex:component>

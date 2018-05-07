@@ -1,0 +1,31 @@
+<apex:page showheader="true" title="Loggly Configuration" controller="Incapsulate_Log.Loggly_Configure_Controller">
+  <apex:form id="form">
+    <apex:pagemessages />
+    <apex:pageblock title="Create Loggly settings">
+      <apex:pageblockbuttons >
+        <apex:commandbutton action="{!create}" value="Create" />
+      </apex:pageblockbuttons>
+      <apex:pageblocksection title="" columns="1" collapsible="false" showheader="false">
+        For more information about configuring Loggly prior to use, read the documentation at <a href="http://solenopsis.org/sloggly/">http://solenopsis.org/sloggly/</a>
+      </apex:pageblocksection>
+      <apex:pageblocksection title="" columns="2" collapsible="false" showheader="false">
+        <apex:pageblocksectionitem >
+          <apex:outputlabel for="name" value="{!$ObjectType.Incapsulate_Log__LogglySettings__c.fields.Name.label}" />
+          <apex:outputtext value="{!recordName}" id="name" />
+        </apex:pageblocksectionitem>
+        <apex:pageblocksectionitem >
+          <apex:outputlabel for="endpoint" value="{!$ObjectType.Incapsulate_Log__LogglySettings__c.fields.Incapsulate_Log__Endpoint__c.label}" />
+          <apex:inputtext value="{!endpoint}" id="endpoint" required="true" />
+        </apex:pageblocksectionitem>
+        <apex:pageblocksectionitem >
+          <apex:outputlabel for="hostname" value="{!$ObjectType.Incapsulate_Log__LogglySettings__c.fields.Incapsulate_Log__Hostname__c.label}" />
+          <apex:inputtext value="{!hostname}" id="hostname" />
+        </apex:pageblocksectionitem>
+        <apex:pageblocksectionitem >
+          <apex:outputlabel for="includeHostname" value="{!$ObjectType.Incapsulate_Log__LogglySettings__c.fields.Incapsulate_Log__Include_Hostname__c.label}" />
+          <apex:inputcheckbox value="{!includeHostname}" id="includeHostname" />
+        </apex:pageblocksectionitem>
+      </apex:pageblocksection>
+    </apex:pageblock>
+  </apex:form>
+</apex:page>

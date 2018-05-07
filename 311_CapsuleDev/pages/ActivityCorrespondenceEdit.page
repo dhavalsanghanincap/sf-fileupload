@@ -1,0 +1,31 @@
+<apex:page standardController="Activity_Correspondence__c" extensions="Base311_Activity_Correspondence_Ext">
+    <apex:form >
+
+        <apex:pageBlock title="Activity Correspondence">
+            <apex:actionFunction action="{!refresh}" name="refreshjs" reRender="outcomes" >
+                        </apex:actionFunction> 
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{! cancel }" value="Cancel" />
+                <apex:commandButton action="{! save }" value="Save" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Activity Correspondence Edit">
+                <apex:inputField value="{!Activity_Correspondence__c.Active__c}"/>
+                <apex:inputField value="{!Activity_Correspondence__c.Correspondence__c}" onchange="refreshjs();"/>
+                <apex:inputField value="{!Activity_Correspondence__c.Service_Type_Version_Activity__c}" onchange="refreshjs();"/>
+                <apex:inputField value="{!Activity_Correspondence__c.Type__c}" onchange="refreshjs();">
+                </apex:inputField>
+                </apex:pageBlockSection>
+            <apex:outputPanel id="outcomes">
+                <apex:pageBlockSection title="Outcomes"  rendered="{!Activity_Correspondence__c.Type__c == 'Complete'}">
+                <c:MultiselectPicklist leftLabel="Outcomes"
+                                       leftOption="{!AllOutcomes}"
+                                       rightLabel="Selected Outcomes"
+                                       rightOption="{!selectedOutcomes}"
+                                       showMoveAll="true"
+                                       size="14"
+                                       width="150px"/>
+            </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

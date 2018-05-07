@@ -1,0 +1,94 @@
+<apex:page showHeader="true" sidebar="false" controller="Console311_SR_ReferredTo_Controller" docType="html-5.0">
+
+  <style>
+    .details-information-container {
+      margin: 0 !important;
+      padding-bottom: 10px !important;
+    }
+  </style>
+
+  <c:Console311_Header />
+  <apex:slds />
+  <apex:stylesheet value="{!URLFOR($Resource.LightningDesign, 'assets/styles/salesforce-lightning-design-system.min.css')}"/>
+
+  <apex:form >
+    <apex:actionFunction name="fetchDistEmailList" action="{!retrieveDistrubutionEmailList}" rerender="distributionComponentContainer">
+      <apex:param name="selectedValue" value="" assignTo="{!mDistPicklistSelected}"/>
+    </apex:actionFunction>
+
+    <apex:actionFunction name="feedParentInformationToPage" action="{!feedParentInformationToPage}" rerender="activityParentContainer" onComplete="convertSVGtoInlineSVG();">
+      <apex:param name="parentJson" value="" />
+    </apex:actionFunction>
+  </apex:form>
+
+  <apex:outputPanel styleClass="parent-sr-container" layout="block" id="activityParentContainer" style="margin-top: 20px;">
+    <c:Console311_Section_ParentSR mParent="{!mActivityParentCase}" mDisconnectEnabled="false" mAFParentComponentFunc="feedParentInformationToPage" mVisibleAndHeaderOverride="true"/>
+  </apex:outputPanel>
+
+  <apex:form styleClass="slds-scope">
+    <div class="slds slds-scope slds-grid slds-wrap" style="padding: 0px 30px;">
+      <label class="slds-col slds-form-element__label slds-size--1-of-1" for="dispicklist">Refer To</label>
+      <apex:selectList id="dispicklist" styleClass="distpickList slds-col slds-form-element slds-size--1-of-1" value="{!mDistPicklistSelected}" size="1" onchange="fetchDistEmailList($('.distpickList').val());">
+        <apex:selectOptions value="{!DistributionPicklist}"/>
+      </apex:selectList>
+
+      <apex:outputPanel id="distributionComponentContainer" layout="block" styleClass="slds-col slds-size--1-of-1">
+          <c:Console311_Section_DistributionList mDistributionList="{!mActiveDistEmailList}" mCoordinatorList=""/>
+      </apex:outputPanel>
+
+      <label class="slds-col slds-form-element__label slds-size--1-of-1" for="dispicklist">Updates</label>
+      <div class="slds-form-element__control">
+        <apex:inputTextarea styleClass="slds-size--1-of-1 slds-textarea" value="{!mUpdateText}" />
+      </div>
+
+      <apex:commandButton styleClass="slds-button slds-button--brand" action="{!SaveEvent}" value="Save" />
+    </div>
+  </apex:form>
+
+  <c:Console311_Scripts datatableenabled="false" datatablesettings=""/>
+
+  <apex:outputpanel id="convertSvg">
+    <script>
+      /*
+      * Replace all SVG images with inline SVG
+      */
+      var convertSVGtoInlineSVG = function () {
+        jQuery('img.svg').each(function () {
+            var $img = jQuery(this);
+            var imgID = $img.attr('id');
+            var imgClass = $img.attr('class');
+            var imgURL = $img.attr('src');
+            var imgClickEvent = $img.attr('onclick');
+
+            jQuery.get(imgURL, function (data) {
+                // Get the SVG tag, ignore the rest
+                var $svg = jQuery(data).find('svg');
+
+                // Add replaced image's ID to the new SVG
+                if (typeof imgID !== 'undefined') {
+                    $svg = $svg.attr('id', imgID);
+                }
+                // Add replaced image's classes to the new SVG
+                if (typeof imgClass !== 'undefined') {
+                    $svg = $svg.attr('class', imgClass + ' replaced-svg');
+                }
+
+                if (typeof imgClickEvent !== 'undefined') {
+                    $svg = $svg.attr('onclick', imgClickEvent);
+                }
+
+                // Remove any invalid XML tags as per http://validator.w3.org
+                $svg = $svg.removeAttr('xmlns:a');
+                $svg = $svg.attr('height', '1.25rem');
+                $svg = $svg.attr('width', '1.25rem');
+
+                // Replace image with new SVG
+                $img.replaceWith($svg);
+
+            }, 'xml');
+          });
+        }
+        convertSVGtoInlineSVG();
+    </script>
+  </apex:outputpanel>
+</apex:page>

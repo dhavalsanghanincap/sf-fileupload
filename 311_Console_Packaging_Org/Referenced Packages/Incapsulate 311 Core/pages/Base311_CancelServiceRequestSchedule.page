@@ -1,0 +1,23 @@
+<apex:page standardController="Incap311__Service_Request_Schedule__c" extensions="Incap311.Base311_CancelServiceRequestSchleCtrl">
+    <apex:form id="theform">
+    <apex:pageMessages />
+    <apex:pageBlock id="thepageBlock">
+        <apex:pageblockButtons >
+            <apex:commandButton action="{!onSave}" value="Save"/>
+            <apex:commandButton action="{!Cancel}" value="Return"/>
+        </apex:pageblockButtons>
+        
+        <apex:pageblockSection title="Service Request Detail">
+            <apex:outputField value="{!schedulerecord.Incap311__Service_Request__r.CaseNumber}"/>
+            <apex:outputField value="{!schedulerecord.Incap311__Service_Request__r.Subject}"/>
+        </apex:pageblockSection>
+        <apex:pageblockSection title="Schedule Detail">
+            <apex:outputField value="{!schedulerecord.Incap311__Schedule__r.Name}"/>
+            <apex:outputField value="{!schedulerecord.Incap311__Schedule__r.Incap311__Schedule_Date__c}"/>
+            <apex:outputField value="{!schedulerecord.Incap311__Schedule__r.Incap311__Day_of_Week__c}"/>
+            <apex:outputField value="{!schedulerecord.Incap311__Schedule__r.Incap311__Item_Count__c}"/>
+            <apex:inputField value="{!schedulerecord.Incap311__Cancel_Reason__c}"/>
+        </apex:pageblockSection>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

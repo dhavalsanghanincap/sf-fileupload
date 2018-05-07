@@ -1,0 +1,245 @@
+<apex:page standardStylesheets="false" sidebar="false" showHeader="false">
+<head>
+            <c:Console311_Header />
+            <style>
+                .side-panel-default {
+                    background: rgb(244, 246, 249); 
+                    padding: 10px;
+                    border-radius: 0 0 5px 5px;
+                    border: 1px solid #eee;
+                }
+
+                .parsley-error {
+                    border: 2px solid #c00;
+                }
+
+                .errorMsg {
+                    color: #d74c3b;
+                }
+
+                .slds-form-element__label {
+                    font-size: 1rem;
+                }
+
+                .slds {
+                    padding: 30px;
+                }
+
+                .slds-dropdown {
+                    max-height: 340px;
+                    overflow-y: scroll;
+                }
+
+                .slds-picklist__label {
+                    max-width: 100%;
+                }
+
+                .details-view,
+                .master-view {
+                    float: left;
+                }
+
+                .details-view-form {
+                    visibility: hidden;
+                    margin-top: 20px;
+                }
+
+                .master-view {
+                    display: none;
+                    border-right: 1px solid #eee;
+                    padding-right: 20px;
+                }
+
+                .slds-container {
+                    padding-bottom: 30px;
+                    margin-left: 20px;
+                    margin-right: 10px;
+                }
+
+                .tree-description {
+                    margin-left: 35px;
+                    padding-top: 5px;
+                    word-break: break-word;
+                }
+
+                .tree-description hr {
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                }
+
+                .tree-hidden {
+                    display: none;
+                }
+
+                .slds-tree__item a {
+                    line-height: 20px;
+                }
+
+                .slds-tree-container {
+                    max-width: initial;
+                }
+
+                .text-muted {
+                    font-size: 12px;
+                }
+
+                p.m0.text-muted {
+                    margin-bottom: 10px;
+                }
+
+                .slds-picklist__label--full {
+                    width: 100%;
+                }
+
+                #case-parent {
+                    width: 75%;
+                }
+
+                #contact-contact-id {
+                    width: 93%;
+                }
+
+                .details-contact-container .slds-form-element__control,
+                .question-container .slds-form-element__control,
+                .section-account-container .slds-form-element__control {
+                    padding-right: 10px;
+                }
+
+                .service-type-description {
+                    display: none;
+                }
+
+                .details-view-form.active,
+                .master-view.active,
+                .service-type-description.active {
+                    display: block;
+                    visibility: visible;
+                }
+
+                .detail-view {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+
+                .map-view-container {
+                    padding: 10px;
+                }
+
+                #flexnotes-loading {
+                    text-align: center;
+                    margin: 15px auto;
+                }
+
+                .service-type-description p {
+                    word-wrap: break-word;
+                }
+
+                .svg-dropdown path {
+                    fill: #54698d;
+                }
+
+                .slds-notify h2 {
+                    font-size: 1em;
+                }
+
+                .hiddenInput,
+                .slds .slds-input.hiddenInput {
+                    display: none;
+                }
+
+                .slds-row-select .parsley-errors-list {
+                    display: none;
+                }
+
+                .loading-spinner {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(22, 50, 92, 0.6);
+                    z-index: 9000;
+                }
+
+                .loading-spinner img {
+                    position: fixed;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                }
+
+                .svg path {
+                    fill: #54698d;
+                }
+
+                .svg {
+                    cursor: pointer;
+                }
+
+                .knowledge-item {
+                    font-family: 'SalesforceSans-Regular',Helvetica,Arial,sans-serif;
+                    font-size: 12.5px;
+                    color: #16325c;
+                    font-weight: normal;
+                }
+
+                .knowledge-item a {
+                    word-wrap: break-word;
+                }
+
+                .knowledge-item-info {
+                    border-bottom: 1px solid #eee;
+                }
+                .knowledge-item-info:last-child {
+                    border-bottom: none;
+                }
+
+                .knowledge-list {
+                    /*max-width: 215px;*/
+                    border-left: 1px solid #eee;
+                    padding: 10px 20px;
+                }
+
+                .knowledge-info-summary {
+                    color: #16325c;
+                }
+
+                .knowledge-info-basic-label {
+                    color: #727272;
+                }
+
+                .knowledge-info-basic-label,
+                .knowledge-info-summary {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .knowledge-article-list-container-scroll {
+                    overflow-x: hidden;
+                    overflow-y: scroll;
+                    max-height: 400px;
+                }
+
+                .slds-text-title--caps {
+                    background: #e7edf4;
+                    padding: 10px !important;
+                    margin: 0;
+                }
+
+                h4.m0 {
+                    font-size: 18px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                }
+
+            </style>
+        </head>
+  <c:Console311_Section_DistributionList mDistributionList="abc@gmail.com,def@gmail.com" />
+</apex:page>

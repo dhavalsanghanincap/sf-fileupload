@@ -1,0 +1,37 @@
+<apex:page controller="IncapRF.WorkflowobjectEnableController">
+<style>
+        .mylist{
+            width:150px;
+            height:200px;
+        }
+    </style>
+    <apex:form id="theform">
+        <apex:pageMessages id="themessage"/>
+        <apex:pageBlock title="Multi Picklist" >
+            
+            <apex:panelGrid columns="3" id="thepanel">
+            
+                <apex:selectList multiselect="true" value="{!selected}" styleclass="mylist">
+             
+                    <apex:selectOptions value="{!notselectedoptions}" />
+            <!--   action="{!save}" -->
+                </apex:selectList>
+                <apex:panelGrid columns="1">
+                    <apex:commandButton value=">>" action="{!addElements}" reRender="thepanel" /> 
+                    <br/>
+                    <apex:commandButton value="<<" action="{!removeElements}" reRender="thepanel" />
+                </apex:panelGrid>
+               <apex:selectList multiselect="true" value="{!removed}" styleclass="mylist">
+                  
+          <apex:selectOptions value="{!selectedOptions}" />
+                </apex:selectList>   
+            </apex:panelGrid>
+                <apex:pageBlockButtons >
+               <!-- <apex:commandButton value="Enable"/> -->
+                 <apex:actionStatus startText="(Loading...)" stopText="" id="clickstatus"></apex:actionStatus>
+            <apex:commandButton value="Apply"  action="{!onenable}" status="clickstatus" reRender="themessage,thepanel" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

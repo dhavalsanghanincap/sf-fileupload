@@ -1,0 +1,5 @@
+<apex:page controller="Test_SubUnits_Controller">
+    <c:Console311_Header />
+    <c:Console311_Scripts dataTableEnabled="false" dataTableSettings=""/>
+  <c:Console311_Section_SubUnits location="{! TestLocation }" selectedSubunitId="275494"/>
+</apex:page>

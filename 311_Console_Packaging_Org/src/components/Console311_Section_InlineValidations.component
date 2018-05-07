@@ -1,0 +1,28 @@
+<apex:component controller="Console311_Controller_AlertValidation">
+    <apex:attribute name="serviceTypeVersion" assignTo="{! mServiceTypeVersion }" type="Incap311__Service_Type_Version__c" description="The service type version to run validations against" />
+    <apex:attribute name="context" assignTo="{! mContext }" type="Object" description="The context of the request; a Map from code => key" />
+    <apex:attribute name="addressLayers" assignTo="{! mAddressLayers}" type="Object[]" description="Address layers" />
+    <apex:attribute name="address" assignTo="{! mAddress}" type="Object" description="Address" />
+    
+    <apex:outputPanel style="block" styleClass="slds-col" rendered="{! InlineValidationMessage.size > 0 || GeoValidationMessage.size > 0 }">
+        <div class="errorContainer slds-size--1-of-1"> 
+            <apex:repeat value="{! GeoValidationMessage }" var="msg">
+                <div>{! msg.message } {! msg.reportOnly }</div>
+                <script>
+                    if(!{! IF(msg.reportOnly == null, false, msg.reportOnly) }) {
+                        disableSaveButton();
+                    }
+                </script>
+            </apex:repeat>
+            <apex:repeat value="{! InlineValidationMessage }" var="msg">
+                <div>{! msg.message }</div>
+                <script>
+                    if(!{! IF(msg.reportOnly == null, false, msg.reportOnly) }) {
+                        disableSaveButton();
+                    }
+                </script>
+            </apex:repeat>
+        </div>
+    </apex:outputPanel>
+    
+</apex:component>

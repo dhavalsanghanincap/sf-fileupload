@@ -1,0 +1,127 @@
+<apex:component layout="none" controller="Console311_Section_ParentSRCtrl">
+  <apex:attribute name="mParent" type="Case" description="The parent case to be displayed and used." />
+  <apex:attribute name="mDisconnectEnabled" type="Boolean" description="" default="true" />
+  <apex:attribute name="mTitle" type="String" description="Title text" default="Service Request Information"/>
+  <apex:attribute name="mAFParentComponentFunc" type="String" required="true" description="Passed in action function name to force a rerender of the component with the knowledge keyword in the parent." />
+  <apex:attribute name="mVisibleAndHeaderOverride" type="Boolean" description="Boolean for overriding the visible and header configuration attributes." default="false" />
+
+  <apex:outputPanel layout="block" styleClass="act-parent-container slds-container" rendered="{!IF(ParentPageConfig != null && !mVisibleAndHeaderOverride, ParentPageConfig.Visible__c, true)}">
+
+    <apex:outputPanel rendered="{!IF(ParentPageConfig != null && !mVisibleAndHeaderOverride, ParentPageConfig.Header__c, true)}" layout="block" styleClass="slds-size--1-of-1">
+      <h4 class="slds-text-title--caps slds-size--1-of-1" id="treeheading" style="display: block;">
+        <span class="slds-icon_container">
+          <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/info.svg')}" aria-hidden="true" class="slds-icon slds-icon--small svg" />
+        </span>
+        {!IF(ParentPageConfig != null, ParentPageConfig.Title__c, 'Parent Service Request')}
+      </h4>
+    </apex:outputPanel>
+
+    <!-- Lookup -->
+    <div class="slds-form-element slds-lookup" style="margin: 10px 0;">
+      <apex:outputPanel rendered="{!mParent = null}" layout="none">
+        <div class="slds-form-element__control" style="padding: 0;">
+          <div class="slds-input-has-icon slds-input-has-icon--right">
+            <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/search.svg')}" class="svg slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" onClick="parentLookupPopup();"/>
+            <input id="parent-id-label" type="text" class="slds-lookup__search-input slds-input" value="{!mParent.CaseNumber}" onkeyup="if(event.keyCode == 13){parentLookupPopup(); event.preventDefault();}"/>
+          </div>
+        </div>
+      </apex:outputPanel>
+
+      <apex:outputPanel rendered="{!mParent != null}" layout="none">
+        <div class="slds-form-element__control">
+          <div class="slds-pill_container">
+            <span class="slds-pill slds-size--1-of-1">
+              <span class="slds-pill__label" title="{!mParent.CaseNumber}">{!mParent.CaseNumber}</span>
+              <button class="slds-button slds-button--icon slds-pill__remove" title="Remove" type="button" onclick="handleParentLookupResponse(null, null, null);">
+                <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/utility/close.svg')}" aria-hidden="true" class="slds-button__icon svg" />
+                <span class="slds-assistive-text">Remove</span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </div>
+
+    <apex:outputPanel rendered="{!mParent != null}" layout="none">
+      <article class="act-parent-card-container slds-card">
+        <div class="slds-card__header slds-grid">
+
+          <header class="slds-media slds-media--center slds-has-flexi-truncate">
+            <div class="slds-media__body">
+              <div class="slds-media slds-no-space slds-has-divider--bottom-space slds-media--center">
+                <div class="slds-media__figure">
+                  <span class="slds-icon_container slds-icon-standard-case">
+                    <img src="{!URLFOR($Resource.LightningDesign, 'assets/icons/standard/case.svg')}" aria-hidden="true" class="case-icon slds-icon slds-icon--medium svg" />
+                  </span>
+                </div>
+                  <div class="slds-media__body">
+                <p class="slds-text-title slds-line-height--reset" style="text-transform: capitalize;" title="{!mParent.CaseNumber}">{!mParent.CaseNumber}</p>
+                <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" style="text-transform: capitalize;" title="{!mParent.Subject}">{!mParent.Subject}</h1>
+            </div>
+                <div class="badge-abs-container">
+                  <span class="slds-badge">{!mParent.Status}</span>
+                </div>
+              </div>
+              <input id="case-parent" name="c-ParentId" class="slds-hide" type="text" readonly="true" value="{!mParent.Id}" />
+            </div>
+          </header>
+        </div>
+
+        <div class="slds-card__body slds-grid-horizontal" style="padding: 5px 20px;">
+          <!--<div class="slds-form-element slds-col slds-size--1-of-2">
+            <span class="slds-form-element__label">Subject</span>
+            <div class="slds-form-element__control">
+              <span class="slds-form-element__static">{!mParent.Subject}</span>
+            </div>
+          </div>-->
+
+          <!--<div class="slds-form-element slds-col slds-size--1-of-2">
+            <span class="slds-form-element__label">Open Date</span>
+            <div class="slds-form-element__control slds-has-divider--bottom">
+              <span class="slds-form-element__static">{!mParent.CreatedDate}</span>
+            </div>
+          </div>-->
+
+          <div class="slds-form-element slds-col slds-size--1-of-1">
+            <span class="slds-form-element__label">Address</span>
+            <div class="slds-form-element__control">
+              <span class="slds-form-element__static">{!mParent.Incap311__Address__c}</span>
+            </div>
+          </div>
+
+          <div class="slds-form-element slds-col slds-size--1-of-1">
+            <span class="slds-form-element__label">Description</span>
+            <div class="slds-form-element__control">
+              <span class="slds-form-element__static">{!mParent.Description}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slds-card__footer"></div>
+      </article>
+    </apex:outputPanel>
+  </apex:outputPanel>
+
+  <script>
+    // Callback function for lookup popups.
+    var handleParentLookupResponse = function(objType, resultId, result) {
+        console.log(objType + ' <= Type, ' + resultId + ' <= Result Id, ' + JSON.stringify(result) + ' <= Result');
+        window['{!mAFParentComponentFunc}'](JSON.stringify(result));
+    }
+
+    var parentLookupPopup = function() {
+      var lookupWindow = null;
+      var parentSearchStr = encodeURI($('#parent-id-label').val());
+      lookupWindow = window.open(
+          '/apex/Console311_Lookup?sobject=Case&callback=handleParentLookupResponse&query=' + parentSearchStr,
+          'Lookup',
+          'height=600,width=800'
+      );
+    }
+
+    // Case Parent lookup popup call.
+    $('body').on('click', '#contact-lookup', function() {
+      parentLookupPopup();   
+    });
+  </script>
+</apex:component>

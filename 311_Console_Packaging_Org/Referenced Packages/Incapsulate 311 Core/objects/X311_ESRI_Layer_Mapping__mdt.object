@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Mapping information between a layer and a field for a given Location Endpoint.</description>
+    <fields>
+        <fullName>Field_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The field name of the request to associate the layer information to.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Field Name</label>
+        <required>true</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Layer_ID__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The layer ID from ESRI to match against.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Layer ID / Name</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Layer_Value__c</fullName>
+        <deprecated>false</deprecated>
+        <description>A path to the value to use from the layer. This is always relative to the layer attribute (ie; if you want the value, just type &quot;value&quot;, if you want attribute abc, you would type &quot;attribute.abc&quot;)</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Layer Value</label>
+        <required>true</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Location_Endpoint__c</fullName>
+        <deprecated>false</deprecated>
+        <description>The location endpoint this mapping belongs to.</description>
+        <externalId>false</externalId>
+        <fieldManageability>SubscriberControlled</fieldManageability>
+        <label>Location Endpoint</label>
+        <referenceTo>Location_Endpoint__mdt</referenceTo>
+        <relationshipName>Location_Layer_Mappings</relationshipName>
+        <required>true</required>
+        <type>MetadataRelationship</type>
+        <unique>false</unique>
+    </fields>
+    <label>311 ESRI Layer Mapping</label>
+    <pluralLabel>311 ESRI Layer Mappings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
